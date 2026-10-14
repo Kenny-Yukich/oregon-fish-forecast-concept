@@ -69,11 +69,11 @@ function cleanName(raw) {
 
 const num = s => { const n = Number(String(s ?? '').replace(/[,\s]/g, '')); return Number.isFinite(n) && String(s ?? '').trim() !== '' ? n : 0; };
 
-function rowsFrom(html, now) {
+function rowsFrom(html, now, log = true) {
   const out = [];
   for (const [ti, t] of tables(html).entries()) {
     const hi = t.findIndex(r => r.some(c => /water/i.test(c.text)) && r.some(c => /(legal|trophy|total|brood|finger)/i.test(c.text)));
-    if (DEBUG) console.log(`  table ${ti}: ${t.length} rows; header row ${hi}: ${hi >= 0 ? t[hi].map(c => c.text).join(' | ') : '(none)'}${t[hi + 1] ? '\n    first row: ' + t[hi + 1].map(c => c.text).join(' | ') : ''}`);
+    if (DEBUG && log) console.log(`  table ${ti}: ${t.length} rows; header row ${hi}: ${hi >= 0 ? t[hi].map(c => c.text).join(' | ') : '(none)'}${t[hi + 1] ? '\n    first row: ' + t[hi + 1].map(c => c.text).join(' | ') : ''}`);
     if (hi < 0) continue;
     const header = t[hi].map(c => c.text.toLowerCase());
     const col = {};
@@ -104,42 +104,37 @@ async function get(url) {
   return text;
 }
 
-async function scrape(now) {
-  try {
-    // The print view held exactly 500 rows on 2026-10-14, which may be a page limit, so keep asking for
-    // further pages until one adds nothing new.
-    const rows = [], seen = new Set();
-    for (let page = 0; page < 20; page++) {
-      const html = await get(page ? `${PRINT}?page=${page}` : PRINT);
-      const found = rowsFrom(html, now);
-      const fresh = found.filter(r => { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
-      rows.push(...fresh);
-      if (DEBUG) console.log(`  print view page ${page}: ${html.length} chars, ${found.length} rows, ${fresh.length} new`);
-      if (!fresh.length) break;
-    }
-    if (rows.length) return {rows, source: PRINT};
-  } catch (e) { console.log('  print view unavailable: ' + e.message); }
-  return {rows: await scrapePages(now), source: PAGE};
+// Collects every row it can reach and merges them. On 2026-10-14 the print view returned a 500-row window
+// and its ?page=N windows overlapped, so no single request was known to hold the whole season.
+// Stops when a page is empty, repeats the previous page exactly (the site ignored ?page), reaches the
+// total the page reports, or, when maxEmpty is set, after that many pages in a row add nothing new.
+async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
+  let empty = 0, total = null, previous = null;
+  for (const url of urls) {
+    let html;
+    try { html = await get(url); } catch (e) { if (DEBUG) console.log(`  ${label}: ${e.message}`); break; }
+    total ??= Number((/of\s+([\d,]+)\s+(?:results|items|entries)/i.exec(html)?.[1] || /([\d,]+)\s+results/i.exec(html)?.[1] || '').replace(/,/g, '')) || null;
+    const found = rowsFrom(html, now, false);
+    const signature = found.map(r => r.week_start + r.odfw_name + r.total).join('|');
+    const fresh = found.filter(r => { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
+    rows.push(...fresh);
+    if (DEBUG) console.log(`  ${label} ${url.replace(/^https:\/\/myodfw\.com/, '')}: ${found.length} rows, ${fresh.length} new`);
+    if (!found.length || signature === previous || (total && seen.size >= total)) break;
+    previous = signature;
+    empty = fresh.length ? 0 : empty + 1;
+    if (empty >= maxEmpty) break;
+  }
+  if (DEBUG && total) console.log(`  ${label}: page says ${total} results`);
+  return total;
 }
 
-async function scrapePages(now) {
-  const rows = [];
-  const seen = new Set();
-  for (let page = 0; page < 40; page++) {
-    const url = page ? `${PAGE}?page=${page}` : PAGE;
-    const html = await get(url);
-    if (DEBUG && page === 0) {
-      console.log(`  page 0: ${html.length} chars, ${(html.match(/<table/gi) || []).length} tables, pager: ${/pager/.test(html)}`);
-      const hints = [...new Set([...html.matchAll(/["'](\/[^"']*(?:json|api|stocking|views\/ajax)[^"']*)["']/gi)].map(m => m[1]))].slice(0, 15);
-      console.log('  url hints: ' + (hints.join(' , ') || '(none)'));
-    }
-    const found = rowsFrom(html, now);
-    const fresh = found.filter(r => { const k = r.week_start + '|' + r.waterbody + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
-    rows.push(...fresh);
-    if (DEBUG) console.log(`  page ${page}: ${found.length} rows, ${fresh.length} new`);
-    if (!fresh.length || !/pager__item--next|rel="next"|[?&]page=\d/.test(html)) break;
-  }
-  return rows;
+async function scrape(now) {
+  const rows = [], seen = new Set();
+  const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
+  await collect([`${PRINT}?items_per_page=All`], seen, rows, now, 'print, all items');
+  await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
+  const total = await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
+  return {rows, source: rows.length ? PRINT : PAGE, total};
 }
 
 const now = new Date();
@@ -147,10 +142,10 @@ let previous = {rows: []};
 if (existsSync(OUT)) {
   try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
 }
-let scraped = [], source = PAGE;
+let scraped = [], source = PAGE, pageTotal = null;
 try {
-  ({rows: scraped, source} = await scrape(now));
-  console.log(`ODFW schedule: ${scraped.length} rows`);
+  ({rows: scraped, source, total: pageTotal} = await scrape(now));
+  console.log(`ODFW schedule: ${scraped.length} rows` + (pageTotal ? ` (page reports ${pageTotal})` : ''));
   for (const r of scraped.slice(0, 8)) console.log(`  ${r.week_start} ${r.waterbody} [${r.odfw_name}] (${r.zone}): ${r.total}`);
   console.log(`  weeks: ${[...new Set(scraped.map(r => r.week_start))].join(', ')}`);
 } catch (e) { console.log('ODFW schedule FAILED, keeping previous rows: ' + e.message); }
