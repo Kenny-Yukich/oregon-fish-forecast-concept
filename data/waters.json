@@ -71,7 +71,12 @@
             "label": "ODFW Central Zone fishery background",
             "url": "https://myodfw.com/fishing/central-zone"
           }
-        ]
+        ],
+        "score_species": [
+          "Redband trout",
+          "Mountain whitefish"
+        ],
+        "score_species_note": "Trout-only score. Steelhead and coho are restricted on this reach and are not scored."
       },
       "readings": null
     },
@@ -142,7 +147,12 @@
             "label": "ODFW Central Zone background",
             "url": "https://myodfw.com/fishing/central-zone"
           }
-        ]
+        ],
+        "score_species": [
+          "Redband trout",
+          "Mountain whitefish"
+        ],
+        "score_species_note": "Trout-only score. Steelhead and coho are restricted on this reach and are not scored."
       },
       "readings": null
     },
@@ -2032,7 +2042,8 @@
             "label": "WDFW emergency rules",
             "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
           }
-        ]
+        ],
+        "score_notice_until": "2026-10-31"
       },
       "readings": null
     },
@@ -2062,11 +2073,11 @@
         "seasonal_detail": "Past WDFW notices describe hatchery coho fisheries on the North Fork near the fish collection facility, and hatchery summer steelhead released into the South Fork Toutle and Green rivers. Those notices are from earlier seasons; this year's boundaries and dates need a check.",
         "methods": "Past WDFW notices required hatchery-only retention with wild steelhead released, and selective gear during early steelhead openers. Confirm current gear rules before fishing.",
         "report": {
-          "summary": "No dated 2026 catch report specific to the Toutle was found.",
-          "reported_on": null,
+          "summary": "A Kelso shop rates the Toutle as fair and lists it open for hatchery steelhead, hatchery coho, and trout (2 a day over 14 inches).",
+          "reported_on": "2026-10-06",
           "checked_on": "2026-10-14",
-          "coverage": "WDFW's southwest report notes a South Fork Toutle weir; it is not a catch survey.",
-          "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          "coverage": "Sportsman's Warehouse Kelso report for the Toutle; not a WDFW creel survey or a specific reach.",
+          "url": "https://fishingreports.sportsmans.com/fishing-report/toutle-river/29233/"
         },
         "alerts": [
           {
@@ -2090,6 +2101,10 @@
         ],
         "checked_on": "2026-10-14",
         "sources": [
+          {
+            "label": "Sportsman's Kelso: Toutle report",
+            "url": "https://fishingreports.sportsmans.com/fishing-report/toutle-river/29233/"
+          },
           {
             "label": "WDFW southwest creel reports",
             "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
