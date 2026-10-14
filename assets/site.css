@@ -458,3 +458,28 @@ details[open] > summary { margin-bottom: 7px; }
 .count-live { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 12px 0 4px; padding: 10px 12px; background: var(--soft); border-radius: 8px; }
 .count-live .meta { flex-basis: 100%; font-size: 12px; }
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 3px oklch(42% 0.14 28 / .18); }
+
+/* Trout stocking */
+.stock-callout { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding: 13px 16px; border: 1px solid var(--control-border); border-radius: 10px; background: var(--surface); color: var(--fg); text-decoration: none; }
+.stock-callout:hover { background: var(--hover); text-decoration: none; }
+.stock-callout > span:nth-child(2) { display: grid; gap: 2px; }
+.stock-callout .meta { font-size: 12px; }
+.stock-callout svg { margin-left: auto; }
+.stock-tiles { margin: 0 0 22px; }
+.stock-tiles dd small { font-family: var(--font-body); font-size: 13px; color: var(--muted); }
+.stock-controls { margin-bottom: 8px; }
+.stock-controls select { border-radius: 8px; }
+#stock-count { text-align: left; margin: 6px 0 4px; }
+.stock-group h2 { display: flex; align-items: center; gap: 10px; font-size: 26px; margin: 26px 0 12px; }
+.stock-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.stock-card { display: grid; gap: 4px; align-content: start; padding: 15px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.stock-card.is-now { border-color: var(--control-border); box-shadow: inset 3px 0 0 var(--accent); }
+.stock-card strong { font-size: 16px; }
+.stock-card p { margin: 4px 0 6px; font-size: 14px; }
+.stock-week { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 4px; }
+.stock-week .meta { font-size: 12px; }
+#stocking .stock-list { grid-template-columns: 1fr; margin: 12px 0; }
+@media (max-width: 640px) {
+  .stock-list { grid-template-columns: 1fr; }
+  .stock-controls select { width: 100%; }
+}

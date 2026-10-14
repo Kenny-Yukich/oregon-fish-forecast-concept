@@ -57,6 +57,19 @@ Verification used mocked tiles and river-line responses, because the editing env
 
 Counts show adult fish moving upstream past a point. They are run timing, not catch rates, and the site says so wherever they appear.
 
+## Trout stocking
+
+Open `#/stocking` from the main navigation.
+
+- **What it shows:** ODFW's planned weekly trout stockings across Oregon. It's grouped into this week, next week, later and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
+- **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
+- **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
+- **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
+  - It reads ODFW's print view of the schedule, which lists every row. If that fails, it falls back to paging the main schedule.
+  - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
+  - It keeps each row for 8 weeks after ODFW removes it from the page.
+- These are ODFW's planned stockings, not confirmed releases, and the page says so.
+
 ## Proposed membership
 
 Open `#/membership` from the main navigation. The concept proposes paid scores for specific river reaches and target species, explanations of their inputs and limitations, and score comparison within the directory. Price and benefits are a proposal, not an active subscription offer. The free guide keeps water records, access, reports, available station readings, restrictions and sources.

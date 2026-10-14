@@ -6,6 +6,8 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
 const OUT = new URL('../data/stocking.js', import.meta.url);
 const PAGE = 'https://myodfw.com/fishing/species/trout/stocking-schedule';
+// The print view lists the whole schedule; the main page shows 50 rows at a time.
+const PRINT = 'https://myodfw.com/fishing/species/trout/stocking-schedule-print';
 const KEEP_DAYS = 56;
 const STRICT = process.env.STRICT === '1', DEBUG = process.env.DEBUG === '1' || STRICT;
 const UA = {'user-agent': 'oregon-fish-forecast-concept (GitHub Actions; daily stocking snapshot)'};
@@ -51,6 +53,20 @@ function weekStart(label, now) {
   return `${year}-${String(mi + 1).padStart(2, '0')}-${m[2].padStart(2, '0')}`;
 }
 
+// ODFW writes names in capitals with abbreviations ("EMPIRE LK, UPR", "N FK SANTIAM R").
+const ABBR = {LK: 'Lake', LKS: 'Lakes', PD: 'Pond', PDS: 'Ponds', RES: 'Reservoir', R: 'River', CR: 'Creek', CRK: 'Creek', FK: 'Fork',
+  NF: 'North Fork', SF: 'South Fork', MF: 'Middle Fork', N: 'North', S: 'South', E: 'East', W: 'West', M: 'Middle', MID: 'Middle',
+  UPR: 'Upper', UP: 'Upper', LWR: 'Lower', LW: 'Lower', SL: 'Slough', PK: 'Park', CN: 'Canal'};
+const QUALIFIERS = /^(Upper|Lower|North|South|East|West|Middle)$/;
+const titleWord = w => w.toLowerCase().replace(/(^|[-'(])([a-z])/g, (_, a, b) => a + b.toUpperCase()).replace(/^Mc([a-z])/, (_, c) => 'Mc' + c.toUpperCase());
+function cleanName(raw) {
+  if (raw !== raw.toUpperCase()) return raw; // already in normal case
+  const expand = part => part.trim().split(/\s+/).map(t => ABBR[t.replace(/\.$/, '')] || titleWord(t)).join(' ');
+  const [main, ...rest] = raw.split(',').map(expand);
+  const quals = rest.filter(r => QUALIFIERS.test(r)), other = rest.filter(r => !QUALIFIERS.test(r));
+  return [...quals, main].join(' ') + (other.length ? ' (' + other.join(', ') + ')' : '');
+}
+
 const num = s => { const n = Number(String(s ?? '').replace(/[,\s]/g, '')); return Number.isFinite(n) && String(s ?? '').trim() !== '' ? n : 0; };
 
 function rowsFrom(html, now) {
@@ -75,7 +91,7 @@ function rowsFrom(html, now) {
       if (!start) continue;
       const fish = {legals: num(cell('legals')), larger: num(cell('larger')), pounders: num(cell('pounders')), trophy: num(cell('trophy')), brood: num(cell('brood')), fingerling: num(cell('fingerling'))};
       const sum = Object.values(fish).reduce((a, b) => a + b, 0);
-      out.push({week_start: start, week_label: weekLabel, waterbody, zone: cell('zone'), ...fish, total: num(cell('total')) || sum});
+      out.push({week_start: start, week_label: weekLabel, waterbody: cleanName(waterbody), odfw_name: waterbody, zone: cell('zone'), ...fish, total: num(cell('total')) || sum});
     }
   }
   return out;
@@ -89,6 +105,16 @@ async function get(url) {
 }
 
 async function scrape(now) {
+  try {
+    const html = await get(PRINT);
+    const rows = rowsFrom(html, now);
+    if (DEBUG) console.log(`  print view: ${html.length} chars, ${rows.length} rows`);
+    if (rows.length) return {rows, source: PRINT};
+  } catch (e) { console.log('  print view unavailable: ' + e.message); }
+  return {rows: await scrapePages(now), source: PAGE};
+}
+
+async function scrapePages(now) {
   const rows = [];
   const seen = new Set();
   for (let page = 0; page < 40; page++) {
@@ -103,7 +129,7 @@ async function scrape(now) {
     const fresh = found.filter(r => { const k = r.week_start + '|' + r.waterbody + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
     rows.push(...fresh);
     if (DEBUG) console.log(`  page ${page}: ${found.length} rows, ${fresh.length} new`);
-    if (!fresh.length || !/pager__item--next|rel="next"/.test(html)) break;
+    if (!fresh.length || !/pager__item--next|rel="next"|[?&]page=\d/.test(html)) break;
   }
   return rows;
 }
@@ -113,15 +139,16 @@ let previous = {rows: []};
 if (existsSync(OUT)) {
   try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
 }
-let scraped = [];
+let scraped = [], source = PAGE;
 try {
-  scraped = await scrape(now);
+  ({rows: scraped, source} = await scrape(now));
   console.log(`ODFW schedule: ${scraped.length} rows`);
-  for (const r of scraped.slice(0, 5)) console.log(`  ${r.week_start} ${r.waterbody} (${r.zone}): ${r.total}`);
+  for (const r of scraped.slice(0, 8)) console.log(`  ${r.week_start} ${r.waterbody} [${r.odfw_name}] (${r.zone}): ${r.total}`);
+  console.log(`  weeks: ${[...new Set(scraped.map(r => r.week_start))].join(', ')}`);
 } catch (e) { console.log('ODFW schedule FAILED, keeping previous rows: ' + e.message); }
 
 const cutoff = new Date(now.getTime() - KEEP_DAYS * 86400000).toISOString().slice(0, 10);
-const key = r => r.week_start + '|' + r.waterbody.toLowerCase() + '|' + (r.zone || '').toLowerCase();
+const key = r => r.week_start + '|' + (r.odfw_name || r.waterbody).toLowerCase() + '|' + (r.zone || '').toLowerCase();
 const merged = new Map((previous.rows || []).filter(r => r.week_start >= cutoff).map(r => [key(r), r]));
 for (const r of scraped) merged.set(key(r), r); // the current page wins for weeks it still lists
 const rows = [...merged.values()].sort((a, b) => a.week_start.localeCompare(b.week_start) || a.waterbody.localeCompare(b.waterbody));
