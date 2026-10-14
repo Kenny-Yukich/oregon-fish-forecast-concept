@@ -1,6 +1,6 @@
 /* Fish-count stations and how each relates to a water, added 2026-10-14.
    Counts show fish moving upstream past a dam or trap. They are run timing, not catch rates.
-   Stations with a dart code are refreshed daily into data/counts.js by .github/workflows/fish-counts.yml;
+   Stations with a dart code are refreshed daily into data/counts.js by .github/workflows/daily-data.yml;
    the others link to the operator's published counts. A live field links a public video feed of the ladder;
    only feeds confirmed to exist are listed, and they are linked rather than embedded. */
 window.ORFF_COUNT_STATIONS = {

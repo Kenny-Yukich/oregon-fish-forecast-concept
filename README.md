@@ -51,11 +51,43 @@ Verification used mocked tiles and river-line responses, because the editing env
   - The Dalles Dam: both Lower Deschutes reaches.
   - Willamette Falls: Willamette at Cathedral Park, McKenzie at Leaburg.
   - Sherars Falls, Leaburg Dam and Winchester Dam: these link to ODFW's own counts.
-- **Daily refresh.** `.github/workflows/fish-counts.yml` runs `scripts/fetch-counts.mjs` every morning (about 6:41 am Pacific). It pulls this year's and last year's daily counts for Bonneville, The Dalles and Willamette Falls from Columbia River DART, works out 7-day, year-to-date and same-date-last-year totals, and commits `data/counts.js` only when the numbers change. A failed fetch keeps the previous numbers. It can also be run by hand from the Actions tab, and pull requests that change the fetcher run a test fetch without committing.
+- **Daily refresh.** `.github/workflows/daily-data.yml` runs `scripts/fetch-counts.mjs` every morning (about 6:41 am Pacific). It pulls this year's and last year's daily counts for Bonneville, The Dalles and Willamette Falls from Columbia River DART, works out 7-day, year-to-date and same-date-last-year totals, and commits `data/counts.js` only when the numbers change. A failed fetch keeps the previous numbers. It can also be run by hand from the Actions tab, and pull requests that change the fetcher run a test fetch without committing.
 - Until the first run, count panels show links to the official counts instead of numbers.
 - **Live ladder video.** A station can carry a `live` link to a public video feed of its fish ladder. Only Winchester Dam has one so far (the Umpqua Fishery Enhancement Derby's stream at umpquafish.com). Feeds are linked, not embedded, and only listed once confirmed to exist.
 
 Counts show adult fish moving upstream past a point. They are run timing, not catch rates, and the site says so wherever they appear.
+
+## Trout stocking
+
+Open `#/stocking` from the main navigation.
+
+- **What it shows:** ODFW's planned weekly trout stockings across Oregon. ODFW publishes about a year ahead, so the page groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
+- **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
+- **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
+- **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
+  - It asks the schedule for one zone and date range at a time, using the schedule's own filter form, and splits each zone by week until every slice fits on one 50-row page. Splits fall between a Sunday and a Monday, since stocking weeks run Monday to Friday. Each response is checked against the filter it asked for.
+    - Why: on Oct 14, 2026, paging the full schedule repeated 101 rows and skipped 53, and the print view stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027. The print view also rejects the filters.
+    - As a safety net it also reads the print view and plain pages and merges anything the slices missed, naming those rows in the log.
+      - On Oct 14, 2026 it added 3 of 1,132 rows: Smith Lake and Bolan Lake, which ODFW lists with no zone (so no zone slice can return them), and a 12-day Faraday Lake stocking.
+      - The safety net only sees the print view's first 500 rows and the plain pages, so a zone-less or unusually long stocking outside those could still be missed.
+    - If the filters stop working, it falls back to the print view and paging and logs that rows may be missing.
+  - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
+  - It keeps each row for 8 weeks after ODFW removes it from the page.
+- These are ODFW's planned stockings, not confirmed releases, and the page says so.
+
+## Member preview
+
+On the **Membership** page, **See the member preview** turns on the proposed paid river scores across the guide. A banner on every page says it's a preview and has **Exit preview**. The setting is kept in that browser only.
+
+- **Scores.** Each river reach gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating. It's built by `assets/member-preview.js` from inputs already on the site:
+  - Report tone, 35%: positive or slow wording in the dated report.
+  - Run strength, 30%: dam counts against last year, for target species.
+  - Report freshness, 20%.
+  - Recent stocking, 15%: ODFW stocking in the last 30 days.
+- **Missing inputs.** A missing input is skipped and lowers confidence, and unverified rule notices lower it too. Missing inputs are never guessed.
+- **Withheld and unscored.** Rivers with a rules notice (both Lower Deschutes reaches and the Coweeman) stay **Rules review pending**, as the membership page promises. Lakes are not scored.
+- **Where scores appear.** In the directory, a score shows under each river's name, with a **Best river score first** sort. River pages show the score with a breakdown of every input and its source.
+- **Not validated.** The formula has not been checked against catch results, and every score is tagged **Preview**.
 
 ## Proposed membership
 

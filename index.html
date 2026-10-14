@@ -9,17 +9,20 @@
   <title>Explore waters · Oregon Fish Forecast</title>
   <link rel="icon" href="assets/weather-fish.webp" type="image/webp">
   <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="assets/site.css?v=20261014-counts">
+  <link rel="stylesheet" href="assets/site.css?v=20261014-preview">
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
   <script src="data/map.js" defer></script>
   <script src="data/count-stations.js" defer></script>
   <script src="data/counts.js" defer></script>
+  <script src="data/stocking.js" defer></script>
+  <script src="data/stocking-match.js" defer></script>
   <script src="assets/vendor/leaflet/leaflet.js" defer></script>
   <script src="assets/monitoring.js" defer></script>
   <script src="assets/map.js" defer></script>
+  <script src="assets/member-preview.js" defer></script>
   <script src="assets/trends.js" defer></script>
-  <script src="assets/app.js?v=20261014-counts" defer></script>
+  <script src="assets/app.js?v=20261014-preview" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -32,12 +35,14 @@
       <nav class="main-nav" aria-label="Main navigation" data-od-id="main-navigation">
         <a href="#/waters" data-nav="waters" aria-current="page">Explore waters</a>
         <a href="#/map" data-nav="map">Map</a>
+        <a href="#/stocking" data-nav="stocking">Stocking</a>
         <a href="#/approach" data-nav="approach">Approach &amp; sources</a>
         <a href="#/membership" data-nav="membership" data-od-id="membership-navigation">Membership</a>
         <span class="concept-label">Independent design concept</span>
       </nav>
     </div>
   </header>
+  <div id="preview-banner" class="preview-banner" role="region" aria-label="Member preview" hidden></div>
   <main id="main-content" tabindex="-1">
     <div id="app">
       <section class="wrap not-found"><h1>Oregon, one reach at a time.</h1><p>Opening the local water directory…</p></section>
