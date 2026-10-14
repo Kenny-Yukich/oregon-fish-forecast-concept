@@ -108,6 +108,7 @@ async function get(url) {
 // and its ?page=N windows overlapped, so no single request was known to hold the whole season.
 // Stops when a page is empty, repeats the previous page exactly (the site ignored ?page), reaches the
 // total the page reports, or, when maxEmpty is set, after that many pages in a row add nothing new.
+const sightings = {};
 async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
   let empty = 0, total = null, previous = null;
   for (const url of urls) {
@@ -116,6 +117,7 @@ async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
     total ??= Number((/of\s+([\d,]+)\s+(?:results|items|entries)/i.exec(html)?.[1] || /([\d,]+)\s+results/i.exec(html)?.[1] || '').replace(/,/g, '')) || null;
     const found = rowsFrom(html, now, false);
     const signature = found.map(r => r.week_start + r.odfw_name + r.total).join('|');
+    for (const r of found) { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; (sightings[label] ??= new Map()).set(k, [...(sightings[label].get(k) || []), urls.indexOf(url)]); }
     const fresh = found.filter(r => { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
     rows.push(...fresh);
     if (DEBUG) console.log(`  ${label} ${url.replace(/^https:\/\/myodfw\.com/, '')}: ${found.length} rows, ${fresh.length} new`);
@@ -133,6 +135,24 @@ async function scrape(now) {
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
   const total = await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
+  if (DEBUG) {
+    const main = sightings['schedule pages'] || new Map(), print = sightings['print pages'] || new Map();
+    const dups = [...main].filter(([, p]) => p.length > 1);
+    const samePage = dups.filter(([, p]) => new Set(p).size < p.length).length;
+    console.log(`  diagnostics: main pages listed ${[...main.values()].reduce((t, p) => t + p.length, 0)} rows, ${main.size} unique; ${dups.length} repeated (${samePage} within one page, ${dups.length - samePage} across pages)`);
+    for (const [k, p] of dups.slice(0, 6)) console.log(`    repeat: ${k} on pages ${p.join(', ')}`);
+    const printOnly = [...print.keys()].filter(k => !main.has(k));
+    console.log(`  diagnostics: ${printOnly.length} print-view rows never appeared in main pages${printOnly.length ? ', e.g. ' + printOnly.slice(0, 3).join(' ; ') : ''}`);
+    try {
+      const html = await get(PAGE);
+      const form = /<form[^>]*views-exposed-form[\s\S]*?<\/form>/i.exec(html)?.[0] || '';
+      const fields = [...form.matchAll(/<(select|input)[^>]*name="([^"]+)"[^>]*>/gi)].map(m => m[2]).filter(n => !/^(form_|op$)/.test(n));
+      const zoneSelect = /<select[^>]*name="([^"]*)"[^>]*>([\s\S]*?)<\/select>/i.exec(form);
+      const options = zoneSelect ? [...zoneSelect[2].matchAll(/<option[^>]*value="([^"]*)"[^>]*>([^<]*)/gi)].map(m => m[1] + '=' + decode(m[2])).slice(0, 25) : [];
+      console.log(`  filter form fields: ${fields.join(', ') || '(none found)'}`);
+      if (zoneSelect) console.log(`  first select "${zoneSelect[1]}" options: ${options.join(' | ')}`);
+    } catch (e) { console.log('  filter form unavailable: ' + e.message); }
+  }
   // On 2026-10-14 the main schedule paged out to Oct 2027, but 1,019 listed rows held 971 unique ones. A sort
   // with ties can repeat some rows across pages and skip others, so make a second pass in a column sort taken
   // from the table's own header links. New rows from it are rows the first pass missed.
