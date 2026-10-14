@@ -133,6 +133,7 @@ function add(seen, r) { const k = rowKey(r); if (seen.has(k)) return false; seen
 // these filters with HTTP 400, so slices go to the main schedule page, which lists 50 rows per page.
 const ZONES = {1: 'Central', 2: 'Northeast', 3: 'Northwest', 4: 'Southeast', 5: 'Southwest', 6: 'Willamette'};
 const PAGE_SIZE = 50;
+const OVERLAP_DAYS = 14;
 const iso = d => d.toISOString().slice(0, 10);
 const addDaysISO = (d, n) => iso(new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000));
 const dow = d => new Date(d + 'T12:00:00Z').getUTCDay();
@@ -148,15 +149,17 @@ async function slice(zoneId, from, to, now, page = 0) {
   return zoneOk && dateOk ? found : null;
 }
 
-// Splits a Monday-to-Sunday range in half on a week boundary until each piece fits on one page. ODFW weeks run
-// Monday to Friday, so no stocking straddles two pieces. A single week that still fills a page is paged through.
+// Splits a Monday-to-Sunday range in half on a week boundary until each piece fits on one page. Most ODFW weeks run
+// Monday to Friday, but on 2026-10-14 three rows still fell between pieces, so each right half starts two weeks
+// early: a stocking up to two weeks long then lands whole in one piece (duplicates are dropped). A single week
+// that still fills a page is paged through.
 async function sliceRows(zoneId, from, to, now, stats) {
   stats.requests++;
   const found = await slice(zoneId, from, to, now);
   if (found == null) return null;
   if (found.length < PAGE_SIZE) return found;
   const weeks = Math.round((Date.parse(to) - Date.parse(from)) / 604800000);
-  if (weeks <= 1) {
+  if (weeks <= 2) {
     const all = [...found];
     for (let page = 1; page < 10; page++) { stats.requests++; const more = await slice(zoneId, from, to, now, page); if (!more?.length) break; all.push(...more); if (more.length < PAGE_SIZE) break; }
     stats.paged++;
@@ -164,7 +167,9 @@ async function sliceRows(zoneId, from, to, now, stats) {
   }
   const mid = addDaysISO(from, Math.floor(weeks / 2) * 7 - 1); // a Sunday
   const a = await sliceRows(zoneId, from, mid, now, stats);
-  const b = a && await sliceRows(zoneId, addDaysISO(mid, 1), to, now, stats);
+  // The right half always starts at least a week after its parent, so the splitting ends.
+  const rightStart = [addDaysISO(mid, 1 - OVERLAP_DAYS), addDaysISO(from, 7)].sort().at(-1);
+  const b = a && await sliceRows(zoneId, rightStart, to, now, stats);
   return a && b ? [...a, ...b] : null;
 }
 
@@ -190,7 +195,7 @@ async function scrape(now) {
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
   await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
-  if (sliced && rows.length > before) console.log(`  WARNING: print view and paging found ${rows.length - before} rows the slices missed`);
+  if (sliced && rows.length > before) console.log(`  WARNING: print view and paging found ${rows.length - before} rows the slices missed: ` + rows.slice(before, before + 5).map(r => `${r.week_label} ${r.odfw_name} (${r.zone})`).join(' ; '));
   else if (sliced) console.log('  print view and paging found nothing the slices missed');
   return {rows, source: PAGE, method: sliced ? 'zones' : 'paging'};
 }
@@ -205,7 +210,8 @@ try {
   ({rows: scraped, method} = await scrape(now));
   console.log(`ODFW schedule: ${scraped.length} rows (${method === 'zones' ? 'complete, by zone' : 'paging fallback, may be incomplete'})`);
   for (const r of scraped.slice(0, 8)) console.log(`  ${r.week_start} ${r.waterbody} [${r.odfw_name}] (${r.zone}): ${r.total}`);
-  console.log(`  weeks: ${[...new Set(scraped.map(r => r.week_start))].join(', ')}`);
+  const weeks = [...new Set(scraped.map(r => r.week_start))].sort();
+  console.log(`  ${weeks.length} weeks, ${weeks[0]} to ${weeks.at(-1)}`);
 } catch (e) { console.log('ODFW schedule FAILED, keeping previous rows: ' + e.message); }
 
 const cutoff = new Date(now.getTime() - KEEP_DAYS * 86400000).toISOString().slice(0, 10);
