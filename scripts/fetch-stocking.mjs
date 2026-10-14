@@ -129,56 +129,70 @@ async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
 const rowKey = r => r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total;
 function add(seen, r) { const k = rowKey(r); if (seen.has(k)) return false; seen.add(k); return true; }
 
-// Zone and date filters from the schedule's own filter form (seen 2026-10-14).
+// Zone and date filters from the schedule's own filter form (seen 2026-10-14). The print view answers
+// these filters with HTTP 400, so slices go to the main schedule page, which lists 50 rows per page.
 const ZONES = {1: 'Central', 2: 'Northeast', 3: 'Northwest', 4: 'Southeast', 5: 'Southwest', 6: 'Willamette'};
-const PRINT_LIMIT = 500;
+const PAGE_SIZE = 50;
 const iso = d => d.toISOString().slice(0, 10);
+const addDaysISO = (d, n) => iso(new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000));
+const dow = d => new Date(d + 'T12:00:00Z').getUTCDay();
 
-// One print-view request, checked against the filter it asked for. Returns null when ODFW ignored the filter.
-async function printSlice(zoneId, from, to, now) {
-  const params = {field_zone_value: zoneId};
-  if (from) Object.assign(params, {field_planned_stocking_date_value: from, field_planned_stocking_date_end_value: to});
-  const found = rowsFrom(await get(PRINT + '?' + new URLSearchParams(params)), now, false);
+// One request for a zone and date range, checked against the filter it asked for. Null when ODFW ignored it.
+async function slice(zoneId, from, to, now, page = 0) {
+  const params = {field_zone_value: zoneId, field_planned_stocking_date_value: from, field_planned_stocking_date_end_value: to};
+  if (page) params.page = page;
+  const found = rowsFrom(await get(PAGE + '?' + new URLSearchParams(params)), now, false);
   const zoneOk = found.every(r => r.zone.toLowerCase().startsWith(ZONES[zoneId].toLowerCase()));
-  const dateOk = !from || found.every(r => r.week_start >= addDaysISO(from, -6) && r.week_start <= to);
-  if (DEBUG) console.log(`  zone ${ZONES[zoneId]}${from ? ` ${from}..${to}` : ''}: ${found.length} rows${zoneOk ? '' : ', zone filter ignored'}${dateOk ? '' : ', date filter ignored'}`);
+  const dateOk = found.every(r => r.week_start >= from && r.week_start <= to);
+  if (!zoneOk || !dateOk) console.log(`  ${ZONES[zoneId]} ${from}..${to}: ${zoneOk ? '' : 'zone '}${dateOk ? '' : 'date '}filter ignored`);
   return zoneOk && dateOk ? found : null;
 }
-const addDaysISO = (d, n) => iso(new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000));
 
-// A zone that fills the print view's 500-row window is split by date until every piece fits.
-async function zoneRows(zoneId, now, from = null, to = null, depth = 0) {
-  const found = await printSlice(zoneId, from, to, now);
+// Splits a Monday-to-Sunday range in half on a week boundary until each piece fits on one page. ODFW weeks run
+// Monday to Friday, so no stocking straddles two pieces. A single week that still fills a page is paged through.
+async function sliceRows(zoneId, from, to, now, stats) {
+  stats.requests++;
+  const found = await slice(zoneId, from, to, now);
   if (found == null) return null;
-  if (found.length < PRINT_LIMIT) return found;
-  if (depth > 6) { console.log(`  zone ${ZONES[zoneId]} still at ${PRINT_LIMIT} rows after splitting; keeping what arrived`); return found; }
-  const start = from || iso(new Date(now.getTime() - 120 * 86400000)), end = to || iso(new Date(now.getTime() + 500 * 86400000));
-  const mid = addDaysISO(start, Math.floor((Date.parse(end) - Date.parse(start)) / 172800000));
-  const a = await zoneRows(zoneId, now, start, mid, depth + 1), b = await zoneRows(zoneId, now, addDaysISO(mid, 1), end, depth + 1);
+  if (found.length < PAGE_SIZE) return found;
+  const weeks = Math.round((Date.parse(to) - Date.parse(from)) / 604800000);
+  if (weeks <= 1) {
+    const all = [...found];
+    for (let page = 1; page < 10; page++) { stats.requests++; const more = await slice(zoneId, from, to, now, page); if (!more?.length) break; all.push(...more); if (more.length < PAGE_SIZE) break; }
+    stats.paged++;
+    return all;
+  }
+  const mid = addDaysISO(from, Math.floor(weeks / 2) * 7 - 1); // a Sunday
+  const a = await sliceRows(zoneId, from, mid, now, stats);
+  const b = a && await sliceRows(zoneId, addDaysISO(mid, 1), to, now, stats);
   return a && b ? [...a, ...b] : null;
 }
 
 async function scrape(now) {
-  const rows = [], seen = new Set(), counts = [];
-  let filtered = true;
+  const rows = [], seen = new Set(), counts = [], stats = {requests: 0, paged: 0};
+  // From the Monday 9 weeks back to a Sunday about 15 months ahead; ODFW plans roughly a year out.
+  const today = iso(now), monday = addDaysISO(today, -((dow(today) + 6) % 7));
+  const from = addDaysISO(monday, -63), to = addDaysISO(monday, 7 * 66 - 1);
+  let sliced = true;
   for (const zoneId of Object.keys(ZONES)) {
     let found = null;
-    try { found = await zoneRows(zoneId, now); } catch (e) { console.log(`  zone ${ZONES[zoneId]} failed: ${e.message}`); }
-    if (found == null) { filtered = false; break; }
+    try { found = await sliceRows(zoneId, from, to, now, stats); } catch (e) { console.log(`  ${ZONES[zoneId]} slices failed: ${e.message}`); }
+    if (found == null) { sliced = false; break; }
     const fresh = found.filter(r => add(seen, r));
     rows.push(...fresh);
     counts.push(`${ZONES[zoneId]} ${fresh.length}`);
   }
-  if (filtered && rows.length) { console.log('  by zone: ' + counts.join(', ')); return {rows, source: PAGE, method: 'zones'}; }
-  // Fallback when ODFW stops honoring the filters: merge the print view's first 500 rows with the main
-  // schedule's 50-row pages. Those pages repeat some rows and skip others (101 repeats and 53 skips on
-  // 2026-10-14), so this can miss stockings and the log says so.
-  console.log('  zone filters unavailable; falling back to print view plus paging, which can miss rows');
-  rows.length = 0; seen.clear();
+  if (sliced) console.log(`  slices: ${counts.join(', ')} (${stats.requests} requests${stats.paged ? `, ${stats.paged} busy weeks paged` : ''})`);
+  else { console.log('  zone and date filters unavailable; using print view and paging only, which can miss rows'); rows.length = 0; seen.clear(); }
+  // Safety net: the print view's first 500 rows and the plain 50-row pages. On 2026-10-14 those pages repeated
+  // 101 rows and skipped 53, so they cannot be trusted alone, but anything they find is a real row.
+  const before = rows.length;
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
   await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
-  return {rows, source: PAGE, method: 'paging'};
+  if (sliced && rows.length > before) console.log(`  WARNING: print view and paging found ${rows.length - before} rows the slices missed`);
+  else if (sliced) console.log('  print view and paging found nothing the slices missed');
+  return {rows, source: PAGE, method: sliced ? 'zones' : 'paging'};
 }
 
 const now = new Date();

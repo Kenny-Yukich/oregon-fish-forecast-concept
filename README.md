@@ -65,9 +65,9 @@ Open `#/stocking` from the main navigation.
 - **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
 - **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
-  - It asks ODFW's print view for one zone at a time, using the schedule's own zone filter. A zone that hits the print view's 500-row limit is split into date ranges until each piece fits. Each response is checked against the filter it asked for.
-    - Why not paging: on Oct 14, 2026, paging the main schedule repeated 101 rows and skipped 53, and the print view on its own stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027.
-    - If ODFW stops honoring the filters, the fetcher falls back to paging and logs that the result may be incomplete.
+  - It asks the schedule for one zone and date range at a time, using the schedule's own filter form, and splits each zone by week until every slice fits on one 50-row page. Splits fall between a Sunday and a Monday, since stocking weeks run Monday to Friday. Each response is checked against the filter it asked for.
+    - Why: on Oct 14, 2026, paging the full schedule repeated 101 rows and skipped 53, and the print view stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027. The print view also rejects the filters.
+    - As a safety net it also reads the print view and plain pages, and logs a warning if they find anything the slices missed. If the filters stop working, it falls back to those and logs that rows may be missing.
   - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
