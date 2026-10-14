@@ -195,9 +195,11 @@ async function scrape(now) {
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
   await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
-  if (sliced && rows.length > before) console.log(`  WARNING: print view and paging found ${rows.length - before} rows the slices missed: ` + rows.slice(before, before + 5).map(r => `${r.week_label} ${r.odfw_name} (${r.zone})`).join(' ; '));
+  // On 2026-10-14 the safety net added 3 rows: two ODFW lists with no zone (so no zone slice can return them)
+  // and one 12-day stocking. It only sees the print view's first 500 rows and the plain pages.
+  if (sliced && rows.length > before) console.log(`  safety net added ${rows.length - before} rows the slices missed: ` + rows.slice(before, before + 5).map(r => `${r.week_label} ${r.odfw_name} (${r.zone || 'no zone'})`).join(' ; '));
   else if (sliced) console.log('  print view and paging found nothing the slices missed');
-  return {rows, source: PAGE, method: sliced ? 'zones' : 'paging'};
+  return {rows, source: PAGE, method: sliced ? 'zones' : 'paging', extra: rows.length - before};
 }
 
 const now = new Date();
@@ -205,10 +207,10 @@ let previous = {rows: []};
 if (existsSync(OUT)) {
   try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
 }
-let scraped = [], method = null;
+let scraped = [], method = null, extra = 0;
 try {
-  ({rows: scraped, method} = await scrape(now));
-  console.log(`ODFW schedule: ${scraped.length} rows (${method === 'zones' ? 'complete, by zone' : 'paging fallback, may be incomplete'})`);
+  ({rows: scraped, method, extra} = await scrape(now));
+  console.log(`ODFW schedule: ${scraped.length} rows (${method === 'zones' ? `zone slices${extra ? ` plus ${extra} from the safety net` : ''}` : 'paging fallback, may be incomplete'})`);
   for (const r of scraped.slice(0, 8)) console.log(`  ${r.week_start} ${r.waterbody} [${r.odfw_name}] (${r.zone}): ${r.total}`);
   const weeks = [...new Set(scraped.map(r => r.week_start))].sort();
   console.log(`  ${weeks.length} weeks, ${weeks[0]} to ${weeks.at(-1)}`);

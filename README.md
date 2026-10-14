@@ -67,7 +67,10 @@ Open `#/stocking` from the main navigation.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
   - It asks the schedule for one zone and date range at a time, using the schedule's own filter form, and splits each zone by week until every slice fits on one 50-row page. Splits fall between a Sunday and a Monday, since stocking weeks run Monday to Friday. Each response is checked against the filter it asked for.
     - Why: on Oct 14, 2026, paging the full schedule repeated 101 rows and skipped 53, and the print view stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027. The print view also rejects the filters.
-    - As a safety net it also reads the print view and plain pages, and logs a warning if they find anything the slices missed. If the filters stop working, it falls back to those and logs that rows may be missing.
+    - As a safety net it also reads the print view and plain pages and merges anything the slices missed, naming those rows in the log.
+      - On Oct 14, 2026 it added 3 of 1,132 rows: Smith Lake and Bolan Lake, which ODFW lists with no zone (so no zone slice can return them), and a 12-day Faraday Lake stocking.
+      - The safety net only sees the print view's first 500 rows and the plain pages, so a zone-less or unusually long stocking outside those could still be missed.
+    - If the filters stop working, it falls back to the print view and paging and logs that rows may be missing.
   - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
