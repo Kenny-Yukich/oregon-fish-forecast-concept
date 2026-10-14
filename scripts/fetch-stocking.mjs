@@ -106,9 +106,17 @@ async function get(url) {
 
 async function scrape(now) {
   try {
-    const html = await get(PRINT);
-    const rows = rowsFrom(html, now);
-    if (DEBUG) console.log(`  print view: ${html.length} chars, ${rows.length} rows`);
+    // The print view held exactly 500 rows on 2026-10-14, which may be a page limit, so keep asking for
+    // further pages until one adds nothing new.
+    const rows = [], seen = new Set();
+    for (let page = 0; page < 20; page++) {
+      const html = await get(page ? `${PRINT}?page=${page}` : PRINT);
+      const found = rowsFrom(html, now);
+      const fresh = found.filter(r => { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
+      rows.push(...fresh);
+      if (DEBUG) console.log(`  print view page ${page}: ${html.length} chars, ${found.length} rows, ${fresh.length} new`);
+      if (!fresh.length) break;
+    }
     if (rows.length) return {rows, source: PRINT};
   } catch (e) { console.log('  print view unavailable: ' + e.message); }
   return {rows: await scrapePages(now), source: PAGE};

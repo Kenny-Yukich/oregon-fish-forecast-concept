@@ -61,14 +61,28 @@ Counts show adult fish moving upstream past a point. They are run timing, not ca
 
 Open `#/stocking` from the main navigation.
 
-- **What it shows:** ODFW's planned weekly trout stockings across Oregon. It's grouped into this week, next week, later and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
+- **What it shows:** ODFW's planned weekly trout stockings across Oregon. ODFW publishes the whole season ahead, so the page groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
 - **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
 - **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
-  - It reads ODFW's print view of the schedule, which lists every row. If that fails, it falls back to paging the main schedule.
+  - It reads ODFW's print view of the schedule, which held the whole season (500 rows) on Oct 14, 2026. It keeps asking for further pages in case that is a page limit, and falls back to paging the main schedule if the print view fails.
   - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
+
+## Member preview
+
+On the **Membership** page, **See the member preview** turns on the proposed paid river scores across the guide. A banner on every page says it's a preview and has **Exit preview**. The setting is kept in that browser only.
+
+- **Scores.** Each river reach gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating. It's built by `assets/member-preview.js` from inputs already on the site:
+  - Report tone, 35%: positive or slow wording in the dated report.
+  - Run strength, 30%: dam counts against last year, for target species.
+  - Report freshness, 20%.
+  - Recent stocking, 15%: ODFW stocking in the last 30 days.
+- **Missing inputs.** A missing input is skipped and lowers confidence, and unverified rule notices lower it too. Missing inputs are never guessed.
+- **Withheld and unscored.** Rivers with a rules notice (both Lower Deschutes reaches and the Coweeman) stay **Rules review pending**, as the membership page promises. Lakes are not scored.
+- **Where scores appear.** In the directory, a score shows under each river's name, with a **Best river score first** sort. River pages show the score with a breakdown of every input and its source.
+- **Not validated.** The formula has not been checked against catch results, and every score is tagged **Preview**.
 
 ## Proposed membership
 

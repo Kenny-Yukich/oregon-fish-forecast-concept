@@ -9,7 +9,7 @@
   <title>Explore waters · Oregon Fish Forecast</title>
   <link rel="icon" href="assets/weather-fish.webp" type="image/webp">
   <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="assets/site.css?v=20261014-stocking">
+  <link rel="stylesheet" href="assets/site.css?v=20261014-preview">
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
   <script src="data/map.js" defer></script>
@@ -20,8 +20,9 @@
   <script src="assets/vendor/leaflet/leaflet.js" defer></script>
   <script src="assets/monitoring.js" defer></script>
   <script src="assets/map.js" defer></script>
+  <script src="assets/member-preview.js" defer></script>
   <script src="assets/trends.js" defer></script>
-  <script src="assets/app.js?v=20261014-stocking" defer></script>
+  <script src="assets/app.js?v=20261014-preview" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -41,6 +42,7 @@
       </nav>
     </div>
   </header>
+  <div id="preview-banner" class="preview-banner" role="region" aria-label="Member preview" hidden></div>
   <main id="main-content" tabindex="-1">
     <div id="app">
       <section class="wrap not-found"><h1>Oregon, one reach at a time.</h1><p>Opening the local water directory…</p></section>
