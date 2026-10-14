@@ -29,6 +29,7 @@ window.ORFF_MAP = {
     "odell-lake-princess-creek": [43.585, -122.000],
     "wallowa-lake-state-park": [45.278, -117.212],
     "cowlitz-river-kelso-castle-rock": [46.205, -122.912],
+    "cowlitz-river-blue-creek": [46.497, -122.650],
     "coweeman-river-kelso": [46.130, -122.880],
     "toutle-river-tower-road": [46.336, -122.838],
     "kalama-river-modrow-bridge": [46.032, -122.855],

@@ -1853,6 +1853,113 @@
       "readings": null
     },
     {
+      "id": "cowlitz-river-blue-creek",
+      "name": "Cowlitz River",
+      "reach": "Barrier Dam to Blue Creek",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "The famous hatchery stretch below the Barrier Dam near Salkum, about 45 minutes north of Kelso.",
+      "gauge": {
+        "station_id": "USGS-14238000",
+        "label": "Below Mayfield Dam gauge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14238000/"
+      },
+      "planning": {
+        "water_id": "cowlitz-river-blue-creek",
+        "target_species": [
+          "Coho salmon",
+          "Hatchery steelhead",
+          "Sea-run cutthroat trout"
+        ],
+        "access_summary": "Blue Creek and Barrier Dam: bank, launch, ADA spots",
+        "access_detail": "Lewis County's guide places Blue Creek next to the salmon hatchery off Spencer Road, about three miles east of Jackson Highway, with restrooms and a fishing spot for anglers in wheelchairs. A local angling guide routes it from I-5 east on Highway 12, right on Fuller Road in Salkum, left on Spencer Road, then right at the fork to the hatchery and dam. The Barrier Dam access is a little over a mile south of Salkum off Fuller Road, with paved parking, restrooms and an ADA fishing ramp. Blue Creek's launch is listed as a Tacoma Power site.",
+        "access_point": {
+          "label": "Blue Creek access, Cowlitz Salmon Hatchery",
+          "map_query": "Blue Creek boat launch Cowlitz Salmon Hatchery Spencer Road Salkum WA"
+        },
+        "access_points": [
+          {
+            "label": "Blue Creek",
+            "type": "Boat launch · bank · ADA spot",
+            "note": "Off Spencer Road next to the salmon hatchery. Tacoma Power site.",
+            "map_query": "Blue Creek boat launch Cowlitz Salmon Hatchery Spencer Road Salkum WA",
+            "url": "https://discoverlewiscounty.com/outdoors/cowlitz-river/"
+          },
+          {
+            "label": "Barrier Dam",
+            "type": "Bank · ADA ramp · restrooms",
+            "note": "South of Salkum off Fuller Road. Busy during salmon runs; closed water starts near the dam.",
+            "map_query": "Cowlitz Salmon Hatchery Barrier Dam 1671 Spencer Road Salkum WA",
+            "url": "https://leeroysramblings.com/Cowlitz_Bank_fishing.htm"
+          }
+        ],
+        "seasonal_summary": "Fall coho now; winter steelhead arriving soon",
+        "seasonal_detail": "A Kelso shop report dated Oct 6 says coho are in at Blue Creek and fishing is good, the summer steelhead run is about over and winter steelhead will arrive soon. Spring Chinook bring the biggest crowds to the Barrier Dam. No fish are counted at Blue Creek itself; Tacoma Power's hatchery separator counts are the nearest run data.",
+        "methods": "Bank anglers line both access points. Past WDFW rules set an anti-snagging rule and a night closure from April through November here; confirm current gear rules before fishing.",
+        "report": {
+          "summary": "Coho are in at Blue Creek and fishing is good.",
+          "reported_on": "2026-10-06",
+          "checked_on": "2026-10-14",
+          "coverage": "Sportsman's Warehouse Kelso report for Blue Creek. A shop report, not a WDFW creel survey.",
+          "url": "https://fishingreports.sportsmans.com/fishing-report/blue-creek-cowlitz-river/29227/"
+        },
+        "alerts": [
+          {
+            "summary": "Closed waters apply near the Barrier Dam and the hatchery, and past rules banned fishing from the south bank from May 1 to June 15. Check the posted boundaries and current dates.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Past WDFW rules here included an anti-snagging rule and a night closure from April 1 through November 30. Confirm they still apply.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/sites/default/files/2023-05/ots-45291-filing.pdf"
+          },
+          {
+            "summary": "A Kelso shop report says Chinook may not be retained on the Cowlitz this fall. Confirm species and limits with WDFW.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "Sportsman's Kelso: Blue Creek report",
+            "url": "https://fishingreports.sportsmans.com/fishing-report/blue-creek-cowlitz-river/29227/"
+          },
+          {
+            "label": "Discover Lewis County: Cowlitz access",
+            "url": "https://discoverlewiscounty.com/outdoors/cowlitz-river/"
+          },
+          {
+            "label": "Leeroy's Ramblings: Cowlitz bank fishing",
+            "url": "https://leeroysramblings.com/Cowlitz_Bank_fishing.htm"
+          },
+          {
+            "label": "WDFW 2023 rule filing: Cowlitz near the hatchery",
+            "url": "https://wdfw.wa.gov/sites/default/files/2023-05/ots-45291-filing.pdf"
+          },
+          {
+            "label": "Tacoma Power: river flows",
+            "url": "https://www.mytpu.org/community-environment/recreation/river-flows-lake-levels"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
       "id": "coweeman-river-kelso",
       "name": "Coweeman River",
       "reach": "Lower river near Kelso",

@@ -24,12 +24,12 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 
 ## Southwest Washington rivers
 
-Six Kelso and Longview area rivers were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
+Seven Kelso and Longview area reaches were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock, and Barrier Dam to Blue Creek), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
 
 - WDFW and most source sites could not be opened directly from the editing environment, so these records were built from search excerpts of the linked sources. Every Washington rules alert is therefore labeled **Needs a trip-day check** until someone confirms it at the source.
 - Coweeman, Toutle and Elochoman have no verified public fishing access, so they get no driving link. Coweeman's score is withheld while it is reported closed through October 31.
 - Records can now list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions, the way TroutRoute lists access points by river. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
-- Four of the rivers have USGS gauges connected (Castle Rock, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
+- Five of the reaches have USGS gauges connected (Castle Rock, below Mayfield Dam, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
 
 ## Water map
 
