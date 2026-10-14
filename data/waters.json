@@ -2,7 +2,7 @@
   "brand": "Oregon Fish Forecast",
   "defaultOrigin": "Portland, Oregon",
   "generatedFor": "Separate Open Design comparison, October 13, 2026",
-  "dataNote": "Editorial records were checked October 12, 2026. No live measurements are included. Missing readings must remain unavailable.",
+  "dataNote": "Editorial records were checked October 12, 2026. No live measurements are included. Missing readings must remain unavailable. Southwest Washington records were added October 14, 2026 from search excerpts of the listed sources; their rules alerts need a trip-day check.",
   "waters": [
     {
       "id": "lower-deschutes-warm-springs-trout-creek",
@@ -1757,6 +1757,504 @@
           {
             "label": "OHA: current cyanobacteria advisories",
             "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "cowlitz-river-kelso-castle-rock",
+      "name": "Cowlitz River",
+      "reach": "Kelso to Castle Rock",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "The big lower river running through Kelso, fed by Toutle River water above Castle Rock.",
+      "gauge": {
+        "station_id": "USGS-14243000",
+        "label": "Castle Rock gauge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14243000/"
+      },
+      "planning": {
+        "water_id": "cowlitz-river-kelso-castle-rock",
+        "target_species": [
+          "Coho salmon",
+          "Hatchery steelhead",
+          "Sea-run cutthroat trout"
+        ],
+        "access_summary": "Kelso: boat ramp, bank",
+        "access_detail": "A local launch guide places the Gearhart Gardens ramp just off I-5 exit 36: cross the Cowlitz River bridge, then turn right onto Gearhart Garden Road and use the northern lot; the first lot holds an old, abandoned ramp. Much of the river runs past private property, so stay on public ground. This is a launch description, not a WDFW site inspection.",
+        "access_point": {
+          "label": "Gearhart Gardens boat ramp, Kelso",
+          "map_query": "Gearhart Gardens boat launch Cowlitz River Kelso WA"
+        },
+        "access_points": [
+          {
+            "label": "Gearhart Gardens boat ramp",
+            "type": "Boat ramp · bank",
+            "note": "Off I-5 exit 36 in Kelso. Use the northern lot.",
+            "map_query": "Gearhart Gardens boat launch Cowlitz River Kelso WA",
+            "url": "https://www.leeroysramblings.com/Cowlitz_launches.htm"
+          }
+        ],
+        "seasonal_summary": "Fall coho now; Chinook reported release-only",
+        "seasonal_detail": "October creel checks show hatchery coho and some steelhead on the lower river. A local shop report lists hatchery steelhead, hatchery sea-run cutthroat and hatchery coho as open with no Chinook retention. Winter steelhead are a separate planning window; confirm the rules for your dates.",
+        "methods": "Creel checks record both bank and boat anglers on the lower river. Choose gear after checking WDFW anti-snagging and hook rules for this section.",
+        "report": {
+          "summary": "Bank anglers below the I-5 bridge kept three coho; above it, two steelhead.",
+          "reported_on": "2026-10-13",
+          "checked_on": "2026-10-14",
+          "coverage": "WDFW creel checks Oct 5-11, summarized by Northwest Sportsman. The below-I-5 section starts at the bridge near Toledo and includes, but is broader than, Kelso to Castle Rock.",
+          "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+        },
+        "alerts": [
+          {
+            "summary": "A Kelso shop report dated Oct 6, 2026 says Chinook may not be retained on the Cowlitz this fall. Confirm current species and limit rules with WDFW.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          },
+          {
+            "summary": "WDFW water access sites need a Discover Pass or a Vehicle Access Pass. Check which pass applies to the launch you use.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/licenses/lands-access"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "Northwest Sportsman: SW WA report, Oct 13",
+            "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+          },
+          {
+            "label": "WDFW southwest creel reports",
+            "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          },
+          {
+            "label": "Sportsman's Kelso: Cowlitz report",
+            "url": "https://fishingreports.sportsmans.com/fishing-report/cowlitz-river/29224/"
+          },
+          {
+            "label": "Leeroy's Ramblings: Cowlitz launches",
+            "url": "https://www.leeroysramblings.com/Cowlitz_launches.htm"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "coweeman-river-kelso",
+      "name": "Coweeman River",
+      "reach": "Lower river near Kelso",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "A small Kelso tributary of the Cowlitz with fall Chinook, coho and winter steelhead.",
+      "gauge": null,
+      "planning": {
+        "water_id": "coweeman-river-kelso",
+        "target_species": [
+          "Coho salmon",
+          "Winter steelhead",
+          "Coastal cutthroat trout"
+        ],
+        "access_summary": "Public access unverified",
+        "access_detail": "No documented public fishing access point was verified for the lower river. The Coweeman River Trail in Kelso has no designated parking and is not established as a fishing entrance. WDFW lists a weir on the Coweeman this season.",
+        "access_point": null,
+        "access_points": [],
+        "seasonal_summary": "Reported closed through Oct 31 for spawning Chinook",
+        "seasonal_detail": "Basin planning documents describe fall Chinook, coho and winter steelhead runs, with the middle and upper river most important for steelhead. In past seasons the river reopened to hatchery steelhead and hatchery salmon on November 1; confirm this season's opener.",
+        "methods": "A fishing method is not established while the river is reported closed. Check the reopening rules, then confirm a legal public access point.",
+        "report": {
+          "summary": "A Kelso shop listing says the river is closed Sep 1 to Oct 31 to protect spawning Chinook.",
+          "reported_on": "2026-10-06",
+          "checked_on": "2026-10-14",
+          "coverage": "Shop report for the whole river; not a WDFW notice or an on-site check.",
+          "url": "https://fishingreports.sportsmans.com/fishing-report/cowlitz-river/29224/"
+        },
+        "alerts": [
+          {
+            "summary": "Reported closed Sep 1 to Oct 31, 2026 to protect spawning Chinook. Confirm the closure and the reopening date with WDFW.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          }
+        ],
+        "score_notice": "A local report lists the Coweeman as closed through October 31 to protect spawning Chinook; the fishing score is withheld until the rules are confirmed.",
+        "score_notice_effective_at": "2026-09-01T00:00:00-07:00",
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "Sportsman's Kelso: area report",
+            "url": "https://fishingreports.sportsmans.com/fishing-report/cowlitz-river/29224/"
+          },
+          {
+            "label": "NW Power Council: Coweeman subbasin plan",
+            "url": "https://www.nwcouncil.org/sites/default/files/MP_Vol_II_Ch_09_Coweeman.pdf"
+          },
+          {
+            "label": "WDFW southwest creel reports",
+            "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "toutle-river-tower-road",
+      "name": "Toutle River",
+      "reach": "Lower river near Tower Road",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "The Mount St. Helens river that joins the Cowlitz above Castle Rock, with hatchery fish from the Toutle program.",
+      "gauge": {
+        "station_id": "USGS-14242580",
+        "label": "Tower Road gauge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14242580/"
+      },
+      "planning": {
+        "water_id": "toutle-river-tower-road",
+        "target_species": [
+          "Coho salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Public access unverified",
+        "access_detail": "No WDFW fishing access site was verified on this reach. Paddling guides describe put-ins between the SR 504 bridge and Tower Road; a paddling put-in is not established as legal bank-fishing access. WDFW lists a weir on the South Fork Toutle this season.",
+        "access_point": null,
+        "access_points": [],
+        "seasonal_summary": "Hatchery coho in fall; hatchery steelhead in tributaries",
+        "seasonal_detail": "Past WDFW notices describe hatchery coho fisheries on the North Fork near the fish collection facility, and hatchery summer steelhead released into the South Fork Toutle and Green rivers. Those notices are from earlier seasons; this year's boundaries and dates need a check.",
+        "methods": "Past WDFW notices required hatchery-only retention with wild steelhead released, and selective gear during early steelhead openers. Confirm current gear rules before fishing.",
+        "report": {
+          "summary": "No dated 2026 catch report specific to the Toutle was found.",
+          "reported_on": null,
+          "checked_on": "2026-10-14",
+          "coverage": "WDFW's southwest report notes a South Fork Toutle weir; it is not a catch survey.",
+          "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+        },
+        "alerts": [
+          {
+            "summary": "Seasons, boundaries and limits for the mainstem, North Fork, South Fork and Green River differ and were not confirmed for 2026.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "In past seasons WDFW kept the North Fork hatchery facility closed to the public and directed anglers to signed trails around it.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules/daily-limit-hatchery-coho-salmon-increased-north-fork-toutle"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "WDFW southwest creel reports",
+            "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          },
+          {
+            "label": "WDFW: North Fork Toutle coho rule (2021)",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules/daily-limit-hatchery-coho-salmon-increased-north-fork-toutle"
+          },
+          {
+            "label": "WDFW: Toutle tributary steelhead rule",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules/two-toutle-river-tributaries-open-hatchery-steelhead-selective"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "kalama-river-modrow-bridge",
+      "name": "Kalama River",
+      "reach": "Lower river at Modrow Bridge",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "A short drive from Longview, with a WDFW launch and bank fishing just off I-5.",
+      "gauge": {
+        "station_id": "USGS-14223500",
+        "label": "Kalama below Italian Creek gauge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14223500/"
+      },
+      "planning": {
+        "water_id": "kalama-river-modrow-bridge",
+        "target_species": [
+          "Coho salmon",
+          "Chinook salmon",
+          "Hatchery steelhead",
+          "Sea-run cutthroat trout"
+        ],
+        "access_summary": "Modrow Bridge: bank, boat launch",
+        "access_detail": "WDFW lists a concrete boat launch with restrooms, open year-round, with bank fishing and boat access. From I-5 exit 32, go east on Kalama River Road 1.2 miles, cross Modrow Bridge, then turn left down the dirt road. A paddling guide places the ramp at river mile 2.9.",
+        "access_point": {
+          "label": "Modrow Bridge water access site",
+          "map_query": "Modrow Bridge Water Access Site Kalama River Kalama WA"
+        },
+        "access_points": [
+          {
+            "label": "Modrow Bridge",
+            "type": "Boat launch · bank · restrooms",
+            "note": "WDFW site, I-5 exit 32, about river mile 2.9.",
+            "map_query": "Modrow Bridge Water Access Site Kalama River Kalama WA",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30066"
+          }
+        ],
+        "seasonal_summary": "Fall coho and Chinook; steelhead year-round",
+        "seasonal_detail": "A local shop report lists the Kalama as open for hatchery steelhead, sea-run cutthroat and hatchery salmon. October creel checks recorded coho kept and Chinook released in the boat fishery near the mouth.",
+        "methods": "Creel checks record both bank and boat anglers. Older WDFW rules prohibited motors upstream of Modrow Bridge; confirm current boating and gear rules before launching.",
+        "report": {
+          "summary": "Four bank anglers on the Kalama kept one coho.",
+          "reported_on": "2026-10-13",
+          "checked_on": "2026-10-14",
+          "coverage": "WDFW creel checks Oct 5-11, summarized by Northwest Sportsman. Separate Columbia mainstem checks near the mouth are not counted here.",
+          "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+        },
+        "alerts": [
+          {
+            "summary": "WDFW lists a weir on the Kalama this season. Check for fishing closures posted near the weir and the current species rules.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          },
+          {
+            "summary": "WDFW water access sites need a Discover Pass or a Vehicle Access Pass.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/licenses/lands-access"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "WDFW: Modrow Bridge access site",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30066"
+          },
+          {
+            "label": "Northwest Sportsman: SW WA report, Oct 13",
+            "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+          },
+          {
+            "label": "WDFW southwest creel reports",
+            "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          },
+          {
+            "label": "American Whitewater: lower Kalama",
+            "url": "https://www.americanwhitewater.org/content/River/view/river-detail/2140/"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "lewis-river-woodland",
+      "name": "Lewis River",
+      "reach": "Woodland to Merwin Dam",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "The busiest fall river in the area this week, with several public launches east of Woodland.",
+      "gauge": {
+        "station_id": "USGS-14220500",
+        "label": "Ariel gauge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14220500/"
+      },
+      "planning": {
+        "water_id": "lewis-river-woodland",
+        "target_species": [
+          "Coho salmon",
+          "Chinook salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Pekin Ferry and Island launches; bank",
+        "access_detail": "WDFW lists Pekin Ferry as a concrete ramp with restrooms, open year-round, with bank fishing and boat access, reached from I-5 exit 21 via SR 503 and South Pekin Road. The Island launch is about 4.9 miles east on SR 503 and is managed by PacifiCorp. Passes are not sold at Pekin Ferry; buy one before you go.",
+        "access_point": {
+          "label": "Pekin Ferry water access site",
+          "map_query": "Pekin Ferry Water Access Site Lewis River Woodland WA"
+        },
+        "access_points": [
+          {
+            "label": "Pekin Ferry",
+            "type": "Boat launch · bank · restrooms",
+            "note": "WDFW site near Woodland, about river mile 3.",
+            "map_query": "Pekin Ferry Water Access Site Lewis River Woodland WA",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30065"
+          },
+          {
+            "label": "Island boat launch",
+            "type": "Boat launch · restrooms",
+            "note": "About 4.9 miles east of I-5 on SR 503. Managed by PacifiCorp.",
+            "map_query": "Island boat launch Lewis River SR 503 Woodland WA",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30062"
+          },
+          {
+            "label": "Eagle Island ramp",
+            "type": "Boat launch",
+            "note": "About 5 miles east of Woodland. WDFW advises against launching at low flow.",
+            "map_query": "Eagle Island Wildlife Area boat ramp Lewis River Woodland WA",
+            "url": "https://wdfw.wa.gov/places-to-go/wildlife-areas/eagle-island-wildlife-area-unit"
+          }
+        ],
+        "seasonal_summary": "Fall coho and Chinook; season runs through December",
+        "seasonal_detail": "A WDFW tributary table lists the fall Lewis season as October 1 through December 31, with three adults allowed and only one of them a Chinook. Treat that as a starting point and check emergency rules for this week.",
+        "methods": "Creel checks show heavy bank and boat effort. A local report notes anti-snagging rules; read the current gear rules for your section.",
+        "report": {
+          "summary": "138 bank anglers kept 3 Chinook and 14 coho; 26 boats kept 9 Chinook and 11 coho.",
+          "reported_on": "2026-10-13",
+          "checked_on": "2026-10-14",
+          "coverage": "WDFW creel checks Oct 5-11, summarized by Northwest Sportsman. Covers the lower Lewis; not specific to one launch.",
+          "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+        },
+        "alerts": [
+          {
+            "summary": "Fall limits reported as three adults, only one Chinook, Oct 1 to Dec 31. Confirm before keeping fish; emergency rules change often.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          },
+          {
+            "summary": "WDFW water access sites need a Discover Pass or a Vehicle Access Pass; passes are not sold at Pekin Ferry.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/licenses/lands-access"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "Northwest Sportsman: SW WA report, Oct 13",
+            "url": "https://nwsportsmanmag.com/sw-wa-buoy-10-lower-columbia-hanford-reach-report-10-13-2026/"
+          },
+          {
+            "label": "WDFW: Pekin Ferry access site",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30065"
+          },
+          {
+            "label": "WDFW: Island access site",
+            "url": "https://wdfw.wa.gov/places-to-go/water-access-sites/30062"
+          },
+          {
+            "label": "WDFW: Eagle Island unit",
+            "url": "https://wdfw.wa.gov/places-to-go/wildlife-areas/eagle-island-wildlife-area-unit"
+          },
+          {
+            "label": "Sportsman's Kelso: North Fork Lewis report",
+            "url": "https://fishingreports.sportsmans.com/fishing-report/lewis-river-north-fork/29232/"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "elochoman-river-cathlamet",
+      "name": "Elochoman River",
+      "reach": "Mouth to Beaver Creek Hatchery",
+      "kind": "river",
+      "region": "Southwest Washington",
+      "description": "A small coastal-feeling river at Cathlamet, west of Longview, mostly fished below the hatchery.",
+      "gauge": null,
+      "planning": {
+        "water_id": "elochoman-river-cathlamet",
+        "target_species": [
+          "Coho salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Some bank spots; public route unverified",
+        "access_detail": "A fishing guide describes fair access, mostly by drift boat, with some bank spots below Beaver Creek Hatchery and private property along the river. WDFW has proposed buying land west of the hatchery for public access; that purchase is not confirmed here. WDFW's report warns boaters about an old weir sill near the hatchery.",
+        "access_point": null,
+        "access_points": [],
+        "seasonal_summary": "Coho in Oct-Nov; winter steelhead Dec-Jan",
+        "seasonal_detail": "Guides describe October and November as the best salmon months, a winter steelhead run from December through March that peaks in December and January, and a summer run from June to September. Most steelhead caught are hatchery fish; wild fish must be released.",
+        "methods": "Most anglers drift the river. Hatchery steelhead have the adipose fin removed, which is how kept fish are identified. Check current gear rules.",
+        "report": {
+          "summary": "No dated 2026 catch report specific to the Elochoman was found.",
+          "reported_on": null,
+          "checked_on": "2026-10-14",
+          "coverage": "WDFW's southwest report carries a boating caution near the hatchery; it is not a catch survey.",
+          "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+        },
+        "alerts": [
+          {
+            "summary": "In 2023 WDFW closed salmon fishing below the Beaver Creek Road Bridge in November to protect hatchery broodstock. Check for a similar closure this season.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules/salmon-fishing-close-elochoman-river-below-beaver-creek-road-bridge-2023-10"
+          },
+          {
+            "summary": "Washington tributaries need a Washington fishing license; Oregon reciprocity covers shared Columbia River boundary waters, not these rivers. A 2026 rules summary lists a new Columbia River Salmon and Steelhead Endorsement for anglers 15 and older.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/washington/fishing/columbia-basin-rivers-special-rules-a-c"
+          }
+        ],
+        "checked_on": "2026-10-14",
+        "sources": [
+          {
+            "label": "WDFW southwest creel reports",
+            "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest"
+          },
+          {
+            "label": "WDFW: 2023 Elochoman salmon closure",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules/salmon-fishing-close-elochoman-river-below-beaver-creek-road-bridge-2023-10"
+          },
+          {
+            "label": "The Columbian: proposed WDFW access purchases",
+            "url": "https://www.columbian.com/news/2025/nov/07/wdfw-mulls-buying-land-for-public-fishing-on-cowlitz-elochoman-rivers/"
+          },
+          {
+            "label": "Perfect Fly: Elochoman River guide",
+            "url": "https://perfectflystore.com/your-streams/fly-fishing-on-the-elochoman-river-washington/"
+          },
+          {
+            "label": "WDFW emergency rules",
+            "url": "https://wdfw.wa.gov/fishing/regulations/emergency-rules"
           }
         ]
       },

@@ -366,3 +366,23 @@ details[open] > summary { margin-bottom: 7px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
+
+/* At-a-glance facts and multi-point access, built only from the record's own fields. */
+.fact-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 22px 0 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.fact-strip div { padding: 14px 16px; border-left: 1px solid var(--border); }
+.fact-strip div:first-child { border-left: 0; padding-left: 0; }
+.fact-strip dt { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.fact-strip dd { margin: 4px 0 0; font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
+.access-points { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.access-points ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.access-points li { background: var(--soft); border-radius: 8px; padding: 13px 15px; }
+.access-points li strong { display: block; font-size: 15px; margin-top: 2px; }
+.access-points li p { margin: 4px 0 8px; font-size: 13px; }
+.access-points .meta { font-size: 12px; }
+.point-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+@media (max-width: 640px) {
+  .fact-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact-strip div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .fact-strip div:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .fact-strip dd { font-size: 20px; }
+}
