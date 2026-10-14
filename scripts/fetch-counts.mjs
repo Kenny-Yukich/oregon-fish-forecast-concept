@@ -7,13 +7,15 @@ const OUT = new URL('../data/counts.js', import.meta.url);
 const STATIONS = ['BON', 'TDA', 'WFF'];
 const STRICT = process.env.STRICT === '1';
 const BASE = 'https://www.cbr.washington.edu/dart/cs/php/rpt/adult_daily.php';
+// DART headers use short codes (Chin, JChin, Stlhd, WStlhd, Coho, JCoho, plus a text "Chinook Run"
+// column); exact codes are matched first, longer spellings as a fallback.
 const SPECIES = {
-  chinook: {label: 'Chinook', test: h => /chin/.test(h) && !/jack|mini/.test(h)},
-  chinook_jack: {label: 'Chinook jacks', test: h => /chin/.test(h) && /jack/.test(h)},
-  coho: {label: 'Coho', test: h => /coho/.test(h) && !/jack/.test(h)},
-  coho_jack: {label: 'Coho jacks', test: h => /coho/.test(h) && /jack/.test(h)},
-  steelhead: {label: 'Steelhead', test: h => /(steel|stlhd)/.test(h) && !/(wild|unclip)/.test(h)},
-  steelhead_wild: {label: 'Wild steelhead', test: h => /(steel|stlhd)/.test(h) && /(wild|unclip)/.test(h)}
+  chinook: {label: 'Chinook', test: h => h === 'chin' || (/chin/.test(h) && !/(run|jack|^j)/.test(h))},
+  chinook_jack: {label: 'Chinook jacks', test: h => h === 'jchin' || (/chin/.test(h) && /(jack|^j)/.test(h))},
+  coho: {label: 'Coho', test: h => h === 'coho' || (/coho/.test(h) && !/(jack|^j)/.test(h))},
+  coho_jack: {label: 'Coho jacks', test: h => h === 'jcoho' || (/coho/.test(h) && /(jack|^j)/.test(h))},
+  steelhead: {label: 'Steelhead', test: h => h === 'stlhd' || (/(steel|stlhd)/.test(h) && !/(wild|unclip|^w)/.test(h))},
+  steelhead_wild: {label: 'Wild steelhead', test: h => h === 'wstlhd' || (/(steel|stlhd)/.test(h) && /(wild|unclip|^w)/.test(h))}
 };
 
 function urls(proj, year) {
@@ -54,7 +56,8 @@ function readDaily(text, year) {
   const dateCol = header.findIndex(h => /date/.test(h));
   const cols = {};
   for (const [key, s] of Object.entries(SPECIES)) {
-    const i = header.findIndex(s.test);
+    const exact = header.findIndex(h => h === {chinook: 'chin', chinook_jack: 'jchin', coho: 'coho', coho_jack: 'jcoho', steelhead: 'stlhd', steelhead_wild: 'wstlhd'}[key]);
+    const i = exact >= 0 ? exact : header.findIndex(s.test);
     if (i >= 0) cols[key] = i;
   }
   console.log(`  header: ${rows[hi].join(' | ')}`);
