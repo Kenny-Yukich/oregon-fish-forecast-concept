@@ -16,8 +16,10 @@ const median = xs => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 
 const clean = pts => pts.filter(p => Number.isFinite(p.value) && p.value > -9999 && Number.isFinite(Date.parse(p.time))).sort((a, b) => Date.parse(a.time) - Date.parse(b.time));
 
 // The USGS OGC API first (the site's own readings use it), the older Water Services API as a fallback.
+// An empty answer also falls through: some gauges (the Kalama) return nothing from the OGC API.
 async function series(station, code) {
   const errors = [];
+  let empty = null;
   for (const version of ['v0', 'v1']) {
     const url = `https://api.waterdata.usgs.gov/ogcapi/${version}/collections/continuous/items?` + new URLSearchParams({f: 'json', monitoring_location_id: station, parameter_code: code, time: 'P7D', skipGeometry: 'true', limit: '20000'});
     try {
@@ -25,7 +27,8 @@ async function series(station, code) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const json = await res.json();
       const pts = clean((json.features || []).map(f => ({time: f.properties?.time, value: Number(f.properties?.value), unit: f.properties?.unit_of_measure})));
-      return {pts, via: 'ogc ' + version};
+      if (pts.length) return {pts, via: 'ogc ' + version};
+      empty ??= {pts, via: 'ogc ' + version};
     } catch (e) { errors.push(`ogc ${version}: ${e.message}`); }
   }
   const url = 'https://waterservices.usgs.gov/nwis/iv/?' + new URLSearchParams({format: 'json', sites: station.replace('USGS-', ''), parameterCd: code, period: 'P7D'});
@@ -35,8 +38,9 @@ async function series(station, code) {
     const json = await res.json();
     const ts = json.value?.timeSeries || [];
     const pts = clean(ts.flatMap(t => (t.values?.[0]?.value || []).map(v => ({time: v.dateTime, value: Number(v.value), unit: t.variable?.unit?.unitCode}))));
-    return {pts, via: 'waterservices'};
+    if (pts.length || !empty) return {pts, via: 'waterservices'};
   } catch (e) { errors.push(`waterservices: ${e.message}`); }
+  if (empty) return empty;
   throw new Error(errors.join('; '));
 }
 
