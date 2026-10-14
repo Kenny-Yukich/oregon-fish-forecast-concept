@@ -1,0 +1,134 @@
+// Reads ODFW's weekly trout stocking schedule and writes data/stocking.js.
+// Past weeks drop off ODFW's page, so rows are merged into the existing file and kept for 8 weeks.
+// Run by .github/workflows/daily-data.yml. Node 18+, no dependencies.
+// STRICT=1 exits non-zero when no rows can be read (used on pull requests); DEBUG=1 logs page structure.
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+
+const OUT = new URL('../data/stocking.js', import.meta.url);
+const PAGE = 'https://myodfw.com/fishing/species/trout/stocking-schedule';
+const KEEP_DAYS = 56;
+const STRICT = process.env.STRICT === '1', DEBUG = process.env.DEBUG === '1' || STRICT;
+const UA = {'user-agent': 'oregon-fish-forecast-concept (GitHub Actions; daily stocking snapshot)'};
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const COLUMNS = {
+  waterbody: h => /water/.test(h),
+  zone: h => /(zone|office|district|region)/.test(h),
+  week: h => /(week|date)/.test(h),
+  legals: h => /legal/.test(h),
+  larger: h => /larger/.test(h),
+  pounders: h => /pound/.test(h),
+  trophy: h => /trophy/.test(h),
+  brood: h => /brood/.test(h),
+  fingerling: h => /finger/.test(h),
+  total: h => /total/.test(h)
+};
+
+const decode = s => s.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ' ')
+  .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#0?39;|&apos;/g, "'").replace(/&quot;/g, '"')
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n))
+  .replace(/\s+/g, ' ').trim();
+
+function tables(html) {
+  return [...html.matchAll(/<table[\s\S]*?<\/table>/gi)].map(m => {
+    const rows = [...m[0].matchAll(/<tr[\s\S]*?<\/tr>/gi)].map(r => [...r[0].matchAll(/<t([hd])[^>]*>([\s\S]*?)<\/t\1>/gi)].map(c => ({th: c[1].toLowerCase() === 'h', text: decode(c[2])})));
+    return rows.filter(r => r.length);
+  });
+}
+
+// "Oct. 12-16, 2026", "October 12 - 16", "Oct 30 - Nov 3, 2026", "10/12/2026", "2026-10-12"
+function weekStart(label, now) {
+  let m = /(\d{4})-(\d{2})-(\d{2})/.exec(label);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(label);
+  if (m) return `${m[3].length === 2 ? '20' + m[3] : m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}`;
+  m = /([a-z]{3})[a-z]*\.?\s+(\d{1,2})/i.exec(label);
+  if (!m) return null;
+  const mi = MONTHS.indexOf(m[1].toLowerCase());
+  if (mi < 0) return null;
+  const y = /(\d{4})/.exec(label)?.[1];
+  let year = y ? +y : now.getUTCFullYear();
+  if (!y) { const diff = mi - now.getUTCMonth(); if (diff > 6) year--; else if (diff < -6) year++; }
+  return `${year}-${String(mi + 1).padStart(2, '0')}-${m[2].padStart(2, '0')}`;
+}
+
+const num = s => { const n = Number(String(s ?? '').replace(/[,\s]/g, '')); return Number.isFinite(n) && String(s ?? '').trim() !== '' ? n : 0; };
+
+function rowsFrom(html, now) {
+  const out = [];
+  for (const [ti, t] of tables(html).entries()) {
+    const hi = t.findIndex(r => r.some(c => /water/i.test(c.text)) && r.some(c => /(legal|trophy|total|brood|finger)/i.test(c.text)));
+    if (DEBUG) console.log(`  table ${ti}: ${t.length} rows; header row ${hi}: ${hi >= 0 ? t[hi].map(c => c.text).join(' | ') : '(none)'}${t[hi + 1] ? '\n    first row: ' + t[hi + 1].map(c => c.text).join(' | ') : ''}`);
+    if (hi < 0) continue;
+    const header = t[hi].map(c => c.text.toLowerCase());
+    const col = {};
+    for (const [k, test] of Object.entries(COLUMNS)) { const i = header.findIndex(test); if (i >= 0) col[k] = i; }
+    if (col.waterbody == null) continue;
+    let carryWeek = null;
+    for (const r of t.slice(hi + 1)) {
+      const cell = k => col[k] != null ? r[col[k]]?.text ?? '' : '';
+      // Some schedules group rows under a single week heading row.
+      if (r.length === 1 && weekStart(r[0].text, now)) { carryWeek = r[0].text; continue; }
+      const waterbody = cell('waterbody');
+      if (!waterbody || /^total/i.test(waterbody)) continue;
+      const weekLabel = cell('week') || carryWeek || '';
+      const start = weekStart(weekLabel, now);
+      if (!start) continue;
+      const fish = {legals: num(cell('legals')), larger: num(cell('larger')), pounders: num(cell('pounders')), trophy: num(cell('trophy')), brood: num(cell('brood')), fingerling: num(cell('fingerling'))};
+      const sum = Object.values(fish).reduce((a, b) => a + b, 0);
+      out.push({week_start: start, week_label: weekLabel, waterbody, zone: cell('zone'), ...fish, total: num(cell('total')) || sum});
+    }
+  }
+  return out;
+}
+
+async function get(url) {
+  const res = await fetch(url, {headers: UA});
+  const text = await res.text();
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return text;
+}
+
+async function scrape(now) {
+  const rows = [];
+  const seen = new Set();
+  for (let page = 0; page < 40; page++) {
+    const url = page ? `${PAGE}?page=${page}` : PAGE;
+    const html = await get(url);
+    if (DEBUG && page === 0) {
+      console.log(`  page 0: ${html.length} chars, ${(html.match(/<table/gi) || []).length} tables, pager: ${/pager/.test(html)}`);
+      const hints = [...new Set([...html.matchAll(/["'](\/[^"']*(?:json|api|stocking|views\/ajax)[^"']*)["']/gi)].map(m => m[1]))].slice(0, 15);
+      console.log('  url hints: ' + (hints.join(' , ') || '(none)'));
+    }
+    const found = rowsFrom(html, now);
+    const fresh = found.filter(r => { const k = r.week_start + '|' + r.waterbody + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
+    rows.push(...fresh);
+    if (DEBUG) console.log(`  page ${page}: ${found.length} rows, ${fresh.length} new`);
+    if (!fresh.length || !/pager__item--next|rel="next"/.test(html)) break;
+  }
+  return rows;
+}
+
+const now = new Date();
+let previous = {rows: []};
+if (existsSync(OUT)) {
+  try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
+}
+let scraped = [];
+try {
+  scraped = await scrape(now);
+  console.log(`ODFW schedule: ${scraped.length} rows`);
+  for (const r of scraped.slice(0, 5)) console.log(`  ${r.week_start} ${r.waterbody} (${r.zone}): ${r.total}`);
+} catch (e) { console.log('ODFW schedule FAILED, keeping previous rows: ' + e.message); }
+
+const cutoff = new Date(now.getTime() - KEEP_DAYS * 86400000).toISOString().slice(0, 10);
+const key = r => r.week_start + '|' + r.waterbody.toLowerCase() + '|' + (r.zone || '').toLowerCase();
+const merged = new Map((previous.rows || []).filter(r => r.week_start >= cutoff).map(r => [key(r), r]));
+for (const r of scraped) merged.set(key(r), r); // the current page wins for weeks it still lists
+const rows = [...merged.values()].sort((a, b) => a.week_start.localeCompare(b.week_start) || a.waterbody.localeCompare(b.waterbody));
+const body = JSON.stringify(rows);
+if (body === JSON.stringify(previous.rows || [])) console.log('No change in stocking rows.');
+else {
+  writeFileSync(OUT, 'window.ORFF_STOCKING = ' + JSON.stringify({source: PAGE, fetched_at: now.toISOString(), keep_days: KEEP_DAYS, rows}) + ';\n');
+  console.log(`Wrote data/stocking.js (${rows.length} rows)`);
+}
+if (STRICT && !scraped.length) process.exit(1);

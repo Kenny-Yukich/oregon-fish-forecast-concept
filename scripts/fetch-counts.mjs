@@ -1,5 +1,5 @@
 // Pulls daily adult fish counts from Columbia River DART and writes data/counts.js.
-// Run by .github/workflows/fish-counts.yml. Node 18+, no dependencies.
+// Run by .github/workflows/daily-data.yml. Node 18+, no dependencies.
 // STRICT=1 exits non-zero when a station cannot be read (used on pull requests).
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
