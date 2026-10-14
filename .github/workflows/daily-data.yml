@@ -8,6 +8,7 @@ on:
     paths:
       - 'scripts/fetch-counts.mjs'
       - 'scripts/fetch-stocking.mjs'
+      - 'scripts/fetch-conditions.mjs'
       - '.github/workflows/daily-data.yml'
 
 permissions:
@@ -32,12 +33,14 @@ jobs:
         run: node scripts/fetch-counts.mjs
       - name: Fetch ODFW trout stocking schedule
         run: node scripts/fetch-stocking.mjs
+      - name: Fetch USGS river flow and temperature
+        run: node scripts/fetch-conditions.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |
-          if git diff --quiet -- data/counts.js data/stocking.js; then echo "Data unchanged."; exit 0; fi
+          if git diff --quiet -- data/counts.js data/stocking.js data/conditions.js; then echo "Data unchanged."; exit 0; fi
           git config user.name "daily-data bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/counts.js data/stocking.js
-          git commit -m "Update daily fish counts and stocking"
+          git add data/counts.js data/stocking.js data/conditions.js
+          git commit -m "Update daily fish counts, stocking and river conditions"
           git push

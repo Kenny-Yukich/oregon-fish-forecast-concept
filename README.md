@@ -77,16 +77,25 @@ Open `#/stocking` from the main navigation.
 
 ## Member preview
 
-On the **Membership** page, **See the member preview** turns on the proposed paid river scores across the guide. A banner on every page says it's a preview and has **Exit preview**. The setting is kept in that browser only.
+On the **Membership** page, **See the member preview** turns on the proposed paid scores across the guide. A banner on every page says it's a preview and has **Exit preview**. The setting is kept in that browser only.
 
-- **Scores.** Each river reach gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating. It's built by `assets/member-preview.js` from inputs already on the site:
-  - Report tone, 35%: positive or slow wording in the dated report.
-  - Run strength, 30%: dam counts against last year, for target species.
-  - Report freshness, 20%.
-  - Recent stocking, 15%: ODFW stocking in the last 30 days.
-- **Missing inputs.** A missing input is skipped and lowers confidence, and unverified rule notices lower it too. Missing inputs are never guessed.
-- **Withheld and unscored.** Rivers with a rules notice (both Lower Deschutes reaches and the Coweeman) stay **Rules review pending**, as the membership page promises. Lakes are not scored.
-- **Where scores appear.** In the directory, a score shows under each river's name, with a **Best river score first** sort. River pages show the score with a breakdown of every input and its source.
+- **River scores.** Each river gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating, built by `assets/member-preview.js` from inputs already on the site:
+  - Report tone, 30%.
+  - Run strength from dam counts against last year, 25%. A plain "Salmon" target counts Chinook and coho.
+  - River conditions, 20%: flow trend against the 7-day median, plus water temperature for cold-water species. These are read daily from each USGS gauge by `scripts/fetch-conditions.mjs` into `data/conditions.js`, and readings older than 36 hours are ignored.
+  - Report freshness, 15%.
+  - Recent stocking, 10%.
+- **Lake scores.**
+  - ODFW stocking, 40%: a stocking in the last 60 days or one due within two weeks.
+  - Report tone, 35%.
+  - Report freshness, 25%.
+  - A lake ODFW isn't stocking scores on its report alone, with lower confidence.
+- **Rules notices.**
+  - A notice withholds the score unless the record lists the species that can still be scored (`score_species`, used for trout on both Lower Deschutes reaches, where steelhead and coho are restricted) or the notice has an end date that has passed (`score_notice_until`, used for the Coweeman closure through Oct 31).
+  - Either way, the notice stays visible.
+- **Missing inputs.** Missing inputs are skipped and lower confidence, and unverified rule notices lower it too. A water needs at least one input besides gauge readings to be scored.
+- **Unscored on Oct 14, 2026.** Crooked River below Opal Springs and the Elochoman, which have no dated report. Coweeman is held until its closure ends.
+- **Where scores appear.** In the directory, a score shows under each water's name, with a **Best score first** sort. Water pages show the score with a breakdown of every input and its source.
 - **Not validated.** The formula has not been checked against catch results, and every score is tagged **Preview**.
 
 ## Proposed membership

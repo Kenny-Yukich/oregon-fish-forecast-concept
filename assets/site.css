@@ -505,3 +505,4 @@ td:first-child .member-score-cell.is-preview { margin-top: 12px; padding-top: 10
 .stock-all { margin: 4px 0 12px; }
 .stock-all summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 6px 0; }
 .stock-all .stock-list { margin-top: 10px; }
+.score-note { margin: 0 0 12px; padding: 9px 12px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 13px; }

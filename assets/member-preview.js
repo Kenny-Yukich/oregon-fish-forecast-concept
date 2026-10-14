@@ -1,7 +1,8 @@
-/* Member preview: shows the proposed paid river scores using a prototype formula.
+/* Member preview: shows the proposed paid scores using a prototype formula.
    The formula is transparent and uses only data already on the site: the dated report's wording and age,
-   dam counts against last year, and recent ODFW stocking. It is not validated and every score says so.
-   Rivers with a rules notice stay withheld, and lakes are not scored, matching the membership proposal. */
+   dam counts against last year, USGS flow and water temperature, and ODFW stocking. It is not validated
+   and every score says so. A rules notice withholds a score unless the record names the species that can
+   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman). */
 (() => {
   'use strict';
   const KEY = 'orff-concept.preview';
@@ -16,10 +17,22 @@
   const POSITIVE = /\b(good|excellent|strong|productive|consistent|active|success|successful|improving|great|hot|best|coho are in)\b/i;
   const NEGATIVE = /\b(slow|poor|tough|closed|ended|no (?:dated|report)|unconfirmed|withheld)\b/i;
   const MIXED = /\b(fair|mixed|spotty|some)\b/i;
+  const COLD_WATER = /trout|salmon|steelhead|whitefish|kokanee|chinook|coho|cutthroat/i;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const days = (from, to) => Math.round((Date.parse(to) - Date.parse(from)) / 86400000);
   const today = () => new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Los_Angeles'}).format(new Date());
-  const SPECIES_KEYS = [['coho', /coho/i], ['chinook', /chinook/i], ['steelhead', /steelhead/i]];
+  const num = n => Math.round(n).toLocaleString('en-US');
+  const short = iso => new Date(iso.slice(0, 10) + 'T12:00:00Z').toLocaleDateString('en-US', {month: 'short', day: 'numeric', timeZone: 'UTC'});
+  // A plain "Salmon" in the target species means Chinook and coho; "Coho salmon" means coho only.
+  const generic = s => /^salmon$/i.test(s.trim());
+  const SPECIES_KEYS = [['coho', s => /coho/i.test(s) || generic(s)], ['chinook', s => /chinook/i.test(s) || generic(s)], ['steelhead', s => /steelhead/i.test(s)]];
+  const WEIGHTS = {
+    river: {tone: 0.30, run: 0.25, cond: 0.20, fresh: 0.15, stock: 0.10},
+    lake: {stock: 0.40, tone: 0.35, fresh: 0.25}
+  };
+  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking'};
+  const kindOf = w => w.kind === 'river' ? 'river' : 'lake';
+  const species = w => w.planning.score_species || w.planning.target_species;
 
   function reportTone(w) {
     const r = w.planning.report;
@@ -28,18 +41,18 @@
     const pos = POSITIVE.test(text), neg = NEGATIVE.test(text), mixed = MIXED.test(text);
     const value = pos && !neg ? (mixed ? 65 : 80) : neg && !pos ? 30 : pos && neg ? 55 : mixed ? 50 : 55;
     const word = value >= 75 ? 'Positive' : value >= 60 ? 'Mostly positive' : value >= 45 ? 'Mixed' : 'Slow';
-    return {key: 'tone', label: 'Report tone', value, weight: 0.35, display: word, reason: '“' + text + '”'};
+    return {key: 'tone', value, display: word, reason: '“' + text + '”'};
   }
   function reportFreshness(w) {
     const r = w.planning.report;
     if (!r?.reported_on) return null;
     const age = days(r.reported_on, today());
     const value = age <= 7 ? 100 : age <= 14 ? 80 : age <= 30 ? 55 : 25;
-    return {key: 'fresh', label: 'Report freshness', value, weight: 0.2, display: age + (age === 1 ? ' day old' : ' days old'), reason: 'Reported ' + r.reported_on + '. Older reports count for less.'};
+    return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: 'Reported ' + r.reported_on + '. Older reports count for less.'};
   }
   function runStrength(w) {
     const links = window.ORFF_COUNT_STATIONS?.waters?.[w.id] || [];
-    const targets = SPECIES_KEYS.filter(([, re]) => w.planning.target_species.some(s => re.test(s))).map(([k]) => k);
+    const targets = SPECIES_KEYS.filter(([, test]) => species(w).some(test)).map(([k]) => k);
     let best = null;
     for (const l of links) {
       const data = window.ORFF_COUNTS?.stations?.[l.station], meta = window.ORFF_COUNT_STATIONS.stations[l.station];
@@ -47,39 +60,78 @@
       for (const k of targets) {
         const v = data.species[k];
         if (!v || !v.last_year_ytd) continue;
-        if (!best || v.last7 > best.v.last7) best = {v, k, meta, through: data.through};
+        if (!best || v.last7 > best.v.last7) best = {v, meta, through: data.through};
       }
     }
     if (!best) return null;
     const ratio = best.v.ytd / best.v.last_year_ytd;
     const value = Math.round(clamp(50 + 50 * (ratio - 1), 10, 95));
-    return {key: 'run', label: 'Run strength', value, weight: 0.3, display: Math.round(ratio * 100) + '% of last year',
-      reason: best.v.label + ' at ' + best.meta.name + ': ' + best.v.ytd.toLocaleString('en-US') + ' this year vs ' + best.v.last_year_ytd.toLocaleString('en-US') + ' by the same date last year, through ' + best.through + '.'};
+    return {key: 'run', value, display: Math.round(ratio * 100) + '% of last year',
+      reason: best.v.label + ' at ' + best.meta.name + ': ' + num(best.v.ytd) + ' this year vs ' + num(best.v.last_year_ytd) + ' by the same date last year, through ' + best.through + '.'};
+  }
+  // Flow trend and water temperature from the river's USGS gauge, read daily by the data workflow.
+  function conditions(w) {
+    const c = window.ORFF_MONITORING?.[w.id], data = c?.station && window.ORFF_CONDITIONS?.stations?.[c.station];
+    if (!data) return null;
+    const fetched = Date.parse(window.ORFF_CONDITIONS.fetched_at);
+    const fresh = x => x && fetched - Date.parse(x.time) <= 36 * 3600000;
+    const parts = [];
+    if (fresh(data.flow) && data.flow.median7 > 0) {
+      const r = data.flow.latest / data.flow.median7, unit = /ft/.test(data.flow.unit || 'ft') ? 'cfs' : data.flow.unit;
+      const [value, word] = r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : [70, 'Dropping'];
+      parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7)});
+    }
+    if (fresh(data.temp) && species(w).some(s => COLD_WATER.test(s))) {
+      const cel = /F/.test(data.temp.unit || '') ? (data.temp.latest - 32) * 5 / 9 : data.temp.latest, fah = cel * 9 / 5 + 32;
+      const [value, word] = cel < 4 ? [45, 'Cold water'] : cel < 7 ? [70, 'Cool water'] : cel <= 16 ? [90, 'Good water temperature'] : cel < 19 ? [55, 'Warm water'] : [25, 'Too warm for trout and salmon'];
+      parts.push({value, word, detail: cel.toFixed(1) + '°C (' + Math.round(fah) + '°F)'});
+    }
+    if (!parts.length) return null;
+    const value = Math.round(parts.reduce((t, p) => t + p.value, 0) / parts.length);
+    return {key: 'cond', value, display: parts.map(p => p.word).join(' · '), reason: c.name + ': ' + parts.map(p => p.detail).join('; ') + '. Gauge readings, not a reading at the access point.'};
+  }
+  function matchedRows(w) {
+    const names = window.ORFF_STOCKING_MATCH?.[w.id];
+    if (!names) return [];
+    const res = names.map(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'));
+    return (window.ORFF_STOCKING?.rows || []).filter(r => res.some(re => re.test(r.waterbody)));
   }
   function stocking(w) {
-    const names = window.ORFF_STOCKING_MATCH?.[w.id];
-    if (!names) return null;
-    const res = names.map(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'));
-    const past = (window.ORFF_STOCKING?.rows || []).filter(r => res.some(re => re.test(r.waterbody)) && r.week_start <= today()).sort((a, b) => b.week_start.localeCompare(a.week_start))[0];
-    if (!past) return null;
-    const age = days(past.week_start, today());
-    const value = age <= 14 ? 85 : age <= 30 ? 65 : 45;
-    return {key: 'stock', label: 'Recent stocking', value, weight: 0.15, display: 'Week of ' + past.week_start, reason: past.total.toLocaleString('en-US') + ' trout planned by ODFW at ' + past.waterbody + '.'};
+    const t = today(), rows = matchedRows(w);
+    const past = rows.filter(r => r.week_start <= t).sort((a, b) => b.week_start.localeCompare(a.week_start))[0];
+    if (kindOf(w) === 'river') {
+      if (!past) return null;
+      const age = days(past.week_start, t);
+      return {key: 'stock', value: age <= 14 ? 85 : age <= 30 ? 65 : 45, display: 'Week of ' + short(past.week_start), reason: num(past.total) + ' trout planned by ODFW at ' + past.waterbody + '.'};
+    }
+    // Lakes: a stocking in the last two months or one coming within two weeks.
+    const next = rows.filter(r => r.week_start > t).sort((a, b) => a.week_start.localeCompare(b.week_start))[0];
+    const age = past ? days(past.week_start, t) : Infinity, until = next ? days(t, next.week_start) : Infinity;
+    const pastValue = age <= 14 ? 90 : age <= 30 ? 75 : age <= 60 ? 55 : 0, nextValue = until <= 14 ? 80 : 0;
+    if (!pastValue && !nextValue) return null;
+    const bits = [past && age <= 60 ? 'Stocked ' + short(past.week_start) : null, next && until <= 14 ? 'next ' + short(next.week_start) : null].filter(Boolean);
+    const reason = [past && age <= 60 ? num(past.total) + ' trout planned for the week of ' + short(past.week_start) : null, next && until <= 14 ? num(next.total) + ' more planned for the week of ' + short(next.week_start) : null].filter(Boolean).join('; ');
+    return {key: 'stock', value: Math.max(pastValue, nextValue), display: bits.join(' · '), reason: reason + ' (ODFW schedule).'};
   }
 
   function score(w) {
-    if (w.kind !== 'river') return {status: 'not-scored'};
-    if (w.planning.score_notice) return {status: 'withheld', reason: w.planning.score_notice};
-    const factors = [reportTone(w), reportFreshness(w), runStrength(w), stocking(w)].filter(Boolean);
-    if (!factors.length) return {status: 'insufficient', reason: 'No dated report, dam count or stocking record yet, so there is nothing to score.'};
-    const total = factors.reduce((t, f) => t + f.weight, 0);
-    const value = Math.round(factors.reduce((t, f) => t + f.value * f.weight, 0) / total);
-    const unverified = w.planning.alerts.filter(a => a.status === 'unverified').length;
+    const p = w.planning, t = today(), kind = kindOf(w), notes = [];
+    const noticeActive = !!p.score_notice && (!p.score_notice_until || t <= p.score_notice_until);
+    if (noticeActive && !p.score_species) return {status: 'withheld', reason: p.score_notice + (p.score_notice_until ? ' The notice runs through ' + short(p.score_notice_until) + '.' : '')};
+    if (noticeActive && p.score_species) notes.push(p.score_species_note || 'Scored for ' + p.score_species.join(' and ') + ' only.');
+    if (p.score_notice && !noticeActive) notes.push('The closure listed through ' + short(p.score_notice_until) + ' has ended. Confirm the reopening with the source before fishing.');
+    const found = kind === 'river' ? [reportTone(w), runStrength(w), conditions(w), reportFreshness(w), stocking(w)] : [stocking(w), reportTone(w), reportFreshness(w)];
+    const factors = found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]}));
+    if (!factors.some(f => f.key !== 'cond')) return {status: 'insufficient', reason: factors.length ? 'Only gauge readings are available. A score also needs a dated report, a dam count or a stocking record.' : 'No dated report, dam count, gauge reading or stocking record yet, so there is nothing to score.'};
+    const total = factors.reduce((s, f) => s + f.weight, 0);
+    const value = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0) / total);
+    const unverified = p.alerts.filter(a => a.status === 'unverified').length;
     const confidence = factors.length >= 3 && unverified === 0 ? 'High' : factors.length >= 2 && unverified <= 1 ? 'Medium' : 'Low';
     const label = value >= 80 ? 'Excellent' : value >= 65 ? 'Good' : value >= 45 ? 'Fair' : 'Slow';
-    const missing = ['Report tone', 'Report freshness', 'Run strength', 'Recent stocking'].filter(l => !factors.some(f => f.label === l));
-    return {status: 'scored', value, label, confidence, factors, missing, unverified};
+    const missing = Object.keys(WEIGHTS[kind]).filter(k => !factors.some(f => f.key === k)).map(k => LABELS[k]);
+    return {status: 'scored', kind, value, label, confidence, factors, missing, unverified, notes, inputs: Object.keys(WEIGHTS[kind]).length};
   }
+  const formula = kind => Object.entries(WEIGHTS[kind]).map(([k, v]) => LABELS[k].toLowerCase() + ' ' + Math.round(v * 100) + '%').join(', ');
 
-  window.ORFFPreview = {get on() { return on; }, set, score};
+  window.ORFFPreview = {get on() { return on; }, set, score, formula};
 })();
