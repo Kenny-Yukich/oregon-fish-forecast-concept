@@ -129,15 +129,18 @@
   }
   function stockCard(r, withWater=true) {
     const w=withWater&&stockWater(r), b=weekBucket(r);
-    return '<li class="stock-card'+(b==='this'?' is-now':'')+'"><div class="stock-week"><span class="count-badge">'+esc(bucketLabel[b])+'</span><span class="meta">'+esc(r.week_label||('Week of '+date(r.week_start)))+'</span></div>'+(withWater?'<strong>'+esc(r.waterbody)+'</strong>':'')+(r.zone?'<span class="meta">'+esc(r.zone)+'</span>':'')+'<p>'+esc(fishLine(r))+'</p><div class="point-links">'+(withWater?external('https://www.google.com/maps/search/?'+new URLSearchParams({api:'1',query:r.waterbody+', Oregon'}),'Find on map','cell-link'):'')+(w?'<a class="cell-link" data-water-link="'+w.id+'" href="#/water/'+w.id+'">Field notes '+icon('arrow')+'</a>':'')+'</div></li>';
+    return '<li class="stock-card'+(b==='this'?' is-now':'')+'"><div class="stock-week"><span class="count-badge">'+esc(b==='later'?monthLabel(r.week_start):bucketLabel[b])+'</span><span class="meta">'+esc(r.week_label||('Week of '+date(r.week_start)))+'</span></div>'+(withWater?'<strong>'+esc(r.waterbody)+'</strong>':'')+(r.zone?'<span class="meta">'+esc(r.zone)+'</span>':'')+'<p>'+esc(fishLine(r))+'</p><div class="point-links">'+(withWater?external('https://www.google.com/maps/search/?'+new URLSearchParams({api:'1',query:r.waterbody+', Oregon'}),'Find on map','cell-link'):'')+(w?'<a class="cell-link" data-water-link="'+w.id+'" href="#/water/'+w.id+'">Field notes '+icon('arrow')+'</a>':'')+'</div></li>';
   }
   function stockHTML(w, compact=false) {
     const rows=stockMatches(w);
     if (rows==null) return '';
-    const sorted=[...rows].sort((a,b)=>b.week_start.localeCompare(a.week_start));
-    if (compact) { const r=sorted.find(r=>weekBucket(r)!=='recent')||sorted[0]; return r?'<p class="cell-label count-cell">Trout stocking</p><p class="small">'+esc(bucketLabel[weekBucket(r)])+': '+esc(fishLine(r))+'</p>':''; }
+    const upcoming=rows.filter(r=>weekBucket(r)!=='recent').sort((a,b)=>a.week_start.localeCompare(b.week_start));
+    const past=rows.filter(r=>weekBucket(r)==='recent').sort((a,b)=>b.week_start.localeCompare(a.week_start));
+    if (compact) { const r=upcoming[0]||past[0]; return r?'<p class="cell-label count-cell">Trout stocking</p><p class="small">'+(upcoming[0]?'Next':'Last')+': '+esc(r.week_label||date(r.week_start))+' · '+esc(fishLine(r))+'</p>':''; }
     const loaded=!!window.ORFF_STOCKING?.fetched_at;
-    return '<section id="stocking" class="detail-section" data-od-id="water-stocking"><h2>When was it stocked?</h2><p class="small muted">ODFW\'s planned trout stockings for this water, kept for 8 weeks. Plans can change for weather, access or fish health.</p>'+(sorted.length?'<ul class="stock-list">'+sorted.map(r=>stockCard(r,false)).join('')+'</ul>':'<p class="reading-note">'+(loaded?'No stockings for this water in ODFW\'s current schedule or the past 8 weeks.':'The stocking schedule has not been loaded yet.')+'</p>')+'<p class="meta">'+external(window.ORFF_STOCKING?.source||'https://myodfw.com/fishing/species/trout/stocking-schedule','ODFW stocking schedule','cell-link')+'</p></section>';
+    const lead=[...upcoming.slice(0,2),...past.slice(0,1)];
+    const all=[...rows].sort((a,b)=>a.week_start.localeCompare(b.week_start));
+    return '<section id="stocking" class="detail-section" data-od-id="water-stocking"><h2>When was it stocked?</h2><p class="small muted">ODFW\'s planned trout stockings for this water, kept for 8 weeks after they happen. Plans can change for weather, access or fish health.</p>'+(rows.length?'<ul class="stock-list">'+lead.map(r=>stockCard(r,false)).join('')+'</ul>'+(all.length>lead.length?'<details class="stock-all"><summary>Full ODFW schedule for this water ('+all.length+')</summary><ul class="stock-list">'+all.map(r=>stockCard(r,false)).join('')+'</ul></details>':''):'<p class="reading-note">'+(loaded?'No stockings for this water in ODFW\'s current schedule or the past 8 weeks.':'The stocking schedule has not been loaded yet.')+'</p>')+'<p class="meta">'+external(window.ORFF_STOCKING?.source||'https://myodfw.com/fishing/species/trout/stocking-schedule','ODFW stocking schedule','cell-link')+'</p></section>';
   }
   function stockingPage(query='',bucket='upcoming') {
     currentWater=null;

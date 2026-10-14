@@ -54,18 +54,32 @@ function weekStart(label, now) {
 }
 
 // ODFW writes names in capitals with abbreviations ("EMPIRE LK, UPR", "N FK SANTIAM R").
-const ABBR = {LK: 'Lake', LKS: 'Lakes', PD: 'Pond', PDS: 'Ponds', RES: 'Reservoir', R: 'River', CR: 'Creek', CRK: 'Creek', FK: 'Fork',
+const ABBR = {WLDLIFE: 'Wildlife', LK: 'Lake', LKS: 'Lakes', PD: 'Pond', PDS: 'Ponds', RES: 'Reservoir', R: 'River', CR: 'Creek', CRK: 'Creek', FK: 'Fork',
   NF: 'North Fork', SF: 'South Fork', MF: 'Middle Fork', N: 'North', S: 'South', E: 'East', W: 'West', M: 'Middle', MID: 'Middle',
   UPR: 'Upper', UP: 'Upper', LWR: 'Lower', LW: 'Lower', SL: 'Slough', PK: 'Park', CN: 'Canal'};
 const QUALIFIERS = /^(Upper|Lower|North|South|East|West|Middle)$/;
-const titleWord = w => w.toLowerCase().replace(/(^|[-'(])([a-z])/g, (_, a, b) => a + b.toUpperCase()).replace(/^Mc([a-z])/, (_, c) => 'Mc' + c.toUpperCase());
+// Capitalizes after a hyphen or bracket, after a one-letter prefix like O'Brien, and after Mc.
+const titleWord = w => w.toLowerCase().replace(/(^|[-(])([a-z])/g, (_, a, b) => a + b.toUpperCase())
+  .replace(/^([A-Za-z])'([a-z])/, (_, a, b) => a.toUpperCase() + "'" + b.toUpperCase()).replace(/^Mc([a-z])/, (_, c) => 'Mc' + c.toUpperCase());
 function cleanName(raw) {
-  if (raw !== raw.toUpperCase()) return raw; // already in normal case
-  const expand = part => part.trim().split(/\s+/).map(t => ABBR[t.replace(/\.$/, '')] || titleWord(t)).join(' ');
+  // Expands capitalized words ("MCKENZIE R-1") and keeps words ODFW already wrote in normal case
+  // ("(below Leaburg Dam)"), so mixed names like "MCKENZIE R-1 (below Leaburg Dam)" read naturally too.
+  const word = t => {
+    if (!/[A-Z]/.test(t) || t !== t.toUpperCase()) return t;
+    const m = /^([A-Z]+)-(\d+)$/.exec(t);
+    if (m) return (ABBR[m[1]] || titleWord(m[1])) + ' ' + m[2];
+    return ABBR[t.replace(/\.$/, '')] || titleWord(t);
+  };
+  const expand = part => part.trim().split(/\s+/).map(word).join(' ');
   const [main, ...rest] = raw.split(',').map(expand);
   const quals = rest.filter(r => QUALIFIERS.test(r)), other = rest.filter(r => !QUALIFIERS.test(r));
   return [...quals, main].join(' ') + (other.length ? ' (' + other.join(', ') + ')' : '');
 }
+
+const cleanZone = z => (z || '').replace(/\s*\/\s*$/, '');
+// Rows saved by an older version of this script are cleaned the same way before merging, so a name or zone
+// fix does not leave a second copy of the same stocking in the 8-week history.
+const normalizeRow = r => ({...r, waterbody: cleanName(r.odfw_name || r.waterbody), zone: cleanZone(r.zone)});
 
 const num = s => { const n = Number(String(s ?? '').replace(/[,\s]/g, '')); return Number.isFinite(n) && String(s ?? '').trim() !== '' ? n : 0; };
 
@@ -91,7 +105,7 @@ function rowsFrom(html, now, log = true) {
       if (!start) continue;
       const fish = {legals: num(cell('legals')), larger: num(cell('larger')), pounders: num(cell('pounders')), trophy: num(cell('trophy')), brood: num(cell('brood')), fingerling: num(cell('fingerling'))};
       const sum = Object.values(fish).reduce((a, b) => a + b, 0);
-      out.push({week_start: start, week_label: weekLabel, waterbody: cleanName(waterbody), odfw_name: waterbody, zone: cell('zone'), ...fish, total: num(cell('total')) || sum});
+      out.push({week_start: start, week_label: weekLabel, waterbody: cleanName(waterbody), odfw_name: waterbody, zone: cleanZone(cell('zone')), ...fish, total: num(cell('total')) || sum});
     }
   }
   return out;
@@ -207,7 +221,15 @@ let previous = {rows: []};
 if (existsSync(OUT)) {
   try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
 }
+previous.rows = (previous.rows || []).map(normalizeRow);
 let scraped = [], method = null, extra = 0;
+if (process.env.NORMALIZE_ONLY === '1') {
+  // Offline: re-clean the saved file without asking ODFW for anything.
+  const seen = new Set(), rows = previous.rows.filter(r => add(seen, r)).sort((a, b) => a.week_start.localeCompare(b.week_start) || a.waterbody.localeCompare(b.waterbody));
+  writeFileSync(OUT, 'window.ORFF_STOCKING = ' + JSON.stringify({...previous, rows}) + ';\n');
+  console.log(`Normalized data/stocking.js (${rows.length} rows)`);
+  process.exit(0);
+}
 try {
   ({rows: scraped, method, extra} = await scrape(now));
   console.log(`ODFW schedule: ${scraped.length} rows (${method === 'zones' ? `zone slices${extra ? ` plus ${extra} from the safety net` : ''}` : 'paging fallback, may be incomplete'})`);
