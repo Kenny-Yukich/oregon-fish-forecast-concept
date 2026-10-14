@@ -1,0 +1,28 @@
+/* Monitoring expansion, researched 2026-10-13. Editorial waters.json stays unchanged.
+   Nearby stations provide context only. No station is used for driving directions. */
+window.ORFF_MONITORING = {
+  "lower-deschutes-warm-springs-trout-creek": {station:"USGS-14092500",name:"Deschutes River near Madras",coverage:"Upstream gauge context for this reach; not a measurement at Trout Creek."},
+  "lower-deschutes-moody": {station:"USGS-14103000",name:"Deschutes River at Moody",coverage:"Lower-river gauge near the mouth; not a measurement at the park entrance."},
+  "middle-deschutes-culver": {station:"USGS-14076500",name:"Deschutes River near Culver",coverage:"Culver monitoring location, downstream of the Steelhead Falls access destination."},
+  "crooked-river-opal-springs": {station:"USGS-14087400",name:"Crooked River below Opal Springs",coverage:"Lower-canyon monitoring only. Public access remains unverified; no driving route is offered."},
+  "metolius-river-grandview": {station:"USGS-14091500",name:"Metolius River near Grandview",coverage:"Lower Metolius gauge context. Public access and section boundaries remain unresolved."},
+  "crooked-river-bowman-dam": {name:"Reclamation PRVO · Crooked River near Prineville",url:"https://www.usbr.gov/pn/hydromet/destea.html",coverage:"Operator flow source for the Bowman tailwater. View the dated operator readings; the old USGS record is not treated as live.",mode:"operator"},
+  "fall-river-above-falls": {name:"Fall River near La Pine · historical USGS record",url:"https://waterdata.usgs.gov/monitoring-location/USGS-14057500/",coverage:"The verified USGS continuous record is historical. A current feed for the hatchery reach has not been connected.",mode:"historical"},
+  "haystack-reservoir": {name:"Reclamation HAY · Haystack Reservoir",url:"https://www.usbr.gov/pn/hydromet/destea.html",coverage:"Reservoir storage and level context, not water temperature or a West Shore launch inspection. View the operator's dated values.",mode:"operator"},
+  "lake-billy-chinook-crooked-arm": {name:"Crooked River arm monitoring",coverage:"A current reservoir-level feed for this arm has not been verified. Deschutes or Metolius inflow measurements are not substituted for this arm.",mode:"unavailable"},
+  "columbia-river-chinook-landing": {station:"USGS-14144700",name:"Columbia River at Vancouver",coverage:"Downstream tidal-river context. Not a measurement of water, current or launch conditions at Chinook Landing."},
+  "rogue-river-touvelle": {station:"USGS-14339000",name:"Rogue River at Dodge Bridge",coverage:"Upstream upper-Rogue station. Not a TouVelle-only flow or water-temperature observation."},
+  "umpqua-river-elkton": {station:"USGS-14321000",name:"Umpqua River near Elkton",coverage:"Nearby mainstem station; not a measurement of bank or ramp conditions at Alfred S. Tyson Park."},
+  "mckenzie-river-leaburg": {station:"USGS-14162500",name:"McKenzie River near Vida",coverage:"Upstream McKenzie context. Leaburg Dam and local diversions separate this from conditions at Leaburg Landing."},
+  "willamette-river-cathedral-park": {station:"USGS-14211720",name:"Willamette River at Portland",coverage:"Upstream Portland tidal-river station. Not a reading at Cathedral Park or a fish-consumption assessment."},
+  "clackamas-river-barton-carver": {station:"USGS-14211010",name:"Clackamas River near Oregon City",coverage:"Downstream lower-river station. Does not establish current conditions throughout the Barton-to-Carver reach."},
+  "sandy-river-lewis-clark": {name:"Lower Sandy monitoring",coverage:"The Troutdale reference located during this review did not establish a current continuous feed. A suitable active upstream feed still needs verification.",url:"https://waterdata.usgs.gov/monitoring-location/USGS-453241122230400/",mode:"unavailable"},
+  "wilson-river-mills-bridge": {station:"USGS-14301500",name:"Wilson River near Tillamook",coverage:"Lower Wilson gauge context. Not a Mills Bridge bank, wading or catch survey."},
+  "north-fork-nehalem-hatchery": {station:"USGS-14301000",name:"Nehalem River near Foss",coverage:"Mainstem basin context only, on a different channel from the North Fork hatchery. Do not treat its flow as North Fork flow."},
+  "siletz-river-jack-morgan": {station:"USGS-14305500",name:"Siletz River at Siletz",coverage:"Upstream Siletz gauge context. Does not establish current access, road or ramp conditions at Jack Morgan Park."},
+  "diamond-lake": {name:"Lake Creek near Diamond Lake · historical outlet gauge",url:"https://waterdata.usgs.gov/monitoring-location/USGS-14312500/",coverage:"The verified outlet-flow record is historical. Outlet flow is not lake temperature, lake level or current north-shore conditions.",mode:"historical"},
+  "detroit-lake-mongold": {station:"USGS-14180500",name:"Detroit Lake near Detroit",coverage:"Reservoir station. A level reading does not establish whether Mongold's ramp is usable for a particular boat."},
+  "henry-hagg-lake": {name:"Reclamation SCO · Scoggins Dam / Henry Hagg Lake",url:"https://www.usbr.gov/pn/hydromet/",coverage:"Operator reservoir-level and storage source; not a C-Ramp inspection or bloom assessment. Select Scoggins / SCO.",mode:"operator"},
+  "odell-lake-princess-creek": {name:"Odell Lake monitoring",coverage:"A current lake-level or suitable outlet feed has not yet been verified. Wind, waves, temperature and Princess Creek launch conditions remain unavailable.",mode:"unavailable"},
+  "wallowa-lake-state-park": {station:"USGS-13326000",name:"Wallowa Lake near Joseph",coverage:"Lake-station reference. The request may return no current observations; a reading is not a south-end ramp or marina inspection."}
+};
