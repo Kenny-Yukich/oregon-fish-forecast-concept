@@ -24,5 +24,11 @@ window.ORFF_MONITORING = {
   "detroit-lake-mongold": {station:"USGS-14180500",name:"Detroit Lake near Detroit",coverage:"Reservoir station. A level reading does not establish whether Mongold's ramp is usable for a particular boat."},
   "henry-hagg-lake": {name:"Reclamation SCO · Scoggins Dam / Henry Hagg Lake",url:"https://www.usbr.gov/pn/hydromet/",coverage:"Operator reservoir-level and storage source; not a C-Ramp inspection or bloom assessment. Select Scoggins / SCO.",mode:"operator"},
   "odell-lake-princess-creek": {name:"Odell Lake monitoring",coverage:"A current lake-level or suitable outlet feed has not yet been verified. Wind, waves, temperature and Princess Creek launch conditions remain unavailable.",mode:"unavailable"},
-  "wallowa-lake-state-park": {station:"USGS-13326000",name:"Wallowa Lake near Joseph",coverage:"Lake-station reference. The request may return no current observations; a reading is not a south-end ramp or marina inspection."}
+  "wallowa-lake-state-park": {station:"USGS-13326000",name:"Wallowa Lake near Joseph",coverage:"Lake-station reference. The request may return no current observations; a reading is not a south-end ramp or marina inspection."},
+  "cowlitz-river-kelso-castle-rock": {station:"USGS-14243000",name:"Cowlitz River at Castle Rock",coverage:"Upstream end of this reach, below the Toutle River confluence. Not a reading at the Kelso launch."},
+  "coweeman-river-kelso": {name:"Coweeman River monitoring",coverage:"A current Coweeman flow feed has not been verified. Cowlitz readings are not substituted for this tributary.",mode:"unavailable"},
+  "toutle-river-tower-road": {station:"USGS-14242580",name:"Toutle River at Tower Road near Silver Lake",coverage:"Lower mainstem gauge, about 10.7 miles below the North and South Fork confluence. Not a North Fork, South Fork or Green River reading."},
+  "kalama-river-modrow-bridge": {station:"USGS-14223500",name:"Kalama River below Italian Creek near Kalama",coverage:"Nearby lower-river gauge. Not a measurement of bank or ramp conditions at Modrow Bridge."},
+  "lewis-river-woodland": {station:"USGS-14220500",name:"Lewis River at Ariel",coverage:"Half a mile below Merwin Dam, so it reflects dam releases. Not a reading at Pekin Ferry or the Woodland launches."},
+  "elochoman-river-cathlamet": {name:"Elochoman River monitoring",coverage:"A current Elochoman flow feed has not been verified. Columbia River readings are not substituted for this tributary.",mode:"unavailable"}
 };

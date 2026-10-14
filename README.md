@@ -14,13 +14,34 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 
 ## Included
 
-- All 24 supplied records, preserving actual species, methods, access, alerts, report dates, coverage, sources and October 12 editorial review dates.
+- All 24 supplied Oregon records, preserving actual species, methods, access, alerts, report dates, coverage, sources and October 12 editorial review dates.
 - Hash navigation for directory, every water and approach/sources; search by water/reach/region/species; river/lake filters; result counts and resettable empty state.
 - Editable Portland origin saved only in this browser. All 22 driving links use the exact documented map query. No estimated drive durations and no routes to the two unverified gauge locations.
 - Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
 - Monitoring coverage entries for every water. Sixteen USGS station connections can request actual latest observations individually. Three operator references, two historical references and three unresolved coverage gaps remain honestly labeled. Not every water has a working live feed.
 - Nearby, upstream, downstream and mainstem/tributary differences are stated explicitly. No station substitutes for a public access point or on-site safety assessment.
 - A future membership page at **$4.99 USD/month**, with river scores as the proposed paid feature. All 17 river entries link to the plan; no computed scores, payment collection or member accounts are simulated.
+
+## Southwest Washington rivers
+
+Six Kelso and Longview area rivers were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
+
+- WDFW and most source sites could not be opened directly from the editing environment, so these records were built from search excerpts of the linked sources. Every Washington rules alert is therefore labeled **Needs a trip-day check** until someone confirms it at the source.
+- Coweeman, Toutle and Elochoman have no verified public fishing access, so they get no driving link. Coweeman's score is withheld while it is reported closed through October 31.
+- Records can now list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions, the way TroutRoute lists access points by river. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
+- Four of the rivers have USGS gauges connected (Castle Rock, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
+
+## Water map
+
+Open `#/map` from the main navigation, or **Map** in any water's section bar. Inspired by TroutRoute's map, in this site's style:
+
+- A satellite base (Esri World Imagery with place labels) or the USGS topo base, with the USGS National Map hydrography layer on top so every stream and lake shows in blue. The hydrography layer can be switched off.
+- One pin per water from `data/map.js`, forest for rivers and blue for lakes. Pins mark the approximate area of each reach. They are not access points, and directions still use only documented access points.
+- Choosing a river with a USGS gauge traces its channel about 25 km up and downstream from that gauge using the USGS NLDI service, drawn as a gold line. The trace can run past the named reach, and the page says so. If it fails, the card says the line is unavailable.
+- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, and deep links such as `#/map?water=lewis-river-woodland`.
+- Leaflet 1.9.4 is vendored in `assets/vendor/leaflet` (BSD-2-Clause, license included). Tiles and river lines are fetched by the visitor's browser only on the map page.
+
+Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
 
 ## Proposed membership
 
