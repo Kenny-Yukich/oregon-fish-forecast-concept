@@ -60,7 +60,7 @@ img { max-width: 100%; height: auto; }
 .brand img { width: 82px; height: auto; }
 .brand-name { font-family: var(--font-display); font-size: 20px; line-height: 1.05; letter-spacing: -.015em; }
 .brand-name span { display: block; margin-top: 3px; font-family: var(--font-body); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .16em; }
-.main-nav { display: flex; align-items: center; gap: 30px; }
+.main-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
 .main-nav a { display: inline-flex; min-height: 48px; align-items: center; padding: 8px 2px; font-size: 14px; letter-spacing: .02em; text-decoration: none; border-bottom: 2px solid transparent; }
 .main-nav a:hover { border-bottom-color: var(--control-border); }
 .main-nav a[aria-current=page] { border-bottom-color: var(--fg); font-weight: 600; }
@@ -231,6 +231,48 @@ details[open] > summary { margin-bottom: 7px; }
 .readings-grid dd small { font-size: 13px; }
 .trending-empty { padding: 22px; border: 1px dashed var(--control-border); border-radius: 12px; display: flex; gap: 25px; align-items: center; font-size: 14px; background: var(--surface); }
 .trending-empty span { color: var(--muted); }
+.member-score-cell { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.member-score-cell > strong, .member-score-cell > span { display: block; }
+.member-score-cell .cell-link { font-weight: 400; }
+.member-score-panel { padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--soft); }
+.member-score-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 16px; }
+.member-score-top h3 { margin: 0; }
+.member-score-panel .score-status { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.member-score-panel .small { margin-bottom: 8px; }
+.membership-page { max-width: 1200px; padding-bottom: 60px; }
+.membership-heading { padding-block: 48px 34px; max-width: 850px; }
+.membership-heading h1 { margin: 14px 0 20px; }
+.membership-heading > p { color: var(--muted); font-size: 18px; max-width: 60ch; }
+.membership-layout { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(0,1fr); gap: 64px; align-items: start; }
+.membership-story { padding-top: 22px; border-top: 1px solid var(--control-border); }
+.membership-story > h2 { margin: 12px 0 16px; }
+.membership-story > p { font-size: 15px; }
+.membership-features { list-style: none; padding: 0; margin: 24px 0; counter-reset: benefits; }
+.membership-features li { position: relative; counter-increment: benefits; padding: 18px 0 18px 38px; border-top: 1px solid var(--border); }
+.membership-features li::before { content: "0" counter(benefits); position: absolute; left: 0; top: 21px; color: var(--muted); font-size: 12px; }
+.membership-features h3 { margin: 0 0 6px; }
+.membership-features p { font-size: 14px; color: var(--muted); margin: 0; }
+.membership-price { background: var(--surface); padding: 30px; border: 1px solid var(--control-border); border-radius: var(--radius); }
+.membership-price > h2 { margin: 22px 0; }
+.membership-price > p { font-size: 14px; }
+.membership-price .membership-amount { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 16px; }
+.membership-amount strong { font-family: var(--font-display); font-size: 54px; letter-spacing: -.025em; line-height: 1.1; font-weight: 400; }
+.membership-amount span { font-size: 14px; color: var(--muted); }
+.membership-availability { padding-block: 18px; margin-top: 24px; border-top: 1px solid var(--border); font-size: 14px; }
+.membership-availability p { margin: 7px 0 0; color: var(--muted); }
+.membership-price .primary { margin-top: 8px; }
+.membership-free { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding-block: 34px; margin-top: 40px; border-block: 1px solid var(--border); }
+.membership-free h2 { margin: 12px 0; }
+.membership-free p { font-size: 14px; color: var(--muted); margin-bottom: 0; }
+.membership-free ul { padding-left: 20px; margin: 0; font-size: 14px; }
+.membership-free li { padding-block: 5px; }
+.membership-faq { max-width: 850px; margin-top: 36px; }
+.membership-faq details { border-top: 1px solid var(--border); }
+.membership-faq summary { padding-block: 16px; font-size: 15px; }
+.membership-faq details p { font-size: 14px; margin: 0 0 22px; }
+@media (max-width: 900px) {
+  .membership-layout, .membership-free { gap: 30px; }
+}
 @media (min-width: 1650px) {
   .intro { padding-block: 42px; }
   table { font-size: 14px; }
@@ -247,6 +289,14 @@ details[open] > summary { margin-bottom: 7px; }
   .origin-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 }
 @media (max-width: 700px) {
+  .membership-layout, .membership-free { grid-template-columns: 1fr; gap: 24px; }
+  .membership-heading { padding-block: 30px 20px; }
+  .membership-heading h1 { font-size: 39px; }
+  .membership-heading > p { font-size: 16px; }
+  .membership-price { padding: 24px; }
+  .membership-price { grid-row: 1; }
+  .membership-free { margin-top: 24px; }
+  .membership-page { padding-bottom: 36px; }
   .trending-grid { grid-template-columns: 1fr; }
   .trending-empty { flex-direction: column; align-items: flex-start; gap: 8px; }
   .wrap { width: calc(100% - 32px); }
@@ -255,7 +305,7 @@ details[open] > summary { margin-bottom: 7px; }
   .brand img { width: 66px; }
   .brand-name { font-size: 19px; }
   .brand-name span { font-size: 10px; }
-  .main-nav { width: 100%; gap: 27px; }
+  .main-nav { width: 100%; gap: 0 20px; }
   .main-nav a { min-height: 45px; font-size: 13px; }
   .intro { grid-template-columns: 1fr; gap: 18px; padding-block: 27px 25px; }
   .intro h1 { font-size: 42px; margin: 10px 0 14px; }

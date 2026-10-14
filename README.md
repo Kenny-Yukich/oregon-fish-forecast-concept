@@ -20,6 +20,13 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 - Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
 - Monitoring coverage entries for every water. Sixteen USGS station connections can request actual latest observations individually. Three operator references, two historical references and three unresolved coverage gaps remain honestly labeled. Not every water has a working live feed.
 - Nearby, upstream, downstream and mainstem/tributary differences are stated explicitly. No station substitutes for a public access point or on-site safety assessment.
+- A future membership page at **$4.99 USD/month**, with river scores as the proposed paid feature. All 17 river entries link to the plan; no computed scores, payment collection or member accounts are simulated.
+
+## Proposed membership
+
+Open `#/membership` from the main navigation. The concept proposes paid scores for specific river reaches and target species, explanations of their inputs and limitations, and score comparison within the directory. Price and benefits are a proposal, not an active subscription offer. The free guide keeps water records, access, reports, available station readings, restrictions and sources.
+
+No scoring method has been validated or connected. River details say **Not calculated yet**; both Lower Deschutes reaches instead show **Rules review pending**, retain their original restriction notices and dates, and explain that payment would not override those restrictions. Lakes and reservoirs do not receive river-score labels. Membership links remember the originating reach so visitors can return to it.
 
 ## Readings
 
@@ -39,4 +46,4 @@ For community trends, aggregate distinct consenting sessions per water over a ro
 
 ## Verification
 
-Lightweight JavaScript and static checks cover all detail routes, source fidelity, the two blocked driving routes, filter/search/empty-state logic, changed origins, trend deduplication and missing/stale reading handling. No original-site modification was performed. Responsive sizing and keyboard controls received static review; rendered desktop/phone verification remains outstanding.
+Lightweight JavaScript and static checks cover all detail routes, source fidelity, the two blocked driving routes, filter/search/empty-state logic, changed origins, trend deduplication, missing/stale reading handling, membership navigation, all 17 river-score states and both Lower Deschutes notices. No original-site modification was performed. Responsive sizing and keyboard controls received static review; rendered desktop/phone verification remains outstanding.
