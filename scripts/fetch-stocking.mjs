@@ -145,12 +145,15 @@ async function scrape(now) {
     console.log(`  diagnostics: ${printOnly.length} print-view rows never appeared in main pages${printOnly.length ? ', e.g. ' + printOnly.slice(0, 3).join(' ; ') : ''}`);
     try {
       const html = await get(PAGE);
-      const form = /<form[^>]*views-exposed-form[\s\S]*?<\/form>/i.exec(html)?.[0] || '';
-      const fields = [...form.matchAll(/<(select|input)[^>]*name="([^"]+)"[^>]*>/gi)].map(m => m[2]).filter(n => !/^(form_|op$)/.test(n));
-      const zoneSelect = /<select[^>]*name="([^"]*)"[^>]*>([\s\S]*?)<\/select>/i.exec(form);
-      const options = zoneSelect ? [...zoneSelect[2].matchAll(/<option[^>]*value="([^"]*)"[^>]*>([^<]*)/gi)].map(m => m[1] + '=' + decode(m[2])).slice(0, 25) : [];
-      console.log(`  filter form fields: ${fields.join(', ') || '(none found)'}`);
-      if (zoneSelect) console.log(`  first select "${zoneSelect[1]}" options: ${options.join(' | ')}`);
+      for (const [i, f] of [...html.matchAll(/<form\b[^>]*>[\s\S]*?<\/form>/gi)].map(m => m[0]).entries()) {
+        const open = /<form\b[^>]*>/i.exec(f)[0];
+        const fields = [...f.matchAll(/<(select|input)\b[^>]*name="([^"]+)"[^>]*>/gi)].map(m => m[1].toLowerCase() + ':' + m[2]).filter(n => !/form_(build_id|token|id)/.test(n));
+        console.log(`  form ${i}: ${open.replace(/\s+/g, ' ').slice(0, 160)}\n    fields: ${fields.join(', ') || '(none)'}`);
+        for (const sel of f.matchAll(/<select\b[^>]*name="([^"]+)"[^>]*>([\s\S]*?)<\/select>/gi)) {
+          const opts = [...sel[2].matchAll(/<option[^>]*value="([^"]*)"[^>]*>([^<]*)/gi)].map(m => m[1] + '=' + decode(m[2]));
+          console.log(`    select ${sel[1]} (${opts.length}): ${opts.slice(0, 30).join(' | ')}`);
+        }
+      }
     } catch (e) { console.log('  filter form unavailable: ' + e.message); }
   }
   // On 2026-10-14 the main schedule paged out to Oct 2027, but 1,019 listed rows held 971 unique ones. A sort
