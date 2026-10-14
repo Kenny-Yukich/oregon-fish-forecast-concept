@@ -61,11 +61,13 @@ Counts show adult fish moving upstream past a point. They are run timing, not ca
 
 Open `#/stocking` from the main navigation.
 
-- **What it shows:** ODFW's planned weekly trout stockings across Oregon. ODFW publishes the whole season ahead, so the page groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
+- **What it shows:** ODFW's planned weekly trout stockings across Oregon. ODFW publishes about a year ahead, so the page groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
 - **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
 - **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
-  - It reads ODFW's print view of the schedule, which held the whole season (500 rows) on Oct 14, 2026. It keeps asking for further pages in case that is a page limit, and falls back to paging the main schedule if the print view fails.
+  - It merges every route to the schedule. ODFW plans about a year ahead (Oct 2026 to Oct 2027 on Oct 14, 2026, roughly 970 stockings).
+    - The print view only shows the first 500 rows, so it's merged with all of the 50-row main schedule pages.
+    - It then makes a second pass in a column sort taken from the table header. A sort with ties can repeat rows across pages and skip others, and the log reports how many rows the second pass recovered.
   - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.

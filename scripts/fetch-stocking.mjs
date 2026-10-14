@@ -131,10 +131,24 @@ async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
 async function scrape(now) {
   const rows = [], seen = new Set();
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
-  await collect([`${PRINT}?items_per_page=All`], seen, rows, now, 'print, all items');
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
   const total = await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
-  return {rows, source: rows.length ? PRINT : PAGE, total};
+  // On 2026-10-14 the main schedule paged out to Oct 2027, but 1,019 listed rows held 971 unique ones. A sort
+  // with ties can repeat some rows across pages and skip others, so make a second pass in a column sort taken
+  // from the table's own header links. New rows from it are rows the first pass missed.
+  try {
+    const head = await get(PAGE);
+    const links = [...head.matchAll(/<th[^>]*>[\s\S]*?<a[^>]+href="([^"]*order=[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)].map(m => ({href: m[1].replace(/&amp;/g, '&'), text: decode(m[2])}));
+    if (DEBUG) console.log('  sortable columns: ' + (links.map(l => l.text + ' -> ' + l.href).join(' , ') || '(none)'));
+    const pick = links.find(l => /water/i.test(l.text)) || links[0];
+    if (pick) {
+      const base = new URL(pick.href, PAGE).toString().replace(/[?&]page=\d+/, '');
+      const before = rows.length;
+      await collect(pages(base, 60), seen, rows, now, 'second pass');
+      console.log(`  second pass added ${rows.length - before} rows the first pass missed`);
+    }
+  } catch (e) { console.log('  second pass skipped: ' + e.message); }
+  return {rows, source: PAGE, total};
 }
 
 const now = new Date();
