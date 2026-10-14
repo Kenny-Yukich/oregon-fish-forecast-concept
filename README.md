@@ -53,6 +53,7 @@ Verification used mocked tiles and river-line responses, because the editing env
   - Sherars Falls, Leaburg Dam and Winchester Dam: these link to ODFW's own counts.
 - **Daily refresh.** `.github/workflows/fish-counts.yml` runs `scripts/fetch-counts.mjs` every morning (about 6:41 am Pacific). It pulls this year's and last year's daily counts for Bonneville, The Dalles and Willamette Falls from Columbia River DART, works out 7-day, year-to-date and same-date-last-year totals, and commits `data/counts.js` only when the numbers change. A failed fetch keeps the previous numbers. It can also be run by hand from the Actions tab, and pull requests that change the fetcher run a test fetch without committing.
 - Until the first run, count panels show links to the official counts instead of numbers.
+- **Live ladder video.** A station can carry a `live` link to a public video feed of its fish ladder. Only Winchester Dam has one so far (the Umpqua Fishery Enhancement Derby's stream at umpquafish.com). Feeds are linked, not embedded, and only listed once confirmed to exist.
 
 Counts show adult fish moving upstream past a point. They are run timing, not catch rates, and the site says so wherever they appear.
 

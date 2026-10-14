@@ -455,3 +455,6 @@ details[open] > summary { margin-bottom: 7px; }
 .count-cell { margin-top: 10px; }
 @media (max-width: 640px) { .count-table { font-size: 13px; } .count-table th, .count-table td { padding: 8px 6px; } .count-panel { padding: 16px; } }
 
+.count-live { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 12px 0 4px; padding: 10px 12px; background: var(--soft); border-radius: 8px; }
+.count-live .meta { flex-basis: 100%; font-size: 12px; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 3px oklch(42% 0.14 28 / .18); }

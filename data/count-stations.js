@@ -1,7 +1,8 @@
 /* Fish-count stations and how each relates to a water, added 2026-10-14.
    Counts show fish moving upstream past a dam or trap. They are run timing, not catch rates.
    Stations with a dart code are refreshed daily into data/counts.js by .github/workflows/fish-counts.yml;
-   the others link to the operator's published counts. */
+   the others link to the operator's published counts. A live field links a public video feed of the ladder;
+   only feeds confirmed to exist are listed, and they are linked rather than embedded. */
 window.ORFF_COUNT_STATIONS = {
   stations: {
     BON: {name: "Bonneville Dam", river: "Columbia River", operator: "U.S. Army Corps of Engineers, via Columbia River DART", dart: "BON", url: "https://www.cbr.washington.edu/dart/query/adult_daily"},
@@ -9,7 +10,8 @@ window.ORFF_COUNT_STATIONS = {
     WFF: {name: "Willamette Falls", river: "Willamette River", operator: "ODFW, via Columbia River DART", dart: "WFF", url: "https://myodfw.com/willamette-falls-fish-counts"},
     SHERARS: {name: "Sherars Falls trap", river: "Deschutes River", operator: "ODFW", url: "https://myodfw.com/sherars-falls-fish-counts", note: "The trap catches an unknown share of fall Chinook and summer steelhead, so its numbers show timing, not run size."},
     LEABURG: {name: "Leaburg Dam", river: "McKenzie River", operator: "ODFW and U.S. Army Corps of Engineers", url: "https://myodfw.com/fish-counts-leaburg-dam"},
-    WINCHESTER: {name: "Winchester Dam", river: "North Umpqua River", operator: "ODFW", url: "https://myodfw.com/winchester-dam-fish-counts", note: "ODFW notes these counts can run one to two months behind."}
+    WINCHESTER: {name: "Winchester Dam", river: "North Umpqua River", operator: "ODFW", url: "https://myodfw.com/winchester-dam-fish-counts", note: "ODFW notes these counts can run one to two months behind.",
+      live: {url: "https://www.umpquafish.com/", label: "Watch the fish ladder live", by: "Umpqua Fishery Enhancement Derby, a nonprofit separate from ODFW. The stream can go offline."}}
   },
   waters: {
     "columbia-river-chinook-landing": [
