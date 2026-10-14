@@ -31,6 +31,18 @@ Six Kelso and Longview area rivers were added on October 14, 2026: the Cowlitz (
 - Records can now list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions, the way TroutRoute lists access points by river. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
 - Four of the rivers have USGS gauges connected (Castle Rock, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
 
+## Water map
+
+Open `#/map` from the main navigation, or **Map** in any water's section bar. Inspired by TroutRoute's map, in this site's style:
+
+- A satellite base (Esri World Imagery with place labels) or the USGS topo base, with the USGS National Map hydrography layer on top so every stream and lake shows in blue. The hydrography layer can be switched off.
+- One pin per water from `data/map.js`, forest for rivers and blue for lakes. Pins mark the approximate area of each reach. They are not access points, and directions still use only documented access points.
+- Choosing a river with a USGS gauge traces its channel about 25 km up and downstream from that gauge using the USGS NLDI service, drawn as a gold line. The trace can run past the named reach, and the page says so. If it fails, the card says the line is unavailable.
+- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, and deep links such as `#/map?water=lewis-river-woodland`.
+- Leaflet 1.9.4 is vendored in `assets/vendor/leaflet` (BSD-2-Clause, license included). Tiles and river lines are fetched by the visitor's browser only on the map page.
+
+Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
+
 ## Proposed membership
 
 Open `#/membership` from the main navigation. The concept proposes paid scores for specific river reaches and target species, explanations of their inputs and limitations, and score comparison within the directory. Price and benefits are a proposal, not an active subscription offer. The free guide keeps water records, access, reports, available station readings, restrictions and sources.

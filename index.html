@@ -8,12 +8,16 @@
   <meta name="description" content="Compare 30 Oregon and Southwest Washington fishing reaches, with documented access, species, dated reports and source context. A separate design concept.">
   <title>Explore waters · Oregon Fish Forecast</title>
   <link rel="icon" href="assets/weather-fish.webp" type="image/webp">
-  <link rel="stylesheet" href="assets/site.css?v=20261014-swwa">
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="assets/site.css?v=20261014-map">
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
+  <script src="data/map.js" defer></script>
+  <script src="assets/vendor/leaflet/leaflet.js" defer></script>
   <script src="assets/monitoring.js" defer></script>
+  <script src="assets/map.js" defer></script>
   <script src="assets/trends.js" defer></script>
-  <script src="assets/app.js?v=20261014-swwa" defer></script>
+  <script src="assets/app.js?v=20261014-map" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -25,6 +29,7 @@
       </a>
       <nav class="main-nav" aria-label="Main navigation" data-od-id="main-navigation">
         <a href="#/waters" data-nav="waters" aria-current="page">Explore waters</a>
+        <a href="#/map" data-nav="map">Map</a>
         <a href="#/approach" data-nav="approach">Approach &amp; sources</a>
         <a href="#/membership" data-nav="membership" data-od-id="membership-navigation">Membership</a>
         <span class="concept-label">Independent design concept</span>
