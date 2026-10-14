@@ -108,17 +108,15 @@ async function get(url) {
 // and its ?page=N windows overlapped, so no single request was known to hold the whole season.
 // Stops when a page is empty, repeats the previous page exactly (the site ignored ?page), reaches the
 // total the page reports, or, when maxEmpty is set, after that many pages in a row add nothing new.
-const sightings = {};
 async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
   let empty = 0, total = null, previous = null;
   for (const url of urls) {
     let html;
     try { html = await get(url); } catch (e) { if (DEBUG) console.log(`  ${label}: ${e.message}`); break; }
-    total ??= Number((/of\s+([\d,]+)\s+(?:results|items|entries)/i.exec(html)?.[1] || /([\d,]+)\s+results/i.exec(html)?.[1] || '').replace(/,/g, '')) || null;
+    total ??= Number((/of\s+([\d,]+)\s+(?:results|items|entries)/i.exec(html)?.[1] || '').replace(/,/g, '')) || null;
     const found = rowsFrom(html, now, false);
     const signature = found.map(r => r.week_start + r.odfw_name + r.total).join('|');
-    for (const r of found) { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; (sightings[label] ??= new Map()).set(k, [...(sightings[label].get(k) || []), urls.indexOf(url)]); }
-    const fresh = found.filter(r => { const k = r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total; if (seen.has(k)) return false; seen.add(k); return true; });
+    const fresh = found.filter(r => add(seen, r));
     rows.push(...fresh);
     if (DEBUG) console.log(`  ${label} ${url.replace(/^https:\/\/myodfw\.com/, '')}: ${found.length} rows, ${fresh.length} new`);
     if (!found.length || signature === previous || (total && seen.size >= total)) break;
@@ -126,52 +124,61 @@ async function collect(urls, seen, rows, now, label, maxEmpty = Infinity) {
     empty = fresh.length ? 0 : empty + 1;
     if (empty >= maxEmpty) break;
   }
-  if (DEBUG && total) console.log(`  ${label}: page says ${total} results`);
   return total;
+}
+const rowKey = r => r.week_start + '|' + r.odfw_name + '|' + r.zone + '|' + r.total;
+function add(seen, r) { const k = rowKey(r); if (seen.has(k)) return false; seen.add(k); return true; }
+
+// Zone and date filters from the schedule's own filter form (seen 2026-10-14).
+const ZONES = {1: 'Central', 2: 'Northeast', 3: 'Northwest', 4: 'Southeast', 5: 'Southwest', 6: 'Willamette'};
+const PRINT_LIMIT = 500;
+const iso = d => d.toISOString().slice(0, 10);
+
+// One print-view request, checked against the filter it asked for. Returns null when ODFW ignored the filter.
+async function printSlice(zoneId, from, to, now) {
+  const params = {field_zone_value: zoneId};
+  if (from) Object.assign(params, {field_planned_stocking_date_value: from, field_planned_stocking_date_end_value: to});
+  const found = rowsFrom(await get(PRINT + '?' + new URLSearchParams(params)), now, false);
+  const zoneOk = found.every(r => r.zone.toLowerCase().startsWith(ZONES[zoneId].toLowerCase()));
+  const dateOk = !from || found.every(r => r.week_start >= addDaysISO(from, -6) && r.week_start <= to);
+  if (DEBUG) console.log(`  zone ${ZONES[zoneId]}${from ? ` ${from}..${to}` : ''}: ${found.length} rows${zoneOk ? '' : ', zone filter ignored'}${dateOk ? '' : ', date filter ignored'}`);
+  return zoneOk && dateOk ? found : null;
+}
+const addDaysISO = (d, n) => iso(new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000));
+
+// A zone that fills the print view's 500-row window is split by date until every piece fits.
+async function zoneRows(zoneId, now, from = null, to = null, depth = 0) {
+  const found = await printSlice(zoneId, from, to, now);
+  if (found == null) return null;
+  if (found.length < PRINT_LIMIT) return found;
+  if (depth > 6) { console.log(`  zone ${ZONES[zoneId]} still at ${PRINT_LIMIT} rows after splitting; keeping what arrived`); return found; }
+  const start = from || iso(new Date(now.getTime() - 120 * 86400000)), end = to || iso(new Date(now.getTime() + 500 * 86400000));
+  const mid = addDaysISO(start, Math.floor((Date.parse(end) - Date.parse(start)) / 172800000));
+  const a = await zoneRows(zoneId, now, start, mid, depth + 1), b = await zoneRows(zoneId, now, addDaysISO(mid, 1), end, depth + 1);
+  return a && b ? [...a, ...b] : null;
 }
 
 async function scrape(now) {
-  const rows = [], seen = new Set();
+  const rows = [], seen = new Set(), counts = [];
+  let filtered = true;
+  for (const zoneId of Object.keys(ZONES)) {
+    let found = null;
+    try { found = await zoneRows(zoneId, now); } catch (e) { console.log(`  zone ${ZONES[zoneId]} failed: ${e.message}`); }
+    if (found == null) { filtered = false; break; }
+    const fresh = found.filter(r => add(seen, r));
+    rows.push(...fresh);
+    counts.push(`${ZONES[zoneId]} ${fresh.length}`);
+  }
+  if (filtered && rows.length) { console.log('  by zone: ' + counts.join(', ')); return {rows, source: PAGE, method: 'zones'}; }
+  // Fallback when ODFW stops honoring the filters: merge the print view's first 500 rows with the main
+  // schedule's 50-row pages. Those pages repeat some rows and skip others (101 repeats and 53 skips on
+  // 2026-10-14), so this can miss stockings and the log says so.
+  console.log('  zone filters unavailable; falling back to print view plus paging, which can miss rows');
+  rows.length = 0; seen.clear();
   const pages = (base, n) => Array.from({length: n}, (_, i) => i ? `${base}${base.includes('?') ? '&' : '?'}page=${i}` : base);
   await collect(pages(PRINT, 20), seen, rows, now, 'print pages', 2);
-  const total = await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
-  if (DEBUG) {
-    const main = sightings['schedule pages'] || new Map(), print = sightings['print pages'] || new Map();
-    const dups = [...main].filter(([, p]) => p.length > 1);
-    const samePage = dups.filter(([, p]) => new Set(p).size < p.length).length;
-    console.log(`  diagnostics: main pages listed ${[...main.values()].reduce((t, p) => t + p.length, 0)} rows, ${main.size} unique; ${dups.length} repeated (${samePage} within one page, ${dups.length - samePage} across pages)`);
-    for (const [k, p] of dups.slice(0, 6)) console.log(`    repeat: ${k} on pages ${p.join(', ')}`);
-    const printOnly = [...print.keys()].filter(k => !main.has(k));
-    console.log(`  diagnostics: ${printOnly.length} print-view rows never appeared in main pages${printOnly.length ? ', e.g. ' + printOnly.slice(0, 3).join(' ; ') : ''}`);
-    try {
-      const html = await get(PAGE);
-      for (const [i, f] of [...html.matchAll(/<form\b[^>]*>[\s\S]*?<\/form>/gi)].map(m => m[0]).entries()) {
-        const open = /<form\b[^>]*>/i.exec(f)[0];
-        const fields = [...f.matchAll(/<(select|input)\b[^>]*name="([^"]+)"[^>]*>/gi)].map(m => m[1].toLowerCase() + ':' + m[2]).filter(n => !/form_(build_id|token|id)/.test(n));
-        console.log(`  form ${i}: ${open.replace(/\s+/g, ' ').slice(0, 160)}\n    fields: ${fields.join(', ') || '(none)'}`);
-        for (const sel of f.matchAll(/<select\b[^>]*name="([^"]+)"[^>]*>([\s\S]*?)<\/select>/gi)) {
-          const opts = [...sel[2].matchAll(/<option[^>]*value="([^"]*)"[^>]*>([^<]*)/gi)].map(m => m[1] + '=' + decode(m[2]));
-          console.log(`    select ${sel[1]} (${opts.length}): ${opts.slice(0, 30).join(' | ')}`);
-        }
-      }
-    } catch (e) { console.log('  filter form unavailable: ' + e.message); }
-  }
-  // On 2026-10-14 the main schedule paged out to Oct 2027, but 1,019 listed rows held 971 unique ones. A sort
-  // with ties can repeat some rows across pages and skip others, so make a second pass in a column sort taken
-  // from the table's own header links. New rows from it are rows the first pass missed.
-  try {
-    const head = await get(PAGE);
-    const links = [...head.matchAll(/<th[^>]*>[\s\S]*?<a[^>]+href="([^"]*order=[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)].map(m => ({href: m[1].replace(/&amp;/g, '&'), text: decode(m[2])}));
-    if (DEBUG) console.log('  sortable columns: ' + (links.map(l => l.text + ' -> ' + l.href).join(' , ') || '(none)'));
-    const pick = links.find(l => /water/i.test(l.text)) || links[0];
-    if (pick) {
-      const base = new URL(pick.href, PAGE).toString().replace(/[?&]page=\d+/, '');
-      const before = rows.length;
-      await collect(pages(base, 60), seen, rows, now, 'second pass');
-      console.log(`  second pass added ${rows.length - before} rows the first pass missed`);
-    }
-  } catch (e) { console.log('  second pass skipped: ' + e.message); }
-  return {rows, source: PAGE, total};
+  await collect(pages(PAGE, 60), seen, rows, now, 'schedule pages');
+  return {rows, source: PAGE, method: 'paging'};
 }
 
 const now = new Date();
@@ -179,10 +186,10 @@ let previous = {rows: []};
 if (existsSync(OUT)) {
   try { previous = JSON.parse(readFileSync(OUT, 'utf8').replace(/^window\.ORFF_STOCKING = /, '').replace(/;\s*$/, '')); } catch {}
 }
-let scraped = [], source = PAGE, pageTotal = null;
+let scraped = [], method = null;
 try {
-  ({rows: scraped, source, total: pageTotal} = await scrape(now));
-  console.log(`ODFW schedule: ${scraped.length} rows` + (pageTotal ? ` (page reports ${pageTotal})` : ''));
+  ({rows: scraped, method} = await scrape(now));
+  console.log(`ODFW schedule: ${scraped.length} rows (${method === 'zones' ? 'complete, by zone' : 'paging fallback, may be incomplete'})`);
   for (const r of scraped.slice(0, 8)) console.log(`  ${r.week_start} ${r.waterbody} [${r.odfw_name}] (${r.zone}): ${r.total}`);
   console.log(`  weeks: ${[...new Set(scraped.map(r => r.week_start))].join(', ')}`);
 } catch (e) { console.log('ODFW schedule FAILED, keeping previous rows: ' + e.message); }
@@ -195,7 +202,7 @@ const rows = [...merged.values()].sort((a, b) => a.week_start.localeCompare(b.we
 const body = JSON.stringify(rows);
 if (body === JSON.stringify(previous.rows || [])) console.log('No change in stocking rows.');
 else {
-  writeFileSync(OUT, 'window.ORFF_STOCKING = ' + JSON.stringify({source: PAGE, fetched_at: now.toISOString(), keep_days: KEEP_DAYS, rows}) + ';\n');
+  writeFileSync(OUT, 'window.ORFF_STOCKING = ' + JSON.stringify({source: PAGE, fetched_at: now.toISOString(), keep_days: KEEP_DAYS, method, rows}) + ';\n');
   console.log(`Wrote data/stocking.js (${rows.length} rows)`);
 }
 if (STRICT && !scraped.length) process.exit(1);

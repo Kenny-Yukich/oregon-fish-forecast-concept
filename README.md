@@ -65,9 +65,9 @@ Open `#/stocking` from the main navigation.
 - **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
 - **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
-  - It merges every route to the schedule. ODFW plans about a year ahead (Oct 2026 to Oct 2027 on Oct 14, 2026, roughly 970 stockings).
-    - The print view only shows the first 500 rows, so it's merged with all of the 50-row main schedule pages.
-    - It then makes a second pass in a column sort taken from the table header. A sort with ties can repeat rows across pages and skip others, and the log reports how many rows the second pass recovered.
+  - It asks ODFW's print view for one zone at a time, using the schedule's own zone filter. A zone that hits the print view's 500-row limit is split into date ranges until each piece fits. Each response is checked against the filter it asked for.
+    - Why not paging: on Oct 14, 2026, paging the main schedule repeated 101 rows and skipped 53, and the print view on its own stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027.
+    - If ODFW stops honoring the filters, the fetcher falls back to paging and logs that the result may be incomplete.
   - It turns ODFW's shorthand names into readable ones ("EMPIRE LK, UPR" becomes "Upper Empire Lake") and keeps the original as `odfw_name`.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
