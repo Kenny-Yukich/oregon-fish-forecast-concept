@@ -43,6 +43,19 @@ Open `#/map` from the main navigation, or **Map** in any water's section bar. In
 
 Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
 
+## Fish counts and catch checks
+
+- **Catch checks.** The Columbia at Chinook Landing now shows ODFW's Troutdale numbers from the Oct 8 report (139 boats, 272 anglers, 54 coho and 12 jacks kept, 74 Chinook and 27 jacks released), plus the coho rule change on Oct 16.
+- **Dam and trap counts.** Water pages near a count site get an **Are fish in the system?** section, which says whether the site is above or below the water. `data/count-stations.js` holds the stations and those relationships:
+  - Bonneville Dam: Columbia at Chinook Landing, Lower Deschutes at Moody.
+  - The Dalles Dam: both Lower Deschutes reaches.
+  - Willamette Falls: Willamette at Cathedral Park, McKenzie at Leaburg.
+  - Sherars Falls, Leaburg Dam and Winchester Dam: these link to ODFW's own counts.
+- **Daily refresh.** `.github/workflows/fish-counts.yml` runs `scripts/fetch-counts.mjs` every morning (about 6:41 am Pacific). It pulls this year's and last year's daily counts for Bonneville, The Dalles and Willamette Falls from Columbia River DART, works out 7-day, year-to-date and same-date-last-year totals, and commits `data/counts.js` only when the numbers change. A failed fetch keeps the previous numbers. It can also be run by hand from the Actions tab, and pull requests that change the fetcher run a test fetch without committing.
+- Until the first run, count panels show links to the official counts instead of numbers.
+
+Counts show adult fish moving upstream past a point. They are run timing, not catch rates, and the site says so wherever they appear.
+
 ## Proposed membership
 
 Open `#/membership` from the main navigation. The concept proposes paid scores for specific river reaches and target species, explanations of their inputs and limitations, and score comparison within the directory. Price and benefits are a proposal, not an active subscription offer. The free guide keeps water records, access, reports, available station readings, restrictions and sources.

@@ -679,13 +679,19 @@
         "seasonal_detail": "Spring Chinook and autumn salmon are distinct planning windows. Run timing and in-season decisions matter more than a fixed best-month label; confirm the fishery and reach before choosing a trip.",
         "methods": "ODFW describes trolling flashers and bait or fishing lures from an anchored boat for spring Chinook. This is general technique background, not a current gear or retention authorization.",
         "report": {
-          "summary": "Troutdale-area checks recorded coho catches and Chinook releases; no lower-river walleye or sturgeon report.",
+          "summary": "Troutdale checks: 139 boats (272 anglers) kept 54 coho and 12 jacks; 74 Chinook and 27 jacks were released.",
           "reported_on": "2026-10-08",
-          "checked_on": "2026-10-12",
-          "coverage": "ODFW Troutdale reporting area, broader than Chinook Landing; catch checks are not measurements at the launch.",
+          "checked_on": "2026-10-14",
+          "coverage": "ODFW weekly catch checks for the Troutdale reporting area, broader than Chinook Landing. No lower-river walleye or sturgeon checks were reported.",
           "url": "https://myodfw.com/recreation-report/fishing-report/columbia-zone"
         },
         "alerts": [
+          {
+            "summary": "ODFW lists two adult coho a day, hatchery or wild, upstream of Warrior Rock through Oct 15, then hatchery coho only from Oct 16 to 31. Chinook and steelhead must be released. Confirm in-season changes.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.dfw.state.or.us/fish/OSCRP/CRM/docs/2026/2026%20Columbia%20River%20summer-fall%20regulations.pdf"
+          },
           {
             "summary": "OHA consumption guidance applies to lower Columbia sturgeon. Read the advisory before planning to eat a catch; retention permission is separate.",
             "status": "advisory",
@@ -699,7 +705,7 @@
             "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
           }
         ],
-        "checked_on": "2026-10-12",
+        "checked_on": "2026-10-14",
         "sources": [
           {
             "label": "ODFW: Portland fishing access",
@@ -724,6 +730,10 @@
           {
             "label": "OHA: current cyanobacteria advisories",
             "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          },
+          {
+            "label": "ODFW 2026 Columbia summer/fall regulations",
+            "url": "https://www.dfw.state.or.us/fish/OSCRP/CRM/docs/2026/2026%20Columbia%20River%20summer-fall%20regulations.pdf"
           }
         ]
       },
