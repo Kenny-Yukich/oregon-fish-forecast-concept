@@ -24,12 +24,12 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 
 ## Southwest Washington rivers
 
-Six Kelso and Longview area rivers were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
+Seven Kelso and Longview area reaches were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock, and Barrier Dam to Blue Creek), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
 
 - WDFW and most source sites could not be opened directly from the editing environment, so these records were built from search excerpts of the linked sources. Every Washington rules alert is therefore labeled **Needs a trip-day check** until someone confirms it at the source.
 - Coweeman, Toutle and Elochoman have no verified public fishing access, so they get no driving link. Coweeman's score is withheld while it is reported closed through October 31.
 - Records can now list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions, the way TroutRoute lists access points by river. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
-- Four of the rivers have USGS gauges connected (Castle Rock, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
+- Five of the reaches have USGS gauges connected (Castle Rock, below Mayfield Dam, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
 
 ## Water map
 
@@ -42,6 +42,19 @@ Open `#/map` from the main navigation, or **Map** in any water's section bar. In
 - Leaflet 1.9.4 is vendored in `assets/vendor/leaflet` (BSD-2-Clause, license included). Tiles and river lines are fetched by the visitor's browser only on the map page.
 
 Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
+
+## Fish counts and catch checks
+
+- **Catch checks.** The Columbia at Chinook Landing now shows ODFW's Troutdale numbers from the Oct 8 report (139 boats, 272 anglers, 54 coho and 12 jacks kept, 74 Chinook and 27 jacks released), plus the coho rule change on Oct 16.
+- **Dam and trap counts.** Water pages near a count site get an **Are fish in the system?** section, which says whether the site is above or below the water. `data/count-stations.js` holds the stations and those relationships:
+  - Bonneville Dam: Columbia at Chinook Landing, Lower Deschutes at Moody.
+  - The Dalles Dam: both Lower Deschutes reaches.
+  - Willamette Falls: Willamette at Cathedral Park, McKenzie at Leaburg.
+  - Sherars Falls, Leaburg Dam and Winchester Dam: these link to ODFW's own counts.
+- **Daily refresh.** `.github/workflows/fish-counts.yml` runs `scripts/fetch-counts.mjs` every morning (about 6:41 am Pacific). It pulls this year's and last year's daily counts for Bonneville, The Dalles and Willamette Falls from Columbia River DART, works out 7-day, year-to-date and same-date-last-year totals, and commits `data/counts.js` only when the numbers change. A failed fetch keeps the previous numbers. It can also be run by hand from the Actions tab, and pull requests that change the fetcher run a test fetch without committing.
+- Until the first run, count panels show links to the official counts instead of numbers.
+
+Counts show adult fish moving upstream past a point. They are run timing, not catch rates, and the site says so wherever they appear.
 
 ## Proposed membership
 

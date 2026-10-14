@@ -440,3 +440,18 @@ details[open] > summary { margin-bottom: 7px; }
   .map-toolbar { left: 52px; top: 10px; }
   .map-legend label { margin-left: 0; }
 }
+
+/* Dam and trap counts */
+.count-panel { border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; background: var(--surface); margin-top: 14px; }
+.count-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 16px; }
+.count-top h3 { margin: 4px 0 0; font-family: var(--font-display); font-weight: 400; font-size: 22px; }
+.count-table-wrap { overflow-x: auto; margin: 12px 0 6px; }
+.count-table { width: 100%; min-width: 0; table-layout: auto; border-collapse: collapse; font-size: 14px; }
+.count-table th, .count-table td { position: static; padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: right; background: none; box-shadow: none; }
+.count-table thead th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.count-table th:first-child { text-align: left; }
+.count-table tbody th { font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 14px; }
+.count-table td { font-variant-numeric: tabular-nums; white-space: nowrap; overflow-wrap: normal; }
+.count-cell { margin-top: 10px; }
+@media (max-width: 640px) { .count-table { font-size: 13px; } .count-table th, .count-table td { padding: 8px 6px; } .count-panel { padding: 16px; } }
+
