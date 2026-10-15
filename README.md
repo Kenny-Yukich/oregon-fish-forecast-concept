@@ -81,6 +81,17 @@ Open `#/stocking` from the main navigation.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
 
+## Angler posts
+
+`data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as a count in the directory.
+
+- **Collected:** Oct 15, 2026, by hand, with Apify. 430 posts from two public Facebook groups (Oregon Fishing, Oregon Fishing Network) and 120 TikTok videos (#oregonfishing plus the getrightkell and outdoorguy35 profiles), Sept 15 to Oct 15. This is not automated yet.
+- **Written up generically:** a short summary, the date, the platform and a link to the source post. No names, handles or photos.
+- **Location honesty:** each entry says when a post was on a different section of the river or did not say where.
+- **Scores:** a catch post on the water's own reach (or with the section unstated), from the last 14 days, can raise the score through an "Angler posts" input (15% for rivers, 20% for lakes). It is kept only when it raises the score, never lowers it, never creates a score where there was none, never overrides a rules hold and never raises confidence. Posts from other sections, conditions notes and secondhand mentions are shown but never scored.
+- **Display:** posts show for 30 days.
+- **Not in the guide yet:** `elsewhere` lists other waters anglers talked about, by number of posts, as a guide to which locations to add next.
+
 ## Fishing scores
 
 Every visitor sees the scores; there is no preview switch or paid tier on the site right now. The formula lives in `assets/member-preview.js` and both designs use it.

@@ -12,7 +12,7 @@ The homepage reads the shared data files (`data/*.js`) and score formula (`asset
 
 - **Idea:** "Read the river before you drive." A forest-ink field almanac: big Fraunces headlines, mono numbers for anything from a source, cream paper sections.
 - **Hero:** the supplied river illustration. A Three.js shader animates only the river: a mask is built from the artwork's own blue, and the water is redrawn with flowing foam in the same flat style. Pointer or touch sends a ripple. The static artwork stays underneath as the poster.
-- **Sections:** live wire of counts and gauges, this week's short list (top scores), fish counts from Bonneville, The Dalles and Willamette Falls, the full directory with search and filters, ODFW stocking this week, how a score is built (one pinned, scrubbed sequence), principles.
+- **Sections:** live wire of counts and gauges, this week's short list (top scores), what anglers are posting (from `data/angler.js`), fish counts from Bonneville, The Dalles and Willamette Falls, the full directory with search and filters, ODFW stocking this week, how a score is built (one pinned, scrubbed sequence), principles.
 - **Water pages:** `#/water/<id>` with report, notices, this morning's gauge reading against its 7-day median, dam counts, stocking, season and methods, score breakdown, access with editable driving origin, and sources.
 - Map and full stocking schedule link to the classic site at `classic/`.
 

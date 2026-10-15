@@ -139,6 +139,22 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .section.ink .lede, .section.ink .eyebrow { color: var(--on-ink-muted); }
 .section.paper-2 { background: var(--paper-2); }
 
+/* ---------- Angler posts ---------- */
+.word-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.word-h { font: 400 clamp(1.5rem, 2.4vw, 2rem)/1.1 var(--display); letter-spacing: -0.015em; margin: 0 0 10px; }
+.word-list { list-style: none; margin: 14px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.word-list li { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.word-list a { text-decoration: none; }
+.word-list a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+.word-list strong { font: 400 1.35rem/1.15 var(--display); }
+.word-list p { margin: 6px 0 4px; }
+.a-meta { font: 400 12px/1.4 var(--mono); color: var(--muted); }
+.anglers { margin-top: 24px; padding: 20px 22px; border-radius: 16px; border: 1px dashed var(--line); }
+.anglers .eyebrow { margin-bottom: 10px; }
+.anglers ul { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 14px; }
+.anglers li p { margin: 4px 0 6px; }
+.anglers .link { font-size: 14px; }
+
 /* ---------- Counts ---------- */
 .stations { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line-ink); }
 .station { padding: 34px 32px 38px 0; border-right: 1px solid var(--line-ink); }
@@ -381,7 +397,7 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
   .nav.menu-open { color: var(--on-ink); background: transparent; box-shadow: none; backdrop-filter: none; }
   .nav-toggle { display: grid; }
   .nav-cta { display: none; }
-  .hero-foot, .section-head, .stock-grid, .method-pin, .d-top { grid-template-columns: 1fr; }
+  .hero-foot, .section-head, .stock-grid, .method-pin, .d-top, .word-grid { grid-template-columns: 1fr; }
   .section-head .lede { justify-self: start; }
   .method-pin { min-height: 0; }
   .stations { grid-template-columns: 1fr; }
