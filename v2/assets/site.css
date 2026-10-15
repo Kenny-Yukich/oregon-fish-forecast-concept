@@ -195,7 +195,7 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .ring-row { display: flex; align-items: center; gap: 14px; }
 .ring-row small { display: block; font: 500 12px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .ring-row strong { font: 400 1.4rem/1.1 var(--display); }
-.preview-note { margin: 28px 0 0; font-size: 14px; color: var(--muted); max-width: 70ch; }
+.score-note { margin: 28px 0 0; font-size: 14px; color: var(--muted); max-width: 70ch; }
 
 /* ---------- Directory ---------- */
 .controls { display: grid; grid-template-columns: minmax(0, 1.4fr) auto auto auto; gap: 12px; align-items: center; margin-bottom: 18px; position: sticky; top: 76px; z-index: 5; padding: 12px; margin-left: -12px; margin-right: -12px; border-radius: 20px; background: color-mix(in oklch, var(--paper) 92%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
@@ -257,17 +257,6 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .principles .n { font: 400 13px var(--mono); color: var(--sun); }
 .principles h3 { font: 400 clamp(1.8rem, 3vw, 2.8rem)/1.02 var(--display); letter-spacing: -0.02em; margin: 14px 0 14px; }
 .principles p { margin: 0; color: var(--on-ink-muted); max-width: 46ch; }
-
-/* ---------- Membership ---------- */
-.member { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-.price { display: flex; align-items: baseline; gap: 10px; margin: 26px 0; }
-.price b { font: 400 clamp(4rem, 8vw, 7rem)/.9 var(--mono); letter-spacing: -0.06em; }
-.price span { color: var(--muted); }
-.member ul { list-style: none; margin: 0 0 30px; padding: 0; display: grid; gap: 12px; }
-.member li { display: flex; gap: 12px; align-items: flex-start; }
-.member li .icon { color: var(--river-deep); margin-top: 3px; }
-.member-art { position: relative; aspect-ratio: 720 / 348; }
-.member-art img { width: 100%; height: auto; }
 
 /* ---------- Footer ---------- */
 .footer { background: var(--ink-deep); color: var(--on-ink); padding: clamp(80px, 10vw, 140px) var(--gutter) 28px; }
@@ -392,7 +381,7 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
   .nav.menu-open { color: var(--on-ink); background: transparent; box-shadow: none; backdrop-filter: none; }
   .nav-toggle { display: grid; }
   .nav-cta { display: none; }
-  .hero-foot, .section-head, .stock-grid, .member, .method-pin, .d-top { grid-template-columns: 1fr; }
+  .hero-foot, .section-head, .stock-grid, .method-pin, .d-top { grid-template-columns: 1fr; }
   .section-head .lede { justify-self: start; }
   .method-pin { min-height: 0; }
   .stations { grid-template-columns: 1fr; }
