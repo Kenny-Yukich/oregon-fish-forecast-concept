@@ -7,7 +7,7 @@
   const packet = window.ORFF_DATA;
   const view = document.getElementById('view');
   if (!packet || !Array.isArray(packet.waters)) {
-    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records could not load. Keep the v2 folder beside the data folder, or open the <a href="classic/">classic site</a>.</p></section>');
+    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records did not load. Reload the page to try again.</p></section>');
     return;
   }
   const waters = packet.waters;
@@ -67,7 +67,7 @@
       '<li><span class="a-meta">' + time(p.date) + ' · ' + esc(p.platform) + ' · ' + esc(kinds[p.kind] || p.kind) + '</span><p>' + esc(p.note) + (p.where ? ' <span class="muted">(' + esc(p.where) + ')</span>' : '') + '</p>' + ext(p.url, 'Source post') + '</li>').join('') + '</ul>' +
       '<p class="small">Word of mouth from public Facebook groups and TikTok, read ' + fmtDate(window.ORFF_ANGLER.checked_on) + '. Not verified. Recent catch posts on this water can raise its score, never lower it.</p></div>';
   }
-  const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load.'};
+  const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load. Reload the page to see this score.'};
   function stockRows(id) {
     const names = window.ORFF_STOCKING_MATCH?.[id];
     if (!names) return [];
@@ -124,10 +124,10 @@
       '<div class="shortlist">' + scored.map(({w, s, f}) =>
         '<a class="pick" href="#/water/' + esc(w.id) + '" data-reveal>' +
         '<div class="ring-row">' + ring(s.value) + '<div><small>Fishing score</small><strong>' + esc(s.label) + '</strong><small>' + esc(s.confidence) + ' confidence</small></div></div>' +
-        '<div><h3>' + esc(w.name) + '</h3><p class="reach">' + esc(w.reach) + '</p></div>' +
+        '<div><h3>' + esc(w.name) + '</h3><p class="reach">' + esc(w.reach) + '</p>' + (s.notes?.length ? '<p class="pick-note">' + icon('danger-triangle-linear') + esc(s.notes[0]) + '</p>' : '') + '</div>' +
         '<blockquote>' + esc(w.planning.report.summary.length > 140 ? w.planning.report.summary.slice(0, 137).trim() + '…' : w.planning.report.summary) + '</blockquote>' +
         '<div class="foot"><span>' + esc(w.region) + ' · ' + esc(f.text) + '</span><span class="go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></div></a>').join('') +
-      '</div><p class="score-note">Every score shows its inputs on the water page. Rules notices always come first.</p></div></section>';
+      '</div><p class="score-note">Every score shows its inputs and rules notices on the water page.</p></div></section>';
   }
 
   function counts() {
@@ -177,7 +177,7 @@
     const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.fah != null ? ' · ' + Math.round(g.fah) + '°F' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
       : '<span class="muted">' + (g.mon?.mode === 'operator' ? 'Operator flow data' : g.mon?.mode === 'historical' ? 'Historical gauge only' : g.mon?.station ? 'No current gauge reading' : 'No live feed') + '</span>';
     const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
-      : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : 'Not enough to score') + '</span>';
+      : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : s.status === 'unavailable' ? 'Score unavailable' : 'Not enough to score') + '</span>';
     return '<li class="row"><a href="#/water/' + esc(w.id) + '">' +
       '<span class="idx" aria-hidden="true">' + pad(i + 1) + '</span>' +
       '<span class="name">' + esc(w.name) + '<small class="muted">' + esc(w.reach) + '</small></span>' +
@@ -222,7 +222,7 @@
           const name = g ? '<a href="#/water/' + esc(g.id) + '"><strong>' + esc(r.waterbody) + '</strong></a>' : '<strong>' + esc(r.waterbody) + '</strong>';
           return '<li data-reveal>' + name + '<span class="num">' + num(r.total) + ' fish</span><small>' + esc(r.zone) + (g ? ' · In the guide' : '') + '</small></li>';
         }).join('') + '</ul></div>'
-        : '<p class="lede">No stockings are listed for the coming weeks. ' + ext(window.ORFF_STOCKING?.source || 'https://myodfw.com/fishing/species/trout/stocking-schedule', 'Check ODFW’s schedule') + '</p>') +
+        : '<p class="lede">' + (window.ORFF_STOCKING ? 'No stockings are listed for the coming weeks. ' : 'The stocking schedule did not load. ') + ext(window.ORFF_STOCKING?.source || 'https://myodfw.com/fishing/species/trout/stocking-schedule', 'Check ODFW’s schedule') + '</p>') +
       '</div></section>';
   }
 
@@ -230,7 +230,7 @@
     const f = [['tone', 30, 'Report tone', 'What the latest dated report says, word for word.'], ['run', 25, 'Run strength', 'This year’s dam counts against the same date last year.'], ['cond', 20, 'River conditions', 'Gauge flow against its 7-day median, and water temperature for cold-water fish.'], ['fresh', 15, 'Report freshness', 'A week-old report counts for more than a month-old one.'], ['stock', 10, 'Recent stocking', 'An ODFW trout release in the last few weeks.']];
     return '<section class="section" id="method" aria-labelledby="m-h"><div class="inner method-pin">' +
       '<div><p class="eyebrow">How a river score is built</p><h2 id="m-h" class="display h-section" data-split tabindex="-1">Five inputs, <em>weighed</em> in the open.</h2>' +
-      '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score entirely. Lakes use stocking 40%, report tone 35% and freshness 25%. Recent angler posts can nudge a score up, never down.</p>' +
+      '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score, or limits it to the species still open. Lakes use stocking 40%, report tone 35% and freshness 25%. Recent angler posts can nudge a score up, never down.</p>' +
       '</div>' +
       '<div class="stack"><div class="stack-bar" role="img" aria-label="River score weights: report tone 30%, run strength 25%, river conditions 20%, report freshness 15%, recent stocking 10%">' +
       f.map(([k, w]) => '<span class="f-' + k + '" style="width:' + w + '%" data-stack></span>').join('') + '</div>' +
@@ -239,7 +239,7 @@
   }
 
   function principles() {
-    const p = [['Missing stays missing.', 'If a gauge is down or a report is undated, the page says so. Nothing is estimated to fill the gap.'], ['A gauge is not an access point.', 'Readings describe one station. Directions only ever go to a documented public access.'], ['Every claim has a date and a source.', 'Reports, notices and counts link to the agency or operator that published them.'], ['Rules come before scores.', 'A closure or restriction holds a score, and a trip-day check is flagged when a rule could not be confirmed.']];
+    const p = [['Missing stays missing.', 'If a gauge is down or a report is undated, the page says so. Nothing is estimated to fill the gap.'], ['A gauge is not an access point.', 'Readings describe one station. Directions only ever go to a documented public access.'], ['Every claim has a date and a source.', 'Reports, notices and counts link to the agency or operator that published them.'], ['Rules come before scores.', 'A closure or restriction holds a score or limits it to the species still open, and a trip-day check is flagged when a rule could not be confirmed.']];
     return '<section class="section ink" aria-labelledby="p-h"><div class="inner"><div class="section-head"><div><p class="eyebrow">What this site won’t do</p><h2 id="p-h" class="display h-section" data-split>Honest about <em>the river.</em></h2></div></div>' +
       '<ol class="principles">' + p.map(([h, t], i) => '<li data-reveal><span class="n">' + pad(i + 1) + '</span><h3>' + h + '</h3><p>' + t + '</p></li>').join('') + '</ol></div></section>';
   }
@@ -254,7 +254,7 @@
     const r = a.reviewed || {};
     return '<section class="section paper-2" id="anglers" aria-labelledby="an-h"><div class="inner">' +
       '<div class="section-head"><div><p class="eyebrow">Word on the water · ' + fmtDate(a.window_start) + ' to ' + fmtDate(a.checked_on) + '</p><h2 id="an-h" class="display h-section" data-split tabindex="-1">What anglers are <em>posting.</em></h2></div>' +
-      '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos in the last 30 days, every morning. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
+      '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos from the last 30 days. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
       '<div class="word-grid"><div><h3 class="word-h">In the guide</h3><ul class="word-list">' + inGuide.map(({w, posts}) =>
         '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + fmtDate(lead(posts).date) + '</span></li>').join('') + '</ul></div>' +
       '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).slice().sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
@@ -271,7 +271,7 @@
     const idx = waters.indexOf(w), prev = waters[(idx - 1 + waters.length) % waters.length], next = waters[(idx + 1) % waters.length];
     const scoreBlock = s.status === 'scored'
       ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence</p>'
-      : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
+      : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : s.status === 'unavailable' ? 'Score unavailable' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
     const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? 'USGS gauge' : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length]];
 
     const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2><p class="quote" data-reveal>' + esc(p.report.summary) + '</p>' +
@@ -295,7 +295,7 @@
       if (g.fah != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.fah.toFixed(1) + '°F</b><p>At the gauge</p></div>');
       const stamp = g.flow?.time || null;
       river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">The river this morning</h2>' +
-        (cards.length ? '<div class="gauge">' + cards.join('') + '</div>' : '<p class="small">The gauge returned no reading in the last 36 hours, so nothing is shown as current.</p>') +
+        (cards.length ? '<div class="gauge">' + cards.join('') + '</div>' : '<p class="small">' + (window.ORFF_CONDITIONS ? 'The gauge returned no reading in the last 36 hours, so nothing is shown as current. The official station record below has its latest data.' : 'Today’s gauge readings did not load. The official station record below has the latest reading.') + '</p>') +
         '<p class="small" style="margin-top:16px">' + esc(g.mon.name) + '. ' + esc(g.mon.coverage) + (stamp ? ' Reading from ' + new Date(stamp).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles', timeZoneName: 'short'}) + ', provisional USGS data.' : '') + '</p>' +
         '<p>' + ext('https://waterdata.usgs.gov/monitoring-location/' + g.mon.station + '/', 'Official station record') + '</p></section>';
     } else if (g.mon) {
@@ -410,7 +410,7 @@
       if (hero) {
         // Navigation, message and CTA stay readable: the CTA and lede only move, they never start hidden.
         const tl = gsap.timeline({defaults: {ease: 'expo.out'}});
-        tl.from(hero.querySelectorAll('.hero-title .wi, .d-title .wi'), {yPercent: 110, duration: 1.1, stagger: 0.06}, 0.05)
+        tl.from(hero.querySelectorAll('.hero-title .wi, .d-title .wi'), {yPercent: 140, duration: 1.1, stagger: 0.06}, 0.05)
           .from(hero.querySelectorAll('.eyebrow, .d-reach, .crumb'), {y: 14, duration: .8}, 0.1)
           .from(hero.querySelectorAll('.hero-lede, .hero-actions, .facts, .d-score'), {y: 26, duration: 1, stagger: .08}, 0.25);
         const plate = hero.querySelector('.plate-frame');
@@ -425,7 +425,7 @@
       }
       // Section headings word by word, then their supporting copy.
       [...root.querySelectorAll('.section [data-split]'), ...(footFresh ? [footWord] : [])].forEach(h => {
-        gsap.from(h.querySelectorAll('.wi'), {yPercent: 110, duration: 1, stagger: .05, ease: 'expo.out', scrollTrigger: {trigger: h, start: 'top 85%', once: true}});
+        gsap.from(h.querySelectorAll('.wi'), {yPercent: 140, duration: 1, stagger: .05, ease: 'expo.out', scrollTrigger: {trigger: h, start: 'top 85%', once: true}});
       });
       root.querySelectorAll('[data-reveal]').forEach(el => {
         gsap.from(el, {y: 36, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: {trigger: el, start: 'top 90%', once: true}});

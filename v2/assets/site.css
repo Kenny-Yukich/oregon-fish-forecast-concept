@@ -59,7 +59,7 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .h-section { font-size: clamp(2.6rem, 6.4vw, 6.2rem); }
 .lede { font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: var(--muted); max-width: 46ch; margin: 22px 0 0; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .12em .32em; margin: 0 -.12em -.32em; }
 .wi { display: inline-block; will-change: transform; }
 
 /* ---------- Buttons and links ---------- */
@@ -199,6 +199,8 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .pick h3 { font: 400 1.9rem/1 var(--display); letter-spacing: -0.02em; margin: 0; }
 .pick .reach { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
 .pick blockquote { margin: auto 0 0; font: italic 400 1.02rem/1.4 var(--display); }
+.pick .pick-note { display: flex; gap: 6px; align-items: flex-start; margin: 8px 0 0; font-size: 14px; line-height: 1.4; color: var(--ink); }
+.pick .pick-note .icon { color: var(--alert); margin-top: 1px; }
 .pick .foot { display: flex; justify-content: space-between; align-items: center; font: 400 12px var(--mono); color: var(--muted); }
 .pick .go { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); transition: transform .45s var(--ease); }
 .pick:hover .go { transform: rotate(-45deg); }
@@ -234,7 +236,8 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .row a::before { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: bottom; transition: transform .5s var(--ease); z-index: -1; border-radius: 4px; }
 .row a:hover, .row a:focus-visible { color: var(--paper); }
 .row a:hover::before, .row a:focus-visible::before { transform: scaleY(1); }
-.row a:hover .muted, .row a:focus-visible .muted, .row a:hover .idx, .row a:focus-visible .idx { color: var(--on-ink-muted); }
+.row a:hover .muted, .row a:focus-visible .muted, .row a:hover .idx, .row a:focus-visible .idx,
+.row a:hover .chip.none, .row a:focus-visible .chip.none, .row a:hover .mini-score.off, .row a:focus-visible .mini-score.off { color: var(--on-ink-muted); }
 .row .idx { font: 400 13px var(--mono); color: var(--muted); }
 .row .name { font: 400 clamp(1.4rem, 2.2vw, 2rem)/1.05 var(--display); letter-spacing: -0.02em; }
 .row .name small { display: block; font: 400 14px/1.3 var(--sans); letter-spacing: 0; margin-top: 6px; }
@@ -360,8 +363,8 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .access small { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--on-ink-muted); }
 .access strong { display: block; font: 400 1.2rem/1.2 var(--display); margin: 4px 0; }
 .access p { margin: 0 0 10px; font-size: 14px; }
-.card.ink .link { color: var(--sun); text-decoration-color: color-mix(in oklch, var(--sun) 40%, transparent); }
-.origin { display: grid; gap: 6px; margin-top: 8px; }
+.card.ink .link, .section.ink .link { color: var(--sun); text-decoration-color: color-mix(in oklch, var(--sun) 40%, transparent); }
+.origin { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 8px; }
 .origin label { font: 400 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--on-ink-muted); }
 .origin div { display: flex; gap: 8px; }
 .origin input { flex: 1; min-width: 0; min-height: 46px; border-radius: 999px; border: 1.5px solid var(--line-ink); background: transparent; padding: 0 16px; color: var(--on-ink); }
