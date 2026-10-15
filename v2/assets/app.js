@@ -7,12 +7,14 @@
   const packet = window.ORFF_DATA;
   const view = document.getElementById('view');
   if (!packet || !Array.isArray(packet.waters)) {
-    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records could not load. Keep the v2 folder beside the data folder, or open the <a href="../">classic site</a>.</p></section>');
+    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records could not load. Keep the v2 folder beside the data folder, or open the <a href="classic/">classic site</a>.</p></section>');
     return;
   }
   const waters = packet.waters;
   const byId = new Map(waters.map(w => [w.id, w]));
   const heroHTML = view.querySelector('.hero').outerHTML;
+  // The shader module sits next to this script, wherever the page that loads it lives.
+  const riverURL = new URL('river.js', document.currentScript?.src || location.href).href;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const gsap = window.gsap, ST = window.ScrollTrigger;
   const motionOK = () => !!gsap && !!ST && !reduced.matches;
@@ -52,7 +54,8 @@
     const ok = x => x && Number.isFinite(x.latest) && fetched - Date.parse(x.time) <= 36 * 3600000;
     const flow = ok(data?.flow) ? data.flow : null, temp = ok(data?.temp) ? data.temp : null;
     const cel = temp ? (/F/.test(temp.unit || '') ? (temp.latest - 32) * 5 / 9 : temp.latest) : null;
-    return {mon, flow, cel, fetched};
+    const fah = cel != null ? cel * 9 / 5 + 32 : null;
+    return {mon, flow, cel, fah, fetched};
   }
   const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load.'};
   function stockRows(id) {
@@ -91,7 +94,7 @@
     }
     for (const w of waters) {
       const g = gauge(w);
-      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + (g.cel != null ? ' <span>' + g.cel.toFixed(1) + '°C</span>' : ''));
+      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + (g.fah != null ? ' <span>' + Math.round(g.fah) + '°F</span>' : ''));
     }
     const t = today(), mon = mondayOf(t);
     const week = (window.ORFF_STOCKING?.rows || []).filter(r => r.week_start === mon);
@@ -161,7 +164,7 @@
   }
   function rowHTML(w, i) {
     const f = freshness(w), g = gauge(w), s = score(w), notices = w.planning.alerts.length;
-    const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.cel != null ? ' · ' + g.cel.toFixed(1) + '°C' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
+    const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.fah != null ? ' · ' + Math.round(g.fah) + '°F' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
       : '<span class="muted">' + (g.mon?.mode === 'operator' ? 'Operator flow data' : g.mon?.mode === 'historical' ? 'Historical gauge only' : g.mon?.station ? 'No current gauge reading' : 'No live feed') + '</span>';
     const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Prototype score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
       : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : 'Not enough to score') + '</span>';
@@ -203,7 +206,7 @@
       '<div class="section-head"><div><p class="eyebrow">ODFW trout stocking</p><h2 id="st-h" class="display h-section" data-split tabindex="-1">Fresh trout, <em>' + esc(label) + '.</em></h2></div>' +
       '<p class="lede" data-reveal>ODFW’s planned releases, read every morning. These are plans, not confirmed releases, and the agency can change them.</p></div>' +
       (week.length ? '<div class="stock-grid"><div data-reveal><p class="stock-total num" data-count="' + total + '">' + num(total) + '</p><p class="lede" style="margin-top:14px">trout planned across ' + week.length + (week.length === 1 ? ' water' : ' waters') + ' for ' + esc(week[0].week_label) + '.</p>' +
-        '<p style="margin-top:28px"><a class="btn btn-ink" href="../#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
+        '<p style="margin-top:28px"><a class="btn btn-ink" href="classic/#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
         '<ul class="stock-list">' + week.map(r => {
           const g = guideFor(r.waterbody);
           const name = g ? '<a href="#/water/' + esc(g.id) + '"><strong>' + esc(r.waterbody) + '</strong></a>' : '<strong>' + esc(r.waterbody) + '</strong>';
@@ -237,8 +240,8 @@
       '<div class="price" data-reveal><b>$4.99</b><span>a month, proposed</span></div>' +
       '<ul data-reveal>' + ['A score for every river and lake, with every input shown', 'Scores for the species you target, held when rules apply', 'Compare and sort the whole directory by score'].map(t => '<li>' + icon('check-circle-linear') + '<span>' + t + '</span></li>').join('') + '</ul>' +
       '<p class="small" data-reveal>A proposal, not a live subscription. Nothing is charged and no account exists. The free guide keeps every record, access point, notice and source.</p>' +
-      '<p style="margin-top:26px" data-reveal><a class="btn btn-ink" href="../#/membership">See the membership proposal ' + icon('arrow-right-up-linear') + '</a></p></div>' +
-      '<div class="member-art" data-reveal><img src="../assets/weather-fish.webp" width="720" height="348" alt="The Oregon Fish Forecast mark: a fish whose body holds a forest, a river, mountains and changing weather." loading="lazy"></div></div></section>';
+      '<p style="margin-top:26px" data-reveal><a class="btn btn-ink" href="classic/#/membership">See the membership proposal ' + icon('arrow-right-up-linear') + '</a></p></div>' +
+      '<div class="member-art" data-reveal><img src="assets/weather-fish.webp" width="720" height="348" alt="The Oregon Fish Forecast mark: a fish whose body holds a forest, a river, mountains and changing weather." loading="lazy"></div></div></section>';
   }
 
   function homeHTML() { return heroHTML + wire() + shortlist() + counts() + directory() + stocking() + method() + principles() + membership(); }
@@ -271,7 +274,7 @@
         cards.push('<div class="gauge-card" data-reveal><small>Flow</small><b class="num">' + num(g.flow.latest) + ' <span style="font-size:.45em">cfs</span></b>' +
           (pos != null ? '<div class="flow-scale" role="img" aria-label="' + word + ' the 7-day median of ' + num(g.flow.median7) + ' cfs"><i style="left:50%"></i><b style="left:' + pos.toFixed(1) + '%"></b></div><p>' + word + ' the 7-day median (' + num(g.flow.median7) + ' cfs)</p>' : '<p>No 7-day median available</p>') + '</div>');
       }
-      if (g.cel != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.cel.toFixed(1) + '°C</b><p>' + Math.round(g.cel * 9 / 5 + 32) + '°F at the gauge</p></div>');
+      if (g.fah != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.fah.toFixed(1) + '°F</b><p>At the gauge</p></div>');
       const stamp = g.flow?.time || null;
       river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">The river this morning</h2>' +
         (cards.length ? '<div class="gauge">' + cards.join('') + '</div>' : '<p class="small">The gauge returned no reading in the last 36 hours, so nothing is shown as current.</p>') +
@@ -312,7 +315,7 @@
       : '<p>No verified public access is documented for this reach, so no directions are offered.</p>' + (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '')) + '</div>';
     const seen = new Set();
     const sources = '<div class="card" data-reveal><h2>Sources</h2><ul class="sources">' + [...(p.sources || []), ...(w.sources || [])].filter(x => { const k = x.label + x.url; if (seen.has(k)) return false; seen.add(k); return true; }).map(x => '<li>' + ext(x.url, x.label) + '</li>').join('') + '</ul>' +
-      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p><p class="small"><a class="link" href="../#/water/' + esc(w.id) + '">Open in the classic site</a></p></div>';
+      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p><p class="small"><a class="link" href="classic/#/water/' + esc(w.id) + '">Open in the classic site</a></p></div>';
 
     return '<article><header class="d-hero"><div class="inner">' +
       '<a class="crumb" href="#/waters">' + icon('arrow-left-linear') + 'All waters</a>' +
@@ -444,7 +447,7 @@
     } catch { return; }
     let cancelled = false;
     stopRiver = () => { cancelled = true; };
-    import('./river.js').then(m => { if (!cancelled) stopRiver = m.mountRiver(plate); }).catch(() => {});
+    import(riverURL).then(m => { if (!cancelled) stopRiver = m.mountRiver(plate); }).catch(() => {});
   }
 
   /* ---------- Router ---------- */

@@ -1,12 +1,12 @@
 # Oregon Fish Forecast, version two
 
-A motion-led redesign that lives beside the classic site. The classic site (the repository root) is not changed.
+The current homepage design. The page itself is the repository's root `index.html`; its code lives in this folder (`v2/assets`, `v2/vendor`). The earlier design is kept at `classic/`.
 
-Online: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/v2/**
+Online: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/** (the old `/v2/` address forwards there, keeping any `#/water/…` route).
 
 ## Same data, every morning
 
-v2 reads the classic site's data files (`../data/*.js`) and its score formula (`../assets/member-preview.js`), so the daily data workflow updates both versions and both show the same scores. Nothing in v2 copies or freezes the data.
+The homepage reads the shared data files (`data/*.js`) and score formula (`assets/member-preview.js`), the same ones the classic site uses, so the daily data workflow updates both and both show the same scores. Nothing here copies or freezes the data.
 
 ## Direction
 
@@ -14,7 +14,7 @@ v2 reads the classic site's data files (`../data/*.js`) and its score formula (`
 - **Hero:** the supplied river illustration. A Three.js shader animates only the river: a mask is built from the artwork's own blue, and the water is redrawn with flowing foam in the same flat style. Pointer or touch sends a ripple. The static artwork stays underneath as the poster.
 - **Sections:** live wire of counts and gauges, this week's short list (prototype scores), fish counts from Bonneville, The Dalles and Willamette Falls, the full directory with search and filters, ODFW stocking this week, how a score is built (one pinned, scrubbed sequence), principles, the membership proposal.
 - **Water pages:** `#/water/<id>` with report, notices, this morning's gauge reading against its 7-day median, dam counts, stocking, season and methods, score breakdown, access with editable driving origin, and sources.
-- Map, full stocking schedule and the membership page link to the classic site.
+- Map, full stocking schedule and the membership page link to the classic site at `classic/`.
 
 ## Motion and fallbacks
 
@@ -26,7 +26,7 @@ v2 reads the classic site's data files (`../data/*.js`) and its score formula (`
 
 ## Assets
 
-- Artwork: the two supplied Oregon Fish Forecast WebP files, used unchanged from `../assets/`.
+- Artwork: the two supplied Oregon Fish Forecast WebP files, used unchanged from `assets/`.
 - Icons: Solar by 480 Design via Iconify (`@iconify-json/solar`), CC BY 4.0, inlined in `assets/icons.js`.
 - Fonts: Fraunces, Instrument Sans, JetBrains Mono from Google Fonts, with system fallbacks.
 - Libraries are vendored in `vendor/` (see `vendor/README.md`).

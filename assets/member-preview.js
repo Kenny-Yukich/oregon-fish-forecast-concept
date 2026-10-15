@@ -84,7 +84,7 @@
     if (fresh(data.temp) && species(w).some(s => COLD_WATER.test(s))) {
       const cel = /F/.test(data.temp.unit || '') ? (data.temp.latest - 32) * 5 / 9 : data.temp.latest, fah = cel * 9 / 5 + 32;
       const [value, word] = cel < 4 ? [45, 'Cold water'] : cel < 7 ? [70, 'Cool water'] : cel <= 16 ? [90, 'Good water temperature'] : cel < 19 ? [55, 'Warm water'] : [25, 'Too warm for trout and salmon'];
-      parts.push({value, word, detail: cel.toFixed(1) + '°C (' + Math.round(fah) + '°F)'});
+      parts.push({value, word, detail: fah.toFixed(1) + '°F'});
     }
     if (!parts.length) return null;
     const value = Math.round(parts.reduce((t, p) => t + p.value, 0) / parts.length);
