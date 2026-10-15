@@ -54,7 +54,8 @@
     const ok = x => x && Number.isFinite(x.latest) && fetched - Date.parse(x.time) <= 36 * 3600000;
     const flow = ok(data?.flow) ? data.flow : null, temp = ok(data?.temp) ? data.temp : null;
     const cel = temp ? (/F/.test(temp.unit || '') ? (temp.latest - 32) * 5 / 9 : temp.latest) : null;
-    return {mon, flow, cel, fetched};
+    const fah = cel != null ? cel * 9 / 5 + 32 : null;
+    return {mon, flow, cel, fah, fetched};
   }
   const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load.'};
   function stockRows(id) {
@@ -93,7 +94,7 @@
     }
     for (const w of waters) {
       const g = gauge(w);
-      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + (g.cel != null ? ' <span>' + g.cel.toFixed(1) + '°C</span>' : ''));
+      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + (g.fah != null ? ' <span>' + Math.round(g.fah) + '°F</span>' : ''));
     }
     const t = today(), mon = mondayOf(t);
     const week = (window.ORFF_STOCKING?.rows || []).filter(r => r.week_start === mon);
@@ -163,7 +164,7 @@
   }
   function rowHTML(w, i) {
     const f = freshness(w), g = gauge(w), s = score(w), notices = w.planning.alerts.length;
-    const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.cel != null ? ' · ' + g.cel.toFixed(1) + '°C' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
+    const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.fah != null ? ' · ' + Math.round(g.fah) + '°F' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
       : '<span class="muted">' + (g.mon?.mode === 'operator' ? 'Operator flow data' : g.mon?.mode === 'historical' ? 'Historical gauge only' : g.mon?.station ? 'No current gauge reading' : 'No live feed') + '</span>';
     const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Prototype score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
       : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : 'Not enough to score') + '</span>';
@@ -273,7 +274,7 @@
         cards.push('<div class="gauge-card" data-reveal><small>Flow</small><b class="num">' + num(g.flow.latest) + ' <span style="font-size:.45em">cfs</span></b>' +
           (pos != null ? '<div class="flow-scale" role="img" aria-label="' + word + ' the 7-day median of ' + num(g.flow.median7) + ' cfs"><i style="left:50%"></i><b style="left:' + pos.toFixed(1) + '%"></b></div><p>' + word + ' the 7-day median (' + num(g.flow.median7) + ' cfs)</p>' : '<p>No 7-day median available</p>') + '</div>');
       }
-      if (g.cel != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.cel.toFixed(1) + '°C</b><p>' + Math.round(g.cel * 9 / 5 + 32) + '°F at the gauge</p></div>');
+      if (g.fah != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.fah.toFixed(1) + '°F</b><p>At the gauge</p></div>');
       const stamp = g.flow?.time || null;
       river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">The river this morning</h2>' +
         (cards.length ? '<div class="gauge">' + cards.join('') + '</div>' : '<p class="small">The gauge returned no reading in the last 36 hours, so nothing is shown as current.</p>') +
