@@ -182,7 +182,7 @@
       '<span class="idx" aria-hidden="true">' + pad(i + 1) + '</span>' +
       '<span class="name">' + esc(w.name) + '<small class="muted">' + esc(w.reach) + '</small></span>' +
       '<span class="cell c-species"><b class="muted">' + esc(w.region) + ' · ' + kindLabel(w) + '</b>' + esc(w.planning.target_species.slice(0, 3).join(', ')) + '</span>' +
-      '<span class="cell c-report"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span>' + (notices ? ' <span class="muted">· ' + notices + (notices === 1 ? ' notice' : ' notices') + '</span>' : '') + (anglerFor(w.id).length ? ' <span class="muted">· ' + anglerFor(w.id).length + (anglerFor(w.id).length === 1 ? ' angler post' : ' angler posts') + '</span>' : '') + '</span>' +
+      '<span class="cell c-report"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span>' + (notices ? ' <span class="muted">· ' + notices + (notices === 1 ? ' notice' : ' notices') + '</span>' : '') + (anglerFor(w.id).length ? ' <span class="muted">· Angler report ' + fmtDate(anglerFor(w.id)[0].date) + '</span>' : '') + '</span>' +
       '<span class="cell c-cond">' + cond + '</span>' +
       '<span class="c-score">' + sc + '</span>' +
       '<span class="arrow" aria-hidden="true">' + icon('arrow-right-linear') + '</span></a></li>';
@@ -254,11 +254,11 @@
     const r = a.reviewed || {};
     return '<section class="section paper-2" id="anglers" aria-labelledby="an-h"><div class="inner">' +
       '<div class="section-head"><div><p class="eyebrow">Word on the water · ' + fmtDate(a.window_start) + ' to ' + fmtDate(a.checked_on) + '</p><h2 id="an-h" class="display h-section" data-split tabindex="-1">What anglers are <em>posting.</em></h2></div>' +
-      '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from two public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
+      '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos in the last 30 days, every morning. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
       '<div class="word-grid"><div><h3 class="word-h">In the guide</h3><ul class="word-list">' + inGuide.map(({w, posts}) =>
-        '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + posts.length + (posts.length === 1 ? ' post' : ' posts') + ' · latest ' + fmtDate(posts[0].date) + '</span></li>').join('') + '</ul></div>' +
+        '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + fmtDate(lead(posts).date) + '</span></li>').join('') + '</ul></div>' +
       '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).slice().sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
-        '<li data-reveal><strong>' + esc(e.water) + '</strong><p>' + esc(e.note) + '</p><span class="a-meta">' + e.posts + (e.posts === 1 ? ' post' : ' posts') + ' · latest ' + fmtDate(e.latest) + '</span></li>').join('') + '</ol></div></div>' +
+        '<li data-reveal><strong>' + esc(e.water) + '</strong><p>' + esc(e.note) + '</p><span class="a-meta">' + fmtDate(e.latest) + '</span></li>').join('') + '</ol></div></div>' +
       '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
   }
 

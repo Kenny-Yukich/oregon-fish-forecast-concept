@@ -116,7 +116,7 @@
     const posts = (window.ORFF_ANGLER?.waters?.[w.id] || []).filter(p => p.scoring && days(p.date, t) >= 0 && days(p.date, t) <= ANGLER_DAYS);
     const pos = posts.filter(p => p.signal === 'positive').length, mixed = posts.filter(p => p.signal === 'mixed').length;
     if (!pos && !mixed) return null;
-    return {key: 'angler', value: pos >= 2 ? 90 : pos ? 80 : 60, display: (pos + mixed) + ((pos + mixed) === 1 ? ' recent post' : ' recent posts'),
+    return {key: 'angler', value: pos >= 2 ? 90 : pos ? 80 : 60, display: (pos + mixed) === 1 ? 'A recent catch post' : 'Recent catch posts',
       reason: 'Word of mouth from public Facebook groups and TikTok in the last two weeks, not verified. Angler posts can raise a score but never lower it.'};
   }
 
