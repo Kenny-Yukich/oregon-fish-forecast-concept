@@ -1,5 +1,5 @@
 // Collects new angler posts from public Facebook groups and TikTok (via Apify), has Claude read them, and merges
-// the fishing reports into data/angler.js. Run daily by .github/workflows/daily-data.yml. Node 18+.
+// the fishing reports into data/angler.js. Run weekly by .github/workflows/angler-posts.yml. Node 18+.
 // Needs APIFY_TOKEN and ANTHROPIC_API_KEY. Without them, or when a step fails, the existing file is kept.
 // STRICT=1 exits non-zero on failure instead of keeping the old file.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -11,7 +11,7 @@ const SEEN = new URL('../data/angler-seen.json', import.meta.url);
 const STRICT = process.env.STRICT === '1';
 const WINDOW_DAYS = 30;      // posts stay on the site this long
 const SEEN_DAYS = 45;        // how long post links are remembered so they are not read twice
-const MAX_LOOKBACK = 7;      // after missed runs, catch up on at most this many days
+const MAX_LOOKBACK = 15;     // after a missed week, catch up on at most this many days
 const MODEL = 'claude-opus-5-5';
 
 export const GROUPS = [
@@ -95,7 +95,7 @@ Fields:
 - where: "" when the post is on the guide's reach. Otherwise say where it was relative to the reach, briefly, for example "Tidewater, below this reach", "Rogue, section not stated", "Tagged at Detroit Lake".
 - note: one short, plain sentence summarizing the report, at most 25 words. Paraphrase. No names, usernames, business names, phone numbers or prices. Write it so a reader learns what was caught or what conditions were like.
 - signal: positive (fish caught, fishing good), mixed (slow but some fish), negative (skunked, poor), or neutral (conditions only).
-- scoring: true only when kind is catch or guide, the post is on this guide reach or does not say which section of this water, and it describes fishing in the last few days. Otherwise false.
+- scoring: true only when kind is catch or guide, the post is on this guide reach or does not say which section of this water, and it describes fishing in the few days before it was posted. Otherwise false.
 
 A post can name more than one water; return the most specific one. Return an empty list when nothing qualifies.`;
 }
@@ -172,7 +172,7 @@ export function merge(current, posts, reports, waterIds, today, readCounts) {
 
 export function render(data) {
   return `/* Angler posts: word of mouth from public social media. Written by scripts/fetch-angler.mjs; edit that script, not this file.
-   Posts from public Facebook groups and TikTok are collected with Apify and read by Claude every morning.
+   Posts from public Facebook groups and TikTok are collected with Apify and read by Claude every week.
    - Summaries are short and general. No names, handles or photos.
    - \`where\` says when a post was on another section of the river or did not say where on the river it was.
    - \`scoring: true\` only for a catch or guide report on this water, with the section unstated or on this reach.
@@ -196,7 +196,7 @@ async function main() {
   const waters = win.ORFF_DATA.waters;
   const current = loadCurrent(readFileSync(OUT, 'utf8'));
   const seen = existsSync(SEEN) ? JSON.parse(readFileSync(SEEN, 'utf8')) : {};
-  // Two days back, or further after missed runs, so nothing posted between runs is skipped.
+  // Back to the last run plus a day of overlap (at least two days), so nothing posted between runs is skipped.
   const since = current.checked_on ? Math.round((Date.parse(today) - Date.parse(current.checked_on)) / 864e5) : 0;
   const lookback = Math.min(MAX_LOOKBACK, Math.max(2, since + 1));
   const oldest = daysAgo(today, lookback);
