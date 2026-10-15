@@ -3,7 +3,7 @@
 ## Site layout
 
 - **Homepage (`index.html`):** the version-two design: motion-led, with a river shader on the supplied artwork. Its code is in `v2/`; see [v2/README.md](v2/README.md).
-- **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule, approach page and membership proposal. The homepage links to it for those pages.
+- **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule and approach page. The homepage links to it for those pages.
 - **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
 - The old `/v2/` address forwards to the homepage.
 
@@ -27,7 +27,6 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 - Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
 - Monitoring coverage entries for every water. Sixteen USGS station connections can request actual latest observations individually. Three operator references, two historical references and three unresolved coverage gaps remain honestly labeled. Not every water has a working live feed.
 - Nearby, upstream, downstream and mainstem/tributary differences are stated explicitly. No station substitutes for a public access point or on-site safety assessment.
-- A future membership page at **$4.99 USD/month**, with river scores as the proposed paid feature. All 17 river entries link to the plan; no computed scores, payment collection or member accounts are simulated.
 
 ## Southwest Washington rivers
 
@@ -82,9 +81,9 @@ Open `#/stocking` from the main navigation.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
 
-## Member preview
+## Fishing scores
 
-On the **Membership** page, **See the member preview** turns on the proposed paid scores across the guide. A banner on every page says it's a preview and has **Exit preview**. The setting is kept in that browser only.
+Every visitor sees the scores; there is no preview switch or paid tier on the site right now. The formula lives in `assets/member-preview.js` and both designs use it.
 
 - **River scores.** Each river gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating, built by `assets/member-preview.js` from inputs already on the site:
   - Report tone, 30%.
@@ -103,13 +102,9 @@ On the **Membership** page, **See the member preview** turns on the proposed pai
 - **Missing inputs.** Missing inputs are skipped and lower confidence, and unverified rule notices lower it too. A water needs at least one input besides gauge readings to be scored.
 - **Unscored on Oct 14, 2026.** Crooked River below Opal Springs and the Elochoman, which have no dated report. Coweeman is held until its closure ends.
 - **Where scores appear.** In the directory, a score shows under each water's name, with a **Best score first** sort. Water pages show the score with a breakdown of every input and its source.
-- **Not validated.** The formula has not been checked against catch results, and every score is tagged **Preview**.
+- **Not yet tested against catches.** The formula has not been checked against catch results. Scores are shown without a label on the site.
 
-## Proposed membership
-
-Open `#/membership` from the main navigation. The concept proposes paid scores for specific river reaches and target species, explanations of their inputs and limitations, and score comparison within the directory. Price and benefits are a proposal, not an active subscription offer. The free guide keeps water records, access, reports, available station readings, restrictions and sources.
-
-No scoring method has been validated or connected. River details say **Not calculated yet**; both Lower Deschutes reaches instead show **Rules review pending**, retain their original restriction notices and dates, and explain that payment would not override those restrictions. Lakes and reservoirs do not receive river-score labels. Membership links remember the originating reach so visitors can return to it.
+Old `#/membership` links on the classic pages go to the water directory.
 
 ## Readings
 
@@ -129,4 +124,4 @@ For community trends, aggregate distinct consenting sessions per water over a ro
 
 ## Verification
 
-Lightweight JavaScript and static checks cover all detail routes, source fidelity, the two blocked driving routes, filter/search/empty-state logic, changed origins, trend deduplication, missing/stale reading handling, membership navigation, all 17 river-score states and both Lower Deschutes notices. No original-site modification was performed. Responsive sizing and keyboard controls received static review; rendered desktop/phone verification remains outstanding.
+Lightweight JavaScript and static checks cover all detail routes, source fidelity, the two blocked driving routes, filter/search/empty-state logic, changed origins, trend deduplication, missing/stale reading handling, all 17 river-score states and both Lower Deschutes notices. No original-site modification was performed. Responsive sizing and keyboard controls received static review; rendered desktop/phone verification remains outstanding.

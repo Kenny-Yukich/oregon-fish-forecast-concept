@@ -110,14 +110,14 @@
     if (!scored.length) return '';
     return '<section class="section" id="shortlist" aria-labelledby="sl-h"><div class="inner">' +
       '<div class="section-head"><div><p class="eyebrow">This week’s short list</p><h2 id="sl-h" class="display h-section" data-split tabindex="-1">Worth the <em>drive</em> this week.</h2></div>' +
-      '<p class="lede" data-reveal>The four waters with the strongest prototype score today, from dated reports, gauges, dam counts and stocking. Open one to see every input.</p></div>' +
+      '<p class="lede" data-reveal>The four waters scoring highest today, from dated reports, gauges, dam counts and stocking. Open one to see every input.</p></div>' +
       '<div class="shortlist">' + scored.map(({w, s, f}) =>
         '<a class="pick" href="#/water/' + esc(w.id) + '" data-reveal>' +
-        '<div class="ring-row">' + ring(s.value) + '<div><small>Prototype score</small><strong>' + esc(s.label) + '</strong><small>' + esc(s.confidence) + ' confidence</small></div></div>' +
+        '<div class="ring-row">' + ring(s.value) + '<div><small>Fishing score</small><strong>' + esc(s.label) + '</strong><small>' + esc(s.confidence) + ' confidence</small></div></div>' +
         '<div><h3>' + esc(w.name) + '</h3><p class="reach">' + esc(w.reach) + '</p></div>' +
         '<blockquote>' + esc(w.planning.report.summary.length > 140 ? w.planning.report.summary.slice(0, 137).trim() + '…' : w.planning.report.summary) + '</blockquote>' +
         '<div class="foot"><span>' + esc(w.region) + ' · ' + esc(f.text) + '</span><span class="go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></div></a>').join('') +
-      '</div><p class="preview-note"><span class="tag">Preview</span> Scores are a prototype formula for the proposed membership. They have not been checked against catch results. Rules notices always come first.</p></div></section>';
+      '</div><p class="score-note">Every score shows its inputs on the water page. Rules notices always come first.</p></div></section>';
   }
 
   function counts() {
@@ -159,14 +159,14 @@
       '<label class="search"><span class="sr-only">Search waters</span>' + icon('magnifer-linear') + '<input id="q" type="search" placeholder="Search a river, lake, region or species" autocomplete="off" value="' + esc(dir.q) + '"></label>' +
       '<div class="seg" role="group" aria-label="Water type">' + [['all', 'All'], ['river', 'Rivers'], ['lake', 'Lakes']].map(([v, l]) => '<button type="button" data-kind="' + v + '" aria-pressed="' + (dir.kind === v) + '">' + l + '</button>').join('') + '</div>' +
       '<label><span class="sr-only">Region</span><select class="select" id="region"><option value="all">All regions</option>' + regions.map(r => '<option' + (dir.region === r ? ' selected' : '') + '>' + esc(r) + '</option>').join('') + '</select></label>' +
-      '<label><span class="sr-only">Sort</span><select class="select" id="sort">' + [['fresh', 'Freshest report'], ['score', 'Best prototype score'], ['name', 'A to Z']].map(([v, l]) => '<option value="' + v + '"' + (dir.sort === v ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label>' +
+      '<label><span class="sr-only">Sort</span><select class="select" id="sort">' + [['fresh', 'Freshest report'], ['score', 'Best score'], ['name', 'A to Z']].map(([v, l]) => '<option value="' + v + '"' + (dir.sort === v ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label>' +
       '</div><p class="result-count" id="result-count" role="status" aria-live="polite"></p><ul class="rows" id="rows"></ul></div></section>';
   }
   function rowHTML(w, i) {
     const f = freshness(w), g = gauge(w), s = score(w), notices = w.planning.alerts.length;
     const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.fah != null ? ' · ' + Math.round(g.fah) + '°F' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
       : '<span class="muted">' + (g.mon?.mode === 'operator' ? 'Operator flow data' : g.mon?.mode === 'historical' ? 'Historical gauge only' : g.mon?.station ? 'No current gauge reading' : 'No live feed') + '</span>';
-    const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Prototype score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
+    const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
       : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : 'Not enough to score') + '</span>';
     return '<li class="row"><a href="#/water/' + esc(w.id) + '">' +
       '<span class="idx" aria-hidden="true">' + pad(i + 1) + '</span>' +
@@ -221,7 +221,7 @@
     return '<section class="section" id="method" aria-labelledby="m-h"><div class="inner method-pin">' +
       '<div><p class="eyebrow">How a river score is built</p><h2 id="m-h" class="display h-section" data-split tabindex="-1">Five inputs, <em>weighed</em> in the open.</h2>' +
       '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score entirely. Lakes use stocking 40%, report tone 35% and freshness 25%.</p>' +
-      '<p style="margin-top:22px" data-reveal><span class="tag">Prototype</span></p></div>' +
+      '</div>' +
       '<div class="stack"><div class="stack-bar" role="img" aria-label="River score weights: report tone 30%, run strength 25%, river conditions 20%, report freshness 15%, recent stocking 10%">' +
       f.map(([k, w]) => '<span class="f-' + k + '" style="width:' + w + '%" data-stack></span>').join('') + '</div>' +
       '<ul class="factor-list">' + f.map(([k, w, l, d]) => '<li data-factor><span class="sw f-' + k + '" aria-hidden="true"></span><strong>' + l + '</strong><span class="num">' + w + '%</span><p>' + d + '</p></li>').join('') + '</ul></div>' +
@@ -234,17 +234,7 @@
       '<ol class="principles">' + p.map(([h, t], i) => '<li data-reveal><span class="n">' + pad(i + 1) + '</span><h3>' + h + '</h3><p>' + t + '</p></li>').join('') + '</ol></div></section>';
   }
 
-  function membership() {
-    return '<section class="section" id="membership" aria-labelledby="mb-h"><div class="inner member"><div>' +
-      '<p class="eyebrow">Proposed membership</p><h2 id="mb-h" class="display h-section" data-split>Scores for the reach <em>you fish.</em></h2>' +
-      '<div class="price" data-reveal><b>$4.99</b><span>a month, proposed</span></div>' +
-      '<ul data-reveal>' + ['A score for every river and lake, with every input shown', 'Scores for the species you target, held when rules apply', 'Compare and sort the whole directory by score'].map(t => '<li>' + icon('check-circle-linear') + '<span>' + t + '</span></li>').join('') + '</ul>' +
-      '<p class="small" data-reveal>A proposal, not a live subscription. Nothing is charged and no account exists. The free guide keeps every record, access point, notice and source.</p>' +
-      '<p style="margin-top:26px" data-reveal><a class="btn btn-ink" href="classic/#/membership">See the membership proposal ' + icon('arrow-right-up-linear') + '</a></p></div>' +
-      '<div class="member-art" data-reveal><img src="assets/weather-fish.webp" width="720" height="348" alt="The Oregon Fish Forecast mark: a fish whose body holds a forest, a river, mountains and changing weather." loading="lazy"></div></div></section>';
-  }
-
-  function homeHTML() { return heroHTML + wire() + shortlist() + counts() + directory() + stocking() + method() + principles() + membership(); }
+  function homeHTML() { return heroHTML + wire() + shortlist() + counts() + directory() + stocking() + method() + principles(); }
 
   /* ---------- Water page ---------- */
   function waterHTML(w) {
@@ -252,7 +242,7 @@
     const points = p.access_points?.length ? p.access_points : p.access_point ? [{label: p.access_point.label, type: 'Documented access', note: p.access_summary, map_query: p.access_point.map_query}] : [];
     const idx = waters.indexOf(w), prev = waters[(idx - 1 + waters.length) % waters.length], next = waters[(idx + 1) % waters.length];
     const scoreBlock = s.status === 'scored'
-      ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence<br>Prototype score, not validated</p>'
+      ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence</p>'
       : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
     const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? 'USGS gauge' : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length]];
 
@@ -305,7 +295,7 @@
       '<li data-reveal><strong>' + esc(x.label) + ' · ' + Math.round(x.weight * 100) + '%</strong><span class="num">' + x.value + '</span><span class="bar"><i data-bar style="transform:scaleX(' + (x.value / 100) + ')"></i></span><p><b>' + esc(x.display) + '.</b> ' + esc(x.reason) + '</p></li>').join('') + '</ul>' +
       (s.missing.length ? '<p class="small" style="margin-top:14px">Not available: ' + esc(s.missing.join(', ')) + '. Missing inputs are skipped, not guessed.</p>' : '') +
       s.notes.map(n => '<div class="callout"><strong>Note</strong>' + esc(n) + '</div>').join('') +
-      '<p class="small" style="margin-top:14px"><span class="tag">Preview</span> A prototype formula for the proposed membership, not checked against catch results.</p></section>' : '';
+      '</section>' : '';
 
     const access = '<div class="card ink" data-reveal><h2>Getting there</h2>' + (points.length
       ? '<ul class="access">' + points.map(pt => '<li><small>' + esc(pt.type || 'Access') + '</small><strong>' + esc(pt.label) + '</strong>' + (pt.note ? '<p>' + esc(pt.note) + '</p>' : '') +
@@ -451,7 +441,7 @@
   }
 
   /* ---------- Router ---------- */
-  const SECTIONS = {waters: 'waters', counts: 'counts', stocking: 'stocking', method: 'method', shortlist: 'shortlist', membership: 'membership'};
+  const SECTIONS = {waters: 'waters', counts: 'counts', stocking: 'stocking', method: 'method', shortlist: 'shortlist'};
   let current = null, firstRender = true;
   const curtain = document.createElement('div');
   curtain.className = 'curtain'; curtain.setAttribute('aria-hidden', 'true');

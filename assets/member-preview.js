@@ -1,18 +1,13 @@
-/* Member preview: shows the proposed paid scores using a prototype formula.
+/* Fishing scores, shown to every visitor.
    The formula is transparent and uses only data already on the site: the dated report's wording and age,
-   dam counts against last year, USGS flow and water temperature, and ODFW stocking. It is not validated
-   and every score says so. A rules notice withholds a score unless the record names the species that can
+   dam counts against last year, USGS flow and water temperature, and ODFW stocking. It has not yet been
+   checked against catch results. A rules notice withholds a score unless the record names the species that can
    still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman). */
 (() => {
   'use strict';
-  const KEY = 'orff-concept.preview';
-  const read = () => { try { return localStorage.getItem(KEY) === 'member'; } catch { return false; } };
-  let on = read();
-  function set(value) {
-    on = value;
-    try { if (value) localStorage.setItem(KEY, 'member'); else localStorage.removeItem(KEY); } catch {}
-    window.dispatchEvent(new CustomEvent('orff-preview-change'));
-  }
+  // Scores are open to everyone, so `on` is always true. `set` stays as a no-op for older callers.
+  const on = true;
+  function set() {}
 
   const POSITIVE = /\b(good|excellent|strong|productive|consistent|active|success|successful|improving|great|hot|best|coho are in)\b/i;
   const NEGATIVE = /\b(slow|poor|tough|closed|ended|no (?:dated|report)|unconfirmed|withheld)\b/i;
