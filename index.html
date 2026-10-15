@@ -4,57 +4,116 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="oklch(30.561% 0.06410 163.509)">
-  <meta name="description" content="Compare 31 Oregon and Southwest Washington fishing reaches, with documented access, species, dated reports and source context. A separate design concept.">
-  <title>Explore waters · Oregon Fish Forecast</title>
+  <meta name="theme-color" content="#0f2e22">
+  <meta name="description" content="Oregon Fish Forecast, version two. Dated reports, river gauges, dam counts and trout stocking for 31 Oregon and Southwest Washington reaches, on one page. A separate design concept.">
+  <title>Oregon Fish Forecast · Read the river</title>
   <link rel="icon" href="assets/weather-fish.webp" type="image/webp">
-  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="assets/site.css?v=20261014-scores">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="v2/assets/site.css">
+  <!-- Shared data. These are the same files the classic site reads, refreshed daily by the data workflow. -->
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
-  <script src="data/map.js" defer></script>
   <script src="data/count-stations.js" defer></script>
   <script src="data/counts.js" defer></script>
   <script src="data/stocking.js" defer></script>
   <script src="data/stocking-match.js" defer></script>
   <script src="data/conditions.js" defer></script>
-  <script src="assets/vendor/leaflet/leaflet.js" defer></script>
-  <script src="assets/monitoring.js" defer></script>
-  <script src="assets/map.js" defer></script>
+  <!-- The prototype score formula is shared with the classic site so both show the same numbers. -->
   <script src="assets/member-preview.js" defer></script>
-  <script src="assets/trends.js" defer></script>
-  <script src="assets/app.js?v=20261014-scores" defer></script>
+  <script src="v2/vendor/gsap.min.js" defer></script>
+  <script src="v2/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="v2/vendor/lenis.min.js" defer></script>
+  <script src="v2/assets/icons.js" defer></script>
+  <script src="v2/assets/app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <header class="site-header" data-od-id="site-header">
-    <div class="wrap header-inner">
-      <a class="brand" href="#/waters" aria-label="Oregon Fish Forecast home" data-od-id="brand-home">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="mark" href="#/" aria-label="Oregon Fish Forecast, home">
         <img src="assets/weather-fish.webp" width="720" height="348" alt="">
-        <span class="brand-name">Oregon<span>Fish Forecast</span></span>
+        <span>Oregon <em>Fish Forecast</em></span>
       </a>
-      <nav class="main-nav" aria-label="Main navigation" data-od-id="main-navigation">
-        <a href="#/waters" data-nav="waters" aria-current="page">Explore waters</a>
-        <a href="#/map" data-nav="map">Map</a>
-        <a href="#/stocking" data-nav="stocking">Stocking</a>
-        <a href="#/approach" data-nav="approach">Approach &amp; sources</a>
-        <a href="#/membership" data-nav="membership" data-od-id="membership-navigation">Membership</a>
-        <span class="concept-label">Independent design concept</span>
+      <nav aria-label="Main">
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#/waters">Waters</a></li>
+          <li><a href="#/counts">Fish counts</a></li>
+          <li><a href="#/stocking">Stocking</a></li>
+          <li><a href="#/method">Method</a></li>
+          <li><a href="classic/#/map">Map <span aria-hidden="true">↗</span></a></li>
+        </ul>
       </nav>
+      <a class="nav-cta" href="#/waters">Find a water</a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Menu</span><span class="bars" aria-hidden="true"></span>
+      </button>
     </div>
   </header>
-  <div id="preview-banner" class="preview-banner" role="region" aria-label="Member preview" hidden></div>
-  <main id="main-content" tabindex="-1">
-    <div id="app">
-      <section class="wrap not-found"><h1>Oregon, one reach at a time.</h1><p>Opening the local water directory…</p></section>
+
+  <main id="main" tabindex="-1">
+    <div id="view">
+      <!-- Static first frame. It is complete without JavaScript, WebGL or motion. -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow on-ink">Oregon &amp; Southwest Washington · 31 reaches · refreshed every morning</p>
+          <h1 id="hero-title" class="hero-title" data-split>Read the river <em>before you drive.</em></h1>
+          <div class="hero-foot">
+            <p class="hero-lede">Dated fishing reports, river gauges, dam counts and ODFW trout stocking for every reach, side by side. When something is missing, we say so.</p>
+            <div class="hero-actions">
+              <a class="btn btn-sun" href="#/waters">Find today’s water</a>
+              <a class="btn btn-ghost" href="#/method">How it works</a>
+            </div>
+          </div>
+        </div>
+        <figure class="plate" id="plate">
+          <div class="plate-frame">
+            <img class="plate-img" src="assets/river-country-landscape.webp" width="1280" height="683" alt="Illustration of a blue river winding between evergreen forest toward snowy mountains under a yellow sun." fetchpriority="high">
+          </div>
+          <figcaption>Supplied Oregon Fish Forecast artwork. It shows river country in general, not any listed water.</figcaption>
+        </figure>
+      </section>
+      <noscript>
+        <section class="noscript">
+          <p>The water directory, fish counts and stocking lists need JavaScript. The <a href="classic/">classic site</a> has the same records, and the raw data is in <a href="data/waters.json">waters.json</a>.</p>
+        </section>
+      </noscript>
     </div>
-    <noscript><p class="wrap">Enable JavaScript to search the local directory and open water details. The complete editorial packet is available in <a href="data/waters.json">waters.json</a>.</p></noscript>
   </main>
-  <footer class="site-footer" data-od-id="site-footer">
-    <div class="wrap footer-inner">
-      <div><div class="footer-brand">See you by the water.</div><p>Oregon Fish Forecast · A separate comparison concept</p></div>
-      <p>Editorial sources reviewed October 12, 2026; Washington rivers added October 14.<br>Check the exact reach and current rules before your trip.</p>
-      <a class="text-link" href="#/approach">About the information <span aria-hidden="true">↗</span></a>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <p class="footer-word" data-split>See you by the water.</p>
+      <div class="footer-cols">
+        <div>
+          <h2 class="footer-h">This site</h2>
+          <ul>
+            <li><a href="#/waters">All waters</a></li>
+            <li><a href="#/counts">Fish counts</a></li>
+            <li><a href="#/stocking">Trout stocking</a></li>
+            <li><a href="#/method">Method</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-h">Classic version</h2>
+          <ul>
+            <li><a href="classic/">Directory table</a></li>
+            <li><a href="classic/#/map">Water map</a></li>
+            <li><a href="classic/#/stocking">Full stocking schedule</a></li>
+            <li><a href="classic/#/approach">Approach &amp; sources</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-h">Credits</h2>
+          <p>Fish and river artwork supplied by Oregon Fish Forecast. Icons: <a href="https://icon-sets.iconify.design/solar/" target="_blank" rel="noopener noreferrer">Solar</a> by 480 Design (CC BY 4.0). Motion: GSAP, Lenis. River shader: Three.js.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-base">
+      <p>Oregon Fish Forecast · version two · an independent design concept, not an active service.</p>
+      <p>Check the exact reach and current rules before every trip.</p>
     </div>
   </footer>
 </body>

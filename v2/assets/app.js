@@ -7,12 +7,14 @@
   const packet = window.ORFF_DATA;
   const view = document.getElementById('view');
   if (!packet || !Array.isArray(packet.waters)) {
-    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records could not load. Keep the v2 folder beside the data folder, or open the <a href="../">classic site</a>.</p></section>');
+    view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records could not load. Keep the v2 folder beside the data folder, or open the <a href="classic/">classic site</a>.</p></section>');
     return;
   }
   const waters = packet.waters;
   const byId = new Map(waters.map(w => [w.id, w]));
   const heroHTML = view.querySelector('.hero').outerHTML;
+  // The shader module sits next to this script, wherever the page that loads it lives.
+  const riverURL = new URL('river.js', document.currentScript?.src || location.href).href;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const gsap = window.gsap, ST = window.ScrollTrigger;
   const motionOK = () => !!gsap && !!ST && !reduced.matches;
@@ -203,7 +205,7 @@
       '<div class="section-head"><div><p class="eyebrow">ODFW trout stocking</p><h2 id="st-h" class="display h-section" data-split tabindex="-1">Fresh trout, <em>' + esc(label) + '.</em></h2></div>' +
       '<p class="lede" data-reveal>ODFW’s planned releases, read every morning. These are plans, not confirmed releases, and the agency can change them.</p></div>' +
       (week.length ? '<div class="stock-grid"><div data-reveal><p class="stock-total num" data-count="' + total + '">' + num(total) + '</p><p class="lede" style="margin-top:14px">trout planned across ' + week.length + (week.length === 1 ? ' water' : ' waters') + ' for ' + esc(week[0].week_label) + '.</p>' +
-        '<p style="margin-top:28px"><a class="btn btn-ink" href="../#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
+        '<p style="margin-top:28px"><a class="btn btn-ink" href="classic/#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
         '<ul class="stock-list">' + week.map(r => {
           const g = guideFor(r.waterbody);
           const name = g ? '<a href="#/water/' + esc(g.id) + '"><strong>' + esc(r.waterbody) + '</strong></a>' : '<strong>' + esc(r.waterbody) + '</strong>';
@@ -237,8 +239,8 @@
       '<div class="price" data-reveal><b>$4.99</b><span>a month, proposed</span></div>' +
       '<ul data-reveal>' + ['A score for every river and lake, with every input shown', 'Scores for the species you target, held when rules apply', 'Compare and sort the whole directory by score'].map(t => '<li>' + icon('check-circle-linear') + '<span>' + t + '</span></li>').join('') + '</ul>' +
       '<p class="small" data-reveal>A proposal, not a live subscription. Nothing is charged and no account exists. The free guide keeps every record, access point, notice and source.</p>' +
-      '<p style="margin-top:26px" data-reveal><a class="btn btn-ink" href="../#/membership">See the membership proposal ' + icon('arrow-right-up-linear') + '</a></p></div>' +
-      '<div class="member-art" data-reveal><img src="../assets/weather-fish.webp" width="720" height="348" alt="The Oregon Fish Forecast mark: a fish whose body holds a forest, a river, mountains and changing weather." loading="lazy"></div></div></section>';
+      '<p style="margin-top:26px" data-reveal><a class="btn btn-ink" href="classic/#/membership">See the membership proposal ' + icon('arrow-right-up-linear') + '</a></p></div>' +
+      '<div class="member-art" data-reveal><img src="assets/weather-fish.webp" width="720" height="348" alt="The Oregon Fish Forecast mark: a fish whose body holds a forest, a river, mountains and changing weather." loading="lazy"></div></div></section>';
   }
 
   function homeHTML() { return heroHTML + wire() + shortlist() + counts() + directory() + stocking() + method() + principles() + membership(); }
@@ -312,7 +314,7 @@
       : '<p>No verified public access is documented for this reach, so no directions are offered.</p>' + (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '')) + '</div>';
     const seen = new Set();
     const sources = '<div class="card" data-reveal><h2>Sources</h2><ul class="sources">' + [...(p.sources || []), ...(w.sources || [])].filter(x => { const k = x.label + x.url; if (seen.has(k)) return false; seen.add(k); return true; }).map(x => '<li>' + ext(x.url, x.label) + '</li>').join('') + '</ul>' +
-      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p><p class="small"><a class="link" href="../#/water/' + esc(w.id) + '">Open in the classic site</a></p></div>';
+      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p><p class="small"><a class="link" href="classic/#/water/' + esc(w.id) + '">Open in the classic site</a></p></div>';
 
     return '<article><header class="d-hero"><div class="inner">' +
       '<a class="crumb" href="#/waters">' + icon('arrow-left-linear') + 'All waters</a>' +
@@ -444,7 +446,7 @@
     } catch { return; }
     let cancelled = false;
     stopRiver = () => { cancelled = true; };
-    import('./river.js').then(m => { if (!cancelled) stopRiver = m.mountRiver(plate); }).catch(() => {});
+    import(riverURL).then(m => { if (!cancelled) stopRiver = m.mountRiver(plate); }).catch(() => {});
   }
 
   /* ---------- Router ---------- */

@@ -1,14 +1,21 @@
-# Oregon Fish Forecast — comparison concept
+# Oregon Fish Forecast
 
-Open **index.html**. All site code, editorial data and artwork are local; no install or server is required. Keep the assets and data folders beside the entry file.
+## Site layout
 
-## Online comparison
+- **Homepage (`index.html`):** the version-two design: motion-led, with a river shader on the supplied artwork. Its code is in `v2/`; see [v2/README.md](v2/README.md).
+- **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule, approach page and membership proposal. The homepage links to it for those pages.
+- **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
+- The old `/v2/` address forwards to the homepage.
 
-GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/**
+GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/** (classic: `/classic/`)
 
-This separate public repository serves the static site from the root of its main branch. It does not deploy to, modify, or replace the original Oregon Fish Forecast app. The comparison asks search engines not to index it.
+This separate public repository serves the static site from the root of its main branch. It does not deploy to, modify, or replace the original Oregon Fish Forecast app. The site asks search engines not to index it.
 
 Only the site, local artwork/data and documentation are published. Local checks, editor configuration, credentials and skill files are excluded.
+
+## Classic site
+
+The notes below describe the classic site in `classic/`. Open **classic/index.html**; keep the `assets` and `data` folders at the repository root beside it.
 
 The design uses forest ink from the supplied fish artwork, serif headings, quiet surfaces and a comparison table as the main utility. Mobile table scrolling stays inside its own region, with water/reach names pinned. Detail pages keep the selected reach visible.
 
