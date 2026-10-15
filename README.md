@@ -83,10 +83,14 @@ Open `#/stocking` from the main navigation.
 
 ## Angler posts
 
-`data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as a count in the directory.
+`data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as the latest angler report date in the directory.
 
-- **Collected:** Oct 15, 2026, by hand, with Apify. 430 posts from two public Facebook groups (Oregon Fishing, Oregon Fishing Network) and 120 TikTok videos (#oregonfishing plus the getrightkell and outdoorguy35 profiles), Sept 15 to Oct 15. This is not automated yet.
-- **Written up generically:** a short summary, the date, the platform and a link to the source post. No names, handles or photos.
+- **Sources:** three public Facebook groups (Oregon Fishing; Oregon Fishing Network; Rogue River, Chetco River, Elk River, & Sixes River Fishing Reports) and TikTok (#oregonfishing plus the getrightkell and outdoorguy35 profiles). The lists are at the top of `scripts/fetch-angler.mjs`.
+- **How it updates:** `scripts/fetch-angler.mjs` runs in the same daily workflow. It collects posts from the last two days with Apify (further back after missed runs, up to a week), skips posts it has already read (`data/angler-seen.json`), and has Claude pick out real fishing reports and write a one-line summary for each. Photo-only posts with no text cannot be read and are skipped. Results are merged into `data/angler.js`, and posts older than 30 days drop off. If a step fails, the previous file is kept and the other daily data still updates. Pull requests only check that the script parses, so they cost nothing.
+- **Setup:** the workflow needs two repository secrets (Settings, Secrets and variables, Actions): `APIFY_TOKEN` from the Apify console (Settings, API & Integrations) and `ANTHROPIC_API_KEY` from console.anthropic.com. Without them the step logs a note and leaves the file alone.
+- **Cost:** Apify charges per post collected. Each run is capped at $2 for Facebook and $1 for TikTok; a normal day is far below that, roughly $10 to $15 a month together. Claude reads about one batch a day, a few dollars a month.
+- **Started:** Oct 15, 2026, with a hand-run collection back to Sept 15 (578 Facebook posts and 48 TikTok videos from that month). The homepage count is the number of posts read from the last 30 days.
+- **Written up generically:** a short summary, the date and a link to the source post. No names, handles or photos.
 - **Location honesty:** each entry says when a post was on a different section of the river or did not say where.
 - **Scores:** a catch post on the water's own reach (or with the section unstated), from the last 14 days, can raise the score through an "Angler posts" input (15% for rivers, 20% for lakes). It is kept only when it raises the score, never lowers it, never creates a score where there was none, never overrides a rules hold and never raises confidence. Posts from other sections, conditions notes and secondhand mentions are shown but never scored.
 - **Display:** posts show for 30 days.

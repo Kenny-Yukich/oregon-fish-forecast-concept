@@ -9,6 +9,7 @@ on:
       - 'scripts/fetch-counts.mjs'
       - 'scripts/fetch-stocking.mjs'
       - 'scripts/fetch-conditions.mjs'
+      - 'scripts/fetch-angler.mjs'
       - '.github/workflows/daily-data.yml'
 
 permissions:
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     env:
       STRICT: ${{ github.event_name == 'pull_request' && '1' || '0' }}
     steps:
@@ -35,12 +36,26 @@ jobs:
         run: node scripts/fetch-stocking.mjs
       - name: Fetch USGS river flow and temperature
         run: node scripts/fetch-conditions.mjs
+      # Angler posts cost a little per run (Apify and the Claude API), so pull requests only check the script parses.
+      - name: Check the angler posts script
+        if: github.event_name == 'pull_request'
+        run: node --check scripts/fetch-angler.mjs
+      - name: Fetch angler posts from Facebook groups and TikTok
+        if: github.event_name != 'pull_request'
+        continue-on-error: true   # never hold back the other data
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund @anthropic-ai/sdk@0.135.0
+          node scripts/fetch-angler.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |
-          if git diff --quiet -- data/counts.js data/stocking.js data/conditions.js; then echo "Data unchanged."; exit 0; fi
+          files="data/counts.js data/stocking.js data/conditions.js data/angler.js data/angler-seen.json"
+          if git diff --quiet -- $files; then echo "Data unchanged."; exit 0; fi
           git config user.name "daily-data bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/counts.js data/stocking.js data/conditions.js
-          git commit -m "Update daily fish counts, stocking and river conditions"
+          git add $files
+          git commit -m "Update daily fish counts, stocking, river conditions and angler posts"
           git push
