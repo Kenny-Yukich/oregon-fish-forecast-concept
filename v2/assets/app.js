@@ -57,6 +57,16 @@
     const fah = cel != null ? cel * 9 / 5 + 32 : null;
     return {mon, flow, cel, fah, fetched};
   }
+  // Angler posts (data/angler.js): word of mouth, shown for 30 days, newest first.
+  const anglerFor = id => (window.ORFF_ANGLER?.waters?.[id] || []).filter(p => { const d = daysBetween(p.date, today()); return d >= 0 && d <= 30; }).sort((a, b) => b.date.localeCompare(a.date));
+  function anglerBlock(w) {
+    const posts = anglerFor(w.id);
+    if (!posts.length) return '';
+    const kinds = {catch: 'Catch', guide: 'Guide', conditions: 'Conditions', mention: 'Mention'};
+    return '<div class="anglers" data-reveal><p class="eyebrow">From anglers · last 30 days</p><ul>' + posts.map(p =>
+      '<li><span class="a-meta">' + time(p.date) + ' · ' + esc(p.platform) + ' · ' + esc(kinds[p.kind] || p.kind) + '</span><p>' + esc(p.note) + (p.where ? ' <span class="muted">(' + esc(p.where) + ')</span>' : '') + '</p>' + ext(p.url, 'Source post') + '</li>').join('') + '</ul>' +
+      '<p class="small">Word of mouth from public Facebook groups and TikTok, read ' + fmtDate(window.ORFF_ANGLER.checked_on) + '. Not verified. Recent catch posts on this water can raise its score, never lower it.</p></div>';
+  }
   const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load.'};
   function stockRows(id) {
     const names = window.ORFF_STOCKING_MATCH?.[id];
@@ -172,7 +182,7 @@
       '<span class="idx" aria-hidden="true">' + pad(i + 1) + '</span>' +
       '<span class="name">' + esc(w.name) + '<small class="muted">' + esc(w.reach) + '</small></span>' +
       '<span class="cell c-species"><b class="muted">' + esc(w.region) + ' · ' + kindLabel(w) + '</b>' + esc(w.planning.target_species.slice(0, 3).join(', ')) + '</span>' +
-      '<span class="cell c-report"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span>' + (notices ? ' <span class="muted">· ' + notices + (notices === 1 ? ' notice' : ' notices') + '</span>' : '') + '</span>' +
+      '<span class="cell c-report"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span>' + (notices ? ' <span class="muted">· ' + notices + (notices === 1 ? ' notice' : ' notices') + '</span>' : '') + (anglerFor(w.id).length ? ' <span class="muted">· ' + anglerFor(w.id).length + (anglerFor(w.id).length === 1 ? ' angler post' : ' angler posts') + '</span>' : '') + '</span>' +
       '<span class="cell c-cond">' + cond + '</span>' +
       '<span class="c-score">' + sc + '</span>' +
       '<span class="arrow" aria-hidden="true">' + icon('arrow-right-linear') + '</span></a></li>';
@@ -220,7 +230,7 @@
     const f = [['tone', 30, 'Report tone', 'What the latest dated report says, word for word.'], ['run', 25, 'Run strength', 'This year’s dam counts against the same date last year.'], ['cond', 20, 'River conditions', 'Gauge flow against its 7-day median, and water temperature for cold-water fish.'], ['fresh', 15, 'Report freshness', 'A week-old report counts for more than a month-old one.'], ['stock', 10, 'Recent stocking', 'An ODFW trout release in the last few weeks.']];
     return '<section class="section" id="method" aria-labelledby="m-h"><div class="inner method-pin">' +
       '<div><p class="eyebrow">How a river score is built</p><h2 id="m-h" class="display h-section" data-split tabindex="-1">Five inputs, <em>weighed</em> in the open.</h2>' +
-      '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score entirely. Lakes use stocking 40%, report tone 35% and freshness 25%.</p>' +
+      '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score entirely. Lakes use stocking 40%, report tone 35% and freshness 25%. Recent angler posts can nudge a score up, never down.</p>' +
       '</div>' +
       '<div class="stack"><div class="stack-bar" role="img" aria-label="River score weights: report tone 30%, run strength 25%, river conditions 20%, report freshness 15%, recent stocking 10%">' +
       f.map(([k, w]) => '<span class="f-' + k + '" style="width:' + w + '%" data-stack></span>').join('') + '</div>' +
@@ -234,7 +244,25 @@
       '<ol class="principles">' + p.map(([h, t], i) => '<li data-reveal><span class="n">' + pad(i + 1) + '</span><h3>' + h + '</h3><p>' + t + '</p></li>').join('') + '</ol></div></section>';
   }
 
-  function homeHTML() { return heroHTML + wire() + shortlist() + counts() + directory() + stocking() + method() + principles(); }
+  function anglers() {
+    const a = window.ORFF_ANGLER;
+    if (!a) return '';
+    // Waters with posts from their own reach come first; each shows its most useful post and where it was.
+    const lead = posts => posts.find(p => p.scoring) || posts.find(p => p.kind === 'catch') || posts[0];
+    const inGuide = waters.map(w => ({w, posts: anglerFor(w.id)})).filter(x => x.posts.length)
+      .sort((x, y) => (y.posts.some(p => p.scoring) - x.posts.some(p => p.scoring)) || y.posts[0].date.localeCompare(x.posts[0].date));
+    const r = a.reviewed || {};
+    return '<section class="section paper-2" id="anglers" aria-labelledby="an-h"><div class="inner">' +
+      '<div class="section-head"><div><p class="eyebrow">Word on the water · ' + fmtDate(a.window_start) + ' to ' + fmtDate(a.checked_on) + '</p><h2 id="an-h" class="display h-section" data-split tabindex="-1">What anglers are <em>posting.</em></h2></div>' +
+      '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from two public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
+      '<div class="word-grid"><div><h3 class="word-h">In the guide</h3><ul class="word-list">' + inGuide.map(({w, posts}) =>
+        '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + posts.length + (posts.length === 1 ? ' post' : ' posts') + ' · latest ' + fmtDate(posts[0].date) + '</span></li>').join('') + '</ul></div>' +
+      '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).slice().sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
+        '<li data-reveal><strong>' + esc(e.water) + '</strong><p>' + esc(e.note) + '</p><span class="a-meta">' + e.posts + (e.posts === 1 ? ' post' : ' posts') + ' · latest ' + fmtDate(e.latest) + '</span></li>').join('') + '</ol></div></div>' +
+      '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
+  }
+
+  function homeHTML() { return heroHTML + wire() + shortlist() + anglers() + counts() + directory() + stocking() + method() + principles(); }
 
   /* ---------- Water page ---------- */
   function waterHTML(w) {
@@ -248,7 +276,7 @@
 
     const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2><p class="quote" data-reveal>' + esc(p.report.summary) + '</p>' +
       '<div class="quote-meta"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span><span>Source checked ' + time(p.report.checked_on, true) + '</span>' + (p.report.url ? ext(p.report.url, 'Original report') : '') + '</div>' +
-      '<div class="callout" data-reveal><strong>Where this report applies</strong>' + esc(p.report.coverage) + '</div></section>';
+      '<div class="callout" data-reveal><strong>Where this report applies</strong>' + esc(p.report.coverage) + '</div>' + anglerBlock(w) + '</section>';
 
     const notices = p.alerts.length ? '<section aria-labelledby="n-h"><h2 id="n-h" class="d-h">Before you go</h2><div class="notices">' + p.alerts.map(a =>
       '<div class="notice' + (a.status === 'unverified' ? ' unverified' : '') + '" data-reveal><div class="notice-label">' + icon(a.status === 'unverified' ? 'info-circle-linear' : 'danger-triangle-linear') + (a.status === 'unverified' ? 'Needs a trip-day check' : 'Recorded notice') + '</div><p>' + esc(a.summary) + '</p>' +
@@ -441,7 +469,7 @@
   }
 
   /* ---------- Router ---------- */
-  const SECTIONS = {waters: 'waters', counts: 'counts', stocking: 'stocking', method: 'method', shortlist: 'shortlist'};
+  const SECTIONS = {waters: 'waters', counts: 'counts', stocking: 'stocking', method: 'method', shortlist: 'shortlist', anglers: 'anglers'};
   let current = null, firstRender = true;
   const curtain = document.createElement('div');
   curtain.className = 'curtain'; curtain.setAttribute('aria-hidden', 'true');

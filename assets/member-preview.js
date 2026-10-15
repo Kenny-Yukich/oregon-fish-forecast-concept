@@ -25,7 +25,9 @@
     river: {tone: 0.30, run: 0.25, cond: 0.20, fresh: 0.15, stock: 0.10},
     lake: {stock: 0.40, tone: 0.35, fresh: 0.25}
   };
-  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking'};
+  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking', angler: 'Angler posts'};
+  // Angler posts from data/angler.js can raise a score but never lower it, and only count for two weeks.
+  const ANGLER_WEIGHT = {river: 0.15, lake: 0.20}, ANGLER_DAYS = 14;
   const kindOf = w => w.kind === 'river' ? 'river' : 'lake';
   const species = w => w.planning.score_species || w.planning.target_species;
 
@@ -109,6 +111,15 @@
     return {key: 'stock', value: Math.max(pastValue, nextValue), display: bits.join(' · '), reason: reason + ' (ODFW schedule).'};
   }
 
+  function anglerPosts(w) {
+    const t = today();
+    const posts = (window.ORFF_ANGLER?.waters?.[w.id] || []).filter(p => p.scoring && days(p.date, t) >= 0 && days(p.date, t) <= ANGLER_DAYS);
+    const pos = posts.filter(p => p.signal === 'positive').length, mixed = posts.filter(p => p.signal === 'mixed').length;
+    if (!pos && !mixed) return null;
+    return {key: 'angler', value: pos >= 2 ? 90 : pos ? 80 : 60, display: (pos + mixed) + ((pos + mixed) === 1 ? ' recent post' : ' recent posts'),
+      reason: 'Word of mouth from public Facebook groups and TikTok in the last two weeks, not verified. Angler posts can raise a score but never lower it.'};
+  }
+
   function score(w) {
     const p = w.planning, t = today(), kind = kindOf(w), notes = [];
     const noticeActive = !!p.score_notice && (!p.score_notice_until || t <= p.score_notice_until);
@@ -119,12 +130,20 @@
     const factors = found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]}));
     if (!factors.some(f => f.key !== 'cond')) return {status: 'insufficient', reason: factors.length ? 'Only gauge readings are available. A score also needs a dated report, a dam count or a stocking record.' : 'No dated report, dam count, gauge reading or stocking record yet, so there is nothing to score.'};
     const total = factors.reduce((s, f) => s + f.weight, 0);
-    const value = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0) / total);
+    let value = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0) / total);
+    // Angler posts are applied last and kept only when they raise the score. They never change confidence.
+    const angler = anglerPosts(w);
+    if (angler) {
+      const weight = ANGLER_WEIGHT[kind];
+      const raised = Math.round((factors.reduce((s, f) => s + f.value * f.weight, 0) + angler.value * weight) / (total + weight));
+      if (raised > value) { value = raised; factors.push({...angler, label: LABELS.angler, weight}); }
+    }
     const unverified = p.alerts.filter(a => a.status === 'unverified').length;
-    const confidence = factors.length >= 3 && unverified === 0 ? 'High' : factors.length >= 2 && unverified <= 1 ? 'Medium' : 'Low';
+    const counted = factors.filter(f => f.key !== 'angler').length;
+    const confidence = counted >= 3 && unverified === 0 ? 'High' : counted >= 2 && unverified <= 1 ? 'Medium' : 'Low';
     const label = value >= 80 ? 'Excellent' : value >= 65 ? 'Good' : value >= 45 ? 'Fair' : 'Slow';
     const missing = Object.keys(WEIGHTS[kind]).filter(k => !factors.some(f => f.key === k)).map(k => LABELS[k]);
-    return {status: 'scored', kind, value, label, confidence, factors, missing, unverified, notes, inputs: Object.keys(WEIGHTS[kind]).length};
+    return {status: 'scored', kind, value, label, confidence, factors, used: counted, missing, unverified, notes, inputs: Object.keys(WEIGHTS[kind]).length};
   }
   const formula = kind => Object.entries(WEIGHTS[kind]).map(([k, v]) => LABELS[k].toLowerCase() + ' ' + Math.round(v * 100) + '%').join(', ');
 
