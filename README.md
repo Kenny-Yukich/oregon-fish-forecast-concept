@@ -81,6 +81,10 @@ Open `#/stocking` from the main navigation.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
 
+## Weather
+
+- **Weather:** `scripts/fetch-weather.mjs` runs in the daily workflow and reads the National Weather Service forecast (api.weather.gov) at each water's map position in `data/map.js`: the next four forecast periods and any active NWS alerts, written to `data/weather.js`. Gridpoints are cached in that file, so the points lookup only runs when a position moves, and waters on the same grid share one forecast request. A water that fails keeps its last entry for up to 48 hours. Water pages show a **Weather** card in the sidebar, with alerts first and a link to the NWS forecast for that spot; the card is hidden when there is no current data. The map position is the general area of the reach, not an access point. Weather is not part of the score.
+
 ## Angler posts
 
 `data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as the latest angler report date in the directory.
@@ -96,7 +100,31 @@ Open `#/stocking` from the main navigation.
 - **Display:** posts show for 30 days.
 - **Not in the guide yet:** `elsewhere` lists other waters anglers talked about, by number of posts, as a guide to which locations to add next.
 
+## River and reservoir conditions
+
+`scripts/fetch-conditions.mjs` runs every morning and writes `data/conditions.js` from four keyless sources. Each one fails on its own, so one outage never blanks the rest.
+
+- **USGS:** 30 days of flow and water temperature for every USGS gauge in `data/monitoring.js`.
+- **NOAA National Water Prediction Service:** gauges USGS does not carry. These are Reclamation's PRVO gauge below Bowman Dam (Crooked River) and the Elochoman stage gauge. NOAA river forecasts (Northwest River Forecast Center) cover the Lower Deschutes at Moody, Umpqua, McKenzie, Wilson, Siletz, Rogue, Clackamas, Cowlitz, Toutle and Lewis.
+- **US Army Corps of Engineers (CWMS):** Detroit Lake pool, the planned rule-curve level and outflow.
+- **Reclamation Hydromet:** Haystack and Henry Hagg pool levels and the Bowman water temperature. Reclamation often refuses cloud requests, so this is optional.
+
+**How the score uses it.** Flow is checked against its 30-day median first: a river at less than half, or more than two and a half times, its recent normal reads as off normal even when the last week has been steady. A NOAA forecast that more than doubles the flow in three days also lowers the score.
+
+## Automatic reports and rules
+
+`data/auto-reports.js` is written by `scripts/fetch-reports.mjs`, which runs every morning in the daily data workflow.
+
+- **WDFW creel report:** reads the Southwest Washington creel page, finds the newest weekly PDF and has Claude summarize it for the eight Washington and Columbia guide waters (period, report end date, one-sentence summary with numbers, which section of the river it covers, and a positive, mixed, negative or neutral signal). When this report is newer than a water's own report, water pages show it as the latest report and the score uses it for report tone and freshness. The page's tributary weir status table is copied as published, without Claude.
+- **ODFW regulation updates:** reads ODFW's in-season regulation updates page and has Claude list the rule changes in effect or starting within 14 days for each Oregon guide water. They show under **Before you go** as "ODFW regulation update" notices. They never withhold a score; an active closure or restriction adds a score note.
+- **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
+- **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
+
 ## Fishing scores
+
+- **Field checks.** `data/field-checks.js` holds first-hand trip checks by the site owner. A check moves that water's score up or down for 14 days (25% weight). Its wording stays in the background: the score breakdown only shows "Field check", a one-word result and the date.
+- **Caps.** A score needs three inputs, and on a river a live flow reading, to reach Excellent; otherwise it is capped at Good. A flow that falls below half its 7-day median reads "Dropping sharply".
+- **Irrigation switches.** `data/flow-seasons.js` lists rivers whose flow changes sharply when irrigation season starts (April to mid-May) or ends (October to mid-November): the Crooked below Bowman Dam and the Deschutes below Bend. In those windows the page and short-list card carry a note, and a river with no live flow reading is capped at Fair.
 
 Every visitor sees the scores; there is no preview switch or paid tier on the site right now. The formula lives in `assets/member-preview.js` and both designs use it.
 
