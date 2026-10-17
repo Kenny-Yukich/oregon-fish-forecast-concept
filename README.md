@@ -81,6 +81,10 @@ Open `#/stocking` from the main navigation.
   - It keeps each row for 8 weeks after ODFW removes it from the page.
 - These are ODFW's planned stockings, not confirmed releases, and the page says so.
 
+## Weather
+
+- **Weather:** `scripts/fetch-weather.mjs` runs in the daily workflow and reads the National Weather Service forecast (api.weather.gov) at each water's map position in `data/map.js`: the next four forecast periods and any active NWS alerts, written to `data/weather.js`. Gridpoints are cached in that file, so the points lookup only runs when a position moves, and waters on the same grid share one forecast request. A water that fails keeps its last entry for up to 48 hours. Water pages show a **Weather** card in the sidebar, with alerts first and a link to the NWS forecast for that spot; the card is hidden when there is no current data. The map position is the general area of the reach, not an access point. Weather is not part of the score.
+
 ## Angler posts
 
 `data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as the latest angler report date in the directory.
