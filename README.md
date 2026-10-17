@@ -96,6 +96,17 @@ Open `#/stocking` from the main navigation.
 - **Display:** posts show for 30 days.
 - **Not in the guide yet:** `elsewhere` lists other waters anglers talked about, by number of posts, as a guide to which locations to add next.
 
+## River and reservoir conditions
+
+`scripts/fetch-conditions.mjs` runs every morning and writes `data/conditions.js` from four keyless sources. Each one fails on its own, so one outage never blanks the rest.
+
+- **USGS:** 30 days of flow and water temperature for every USGS gauge in `data/monitoring.js`.
+- **NOAA National Water Prediction Service:** gauges USGS does not carry. These are Reclamation's PRVO gauge below Bowman Dam (Crooked River) and the Elochoman stage gauge. NOAA river forecasts (Northwest River Forecast Center) cover the Lower Deschutes at Moody, Umpqua, McKenzie, Wilson, Siletz, Rogue, Clackamas, Cowlitz, Toutle and Lewis.
+- **US Army Corps of Engineers (CWMS):** Detroit Lake pool, the planned rule-curve level and outflow.
+- **Reclamation Hydromet:** Haystack and Henry Hagg pool levels and the Bowman water temperature. Reclamation often refuses cloud requests, so this is optional.
+
+**How the score uses it.** Flow is checked against its 30-day median first: a river at less than half, or more than two and a half times, its recent normal reads as off normal even when the last week has been steady. A NOAA forecast that more than doubles the flow in three days also lowers the score.
+
 ## Fishing scores
 
 - **Field checks.** `data/field-checks.js` holds first-hand trip checks by the site owner. A check moves that water's score up or down for 14 days (25% weight). Its wording stays in the background: the score breakdown only shows "Field check", a one-word result and the date.

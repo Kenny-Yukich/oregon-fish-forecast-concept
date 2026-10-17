@@ -75,7 +75,8 @@
     return {key: 'run', value, display: Math.round(ratio * 100) + '% of last year',
       reason: best.v.label + ' at ' + best.meta.name + ': ' + num(best.v.ytd) + ' this year vs ' + num(best.v.last_year_ytd) + ' by the same date last year, through ' + best.through + '.'};
   }
-  // Flow trend and water temperature from the river's USGS gauge, read daily by the data workflow.
+  // Flow and water temperature from the river's gauge (USGS, or NOAA for Reclamation gauges), read daily, plus
+  // the NOAA river forecast where there is one.
   function conditions(w) {
     const c = window.ORFF_MONITORING?.[w.id], data = c?.station && window.ORFF_CONDITIONS?.stations?.[c.station];
     if (!data) return null;
@@ -84,8 +85,18 @@
     const parts = [];
     if (fresh(data.flow) && data.flow.median7 > 0) {
       const r = data.flow.latest / data.flow.median7, unit = /ft/.test(data.flow.unit || 'ft') ? 'cfs' : data.flow.unit;
-      const [value, word] = r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : r >= 0.5 ? [70, 'Dropping'] : [35, 'Dropping sharply'];
-      parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7)});
+      // Against the 30-day median first: a river that dropped or rose more than a week ago still reads as off normal.
+      const r30 = data.flow.median30 > 0 ? data.flow.latest / data.flow.median30 : 1;
+      const [value, word] = r30 < 0.5 ? [30, 'Far below its 30-day level'] : r30 > 2.5 ? [25, 'Far above its 30-day level']
+        : r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : r >= 0.5 ? [70, 'Dropping'] : [35, 'Dropping sharply'];
+      parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7) + (data.flow.median30 ? ' and a 30-day median of ' + num(data.flow.median30) : '')});
+    }
+    // A NOAA river forecast that more than doubles the flow in the next three days.
+    const fc = c.forecast && window.ORFF_CONDITIONS.forecasts?.[c.forecast];
+    if (fc && fresh(data.flow)) {
+      const soon = fc.points.filter(p => p.flow != null && Date.parse(p.time) - Date.now() <= 72 * 3600000);
+      const peak = soon.length ? Math.max(...soon.map(p => p.flow)) : null;
+      if (peak && peak > 2 * data.flow.latest) parts.push({value: 30, word: 'Big rise forecast', detail: 'NOAA forecasts up to ' + num(peak) + ' cfs in the next three days'});
     }
     if (fresh(data.temp) && species(w).some(s => COLD_WATER.test(s))) {
       const cel = /F/.test(data.temp.unit || '') ? (data.temp.latest - 32) * 5 / 9 : data.temp.latest, fah = cel * 9 / 5 + 32;

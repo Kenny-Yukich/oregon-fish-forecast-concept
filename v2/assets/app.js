@@ -52,10 +52,32 @@
     const data = mon?.station && window.ORFF_CONDITIONS?.stations?.[mon.station];
     const fetched = Date.parse(window.ORFF_CONDITIONS?.fetched_at || 0);
     const ok = x => x && Number.isFinite(x.latest) && fetched - Date.parse(x.time) <= 36 * 3600000;
-    const flow = ok(data?.flow) ? data.flow : null, temp = ok(data?.temp) ? data.temp : null;
+    const flow = ok(data?.flow) ? data.flow : null, temp = ok(data?.temp) ? data.temp : null, stage = !flow && ok(data?.stage) ? data.stage : null;
     const cel = temp ? (/F/.test(temp.unit || '') ? (temp.latest - 32) * 5 / 9 : temp.latest) : null;
     const fah = cel != null ? cel * 9 / 5 + 32 : null;
-    return {mon, flow, cel, fah, fetched};
+    // NOAA river forecast and reservoir readings (Army Corps or Reclamation), when this water has them.
+    const forecast = mon?.forecast && window.ORFF_CONDITIONS?.forecasts?.[mon.forecast] || null;
+    const resv = window.ORFF_CONDITIONS?.reservoirs?.[mon?.dam?.id || mon?.usbrLake] || null;
+    const pool = resv && ok(resv.elev) ? resv : null;
+    return {mon, flow, stage, cel, fah, fetched, forecast, pool};
+  }
+  // Reservoir pool from the Army Corps (with its planned rule-curve level and outflow) or Reclamation.
+  function poolCard(r) {
+    const change = r.elev.week_ago != null ? r.elev.latest - r.elev.week_ago : null;
+    const rule = r.rule && Number.isFinite(r.rule.latest) ? r.elev.latest - r.rule.latest : null;
+    return '<div class="gauge-card" data-reveal><small>Pool elevation</small><b class="num">' + r.elev.latest.toFixed(1) + ' <span style="font-size:.45em">ft</span></b><p>' +
+      [change != null && Math.abs(change) >= 0.1 ? (change < 0 ? 'Down ' : 'Up ') + Math.abs(change).toFixed(1) + ' ft in a week' : change != null ? 'Steady this week' : '',
+       rule != null ? Math.abs(rule).toFixed(1) + ' ft ' + (rule < 0 ? 'below' : 'above') + ' the planned level' : '',
+       r.outflow ? 'Outflow ' + num(r.outflow.latest) + ' cfs' : ''].filter(Boolean).join('. ') + '. ' + esc(r.name || '') + '.</p></div>';
+  }
+  // NOAA river forecast: where the flow is headed over the next few days.
+  function forecastLine(g) {
+    const pts = (g.forecast?.points || []).filter(p => p.flow != null);
+    if (pts.length < 2) return '';
+    const peak = pts.reduce((a, b) => b.flow > a.flow ? b : a), last = pts.at(-1), when = t => new Date(t).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Los_Angeles'});
+    const now = g.flow?.latest ?? pts[0].flow;
+    const text = peak.flow > 1.3 * now ? 'rising to about ' + num(peak.flow) + ' cfs by ' + when(peak.time) : last.flow < 0.77 * now ? 'falling to about ' + num(last.flow) + ' cfs by ' + when(last.time) : 'holding near ' + num(now) + ' cfs through ' + when(last.time);
+    return '<p class="small" style="margin-top:16px"><b>NOAA river forecast:</b> ' + text + '. ' + ext('https://water.noaa.gov/gauges/' + g.mon.forecast.toLowerCase(), 'Forecast') + '</p>';
   }
   // Angler posts (data/angler.js): word of mouth, shown for 30 days, newest first.
   const anglerFor = id => (window.ORFF_ANGLER?.waters?.[id] || []).filter(p => { const d = daysBetween(p.date, today()); return d >= 0 && d <= 30; }).sort((a, b) => b.date.localeCompare(a.date));
@@ -175,6 +197,8 @@
   function rowHTML(w, i) {
     const f = freshness(w), g = gauge(w), s = score(w), notices = w.planning.alerts.length;
     const cond = g.flow ? '<b>' + num(g.flow.latest) + ' cfs' + (g.fah != null ? ' · ' + Math.round(g.fah) + '°F' : '') + '</b><span class="muted">' + esc(g.mon.name) + '</span>'
+      : g.stage ? '<b>' + g.stage.latest.toFixed(1) + ' ft stage</b><span class="muted">' + esc(g.mon.name) + '</span>'
+      : g.pool ? '<b>Pool ' + g.pool.elev.latest.toFixed(0) + ' ft</b><span class="muted">' + esc(g.pool.name || g.mon.name) + '</span>'
       : '<span class="muted">' + (g.mon?.mode === 'operator' ? 'Operator flow data' : g.mon?.mode === 'historical' ? 'Historical gauge only' : g.mon?.station ? 'No current gauge reading' : 'No live feed') + '</span>';
     const sc = s.status === 'scored' ? '<span class="mini-score"><span class="sr-only">Score </span>' + s.value + '<i aria-hidden="true"><b style="width:' + s.value + '%"></b></i></span>'
       : '<span class="mini-score off">' + (s.status === 'withheld' ? 'Score held for rules' : s.status === 'unavailable' ? 'Score unavailable' : 'Not enough to score') + '</span>';
@@ -272,7 +296,7 @@
     const scoreBlock = s.status === 'scored'
       ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence</p>'
       : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : s.status === 'unavailable' ? 'Score unavailable' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
-    const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? 'USGS gauge' : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length]];
+    const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? (/^NWPS-/.test(g.mon.station) ? 'NOAA gauge' : 'USGS gauge') : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length]];
 
     const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2><p class="quote" data-reveal>' + esc(p.report.summary) + '</p>' +
       '<div class="quote-meta"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span><span>Source checked ' + time(p.report.checked_on, true) + '</span>' + (p.report.url ? ext(p.report.url, 'Original report') : '') + '</div>' +
@@ -292,14 +316,19 @@
         cards.push('<div class="gauge-card" data-reveal><small>Flow</small><b class="num">' + num(g.flow.latest) + ' <span style="font-size:.45em">cfs</span></b>' +
           (pos != null ? '<div class="flow-scale" role="img" aria-label="' + word + ' the 7-day median of ' + num(g.flow.median7) + ' cfs"><i style="left:50%"></i><b style="left:' + pos.toFixed(1) + '%"></b></div><p>' + word + ' the 7-day median (' + num(g.flow.median7) + ' cfs)</p>' : '<p>No 7-day median available</p>') + '</div>');
       }
+      if (g.flow?.median30 > 0 && g.flow.latest < 0.5 * g.flow.median30) cards.push('<div class="gauge-card" data-reveal><small>Against last month</small><b class="num">' + Math.round(100 * g.flow.latest / g.flow.median30) + '%</b><p>Of its 30-day median (' + num(g.flow.median30) + ' cfs). Expect low, thin water.</p></div>');
+      else if (g.flow?.median30 > 0 && g.flow.latest > 2.5 * g.flow.median30) cards.push('<div class="gauge-card" data-reveal><small>Against last month</small><b class="num">' + Math.round(100 * g.flow.latest / g.flow.median30) + '%</b><p>Of its 30-day median (' + num(g.flow.median30) + ' cfs). Expect high, fast water.</p></div>');
+      if (g.stage) cards.push('<div class="gauge-card" data-reveal><small>River stage</small><b class="num">' + g.stage.latest.toFixed(2) + ' <span style="font-size:.45em">ft</span></b><p>' + (g.stage.median7 != null ? (g.stage.latest > g.stage.median7 + 0.3 ? 'Higher than' : g.stage.latest < g.stage.median7 - 0.3 ? 'Lower than' : 'Close to') + ' its 7-day median (' + g.stage.median7.toFixed(2) + ' ft). Height, not flow.' : 'Height, not flow.') + '</p></div>');
       if (g.fah != null) cards.push('<div class="gauge-card" data-reveal><small>Water temperature</small><b class="num">' + g.fah.toFixed(1) + '°F</b><p>At the gauge</p></div>');
-      const stamp = g.flow?.time || null;
-      river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">The river this morning</h2>' +
+      if (g.pool) cards.push(poolCard(g.pool));
+      const stamp = g.flow?.time || g.stage?.time || null, lake = w.kind !== 'river';
+      river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">' + (lake ? 'The lake this morning' : 'The river this morning') + '</h2>' +
         (cards.length ? '<div class="gauge">' + cards.join('') + '</div>' : '<p class="small">' + (window.ORFF_CONDITIONS ? 'The gauge returned no reading in the last 36 hours, so nothing is shown as current. The official station record below has its latest data.' : 'Today’s gauge readings did not load. The official station record below has the latest reading.') + '</p>') +
-        '<p class="small" style="margin-top:16px">' + esc(g.mon.name) + '. ' + esc(g.mon.coverage) + (stamp ? ' Reading from ' + new Date(stamp).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles', timeZoneName: 'short'}) + ', provisional USGS data.' : '') + '</p>' +
-        '<p>' + ext('https://waterdata.usgs.gov/monitoring-location/' + g.mon.station + '/', 'Official station record') + '</p></section>';
+        forecastLine(g) +
+        '<p class="small" style="margin-top:16px">' + esc(g.mon.name) + '. ' + esc(g.mon.coverage) + (stamp ? ' Reading from ' + new Date(stamp).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles', timeZoneName: 'short'}) + ', provisional ' + (/^NWPS-/.test(g.mon.station) ? 'data via NOAA' : 'USGS data') + '.' : '') + '</p>' +
+        '<p>' + ext(g.mon.url || 'https://waterdata.usgs.gov/monitoring-location/' + g.mon.station + '/', 'Official station record') + '</p></section>';
     } else if (g.mon) {
-      river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">River conditions</h2><p>' + esc(g.mon.name) + '</p><p class="small">' + esc(g.mon.coverage) + '</p>' + (g.mon.url ? '<p>' + ext(g.mon.url, g.mon.mode === 'operator' ? 'Operator readings' : 'Station record') + '</p>' : '') + '</section>';
+      river = '<section aria-labelledby="c-h"><h2 id="c-h" class="d-h">' + (w.kind !== 'river' ? 'Lake conditions' : 'River conditions') + '</h2>' + (g.pool ? '<div class="gauge">' + poolCard(g.pool) + '</div>' : '') + '<p>' + esc(g.mon.name) + '</p><p class="small">' + esc(g.mon.coverage) + '</p>' + (g.mon.url ? '<p>' + ext(g.mon.url, g.mon.mode === 'operator' ? 'Operator readings' : 'Station record') + '</p>' : '') + '</section>';
     } else river = '';
 
     const links = window.ORFF_COUNT_STATIONS?.waters?.[w.id] || [];
