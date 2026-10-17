@@ -2,7 +2,10 @@
    The formula is transparent and uses only data already on the site: the dated report's wording and age,
    dam counts against last year, USGS flow and water temperature, and ODFW stocking. It has not yet been
    checked against catch results. A rules notice withholds a score unless the record names the species that can
-   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman). */
+   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman).
+   First-hand field checks (data/field-checks.js) move a score either way. A score needs three inputs, and on a river a
+   live flow reading, to reach Excellent. During an irrigation switch (data/flow-seasons.js) a river with no live flow
+   reading is capped at Fair. */
 (() => {
   'use strict';
   // Scores are open to everyone, so `on` is always true. `set` stays as a no-op for older callers.
@@ -25,9 +28,15 @@
     river: {tone: 0.30, run: 0.25, cond: 0.20, fresh: 0.15, stock: 0.10},
     lake: {stock: 0.40, tone: 0.35, fresh: 0.25}
   };
-  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking', angler: 'Angler posts'};
+  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking', angler: 'Angler posts', field: 'Field check'};
   // Angler posts from data/angler.js can raise a score but never lower it, and only count for two weeks.
   const ANGLER_WEIGHT = {river: 0.15, lake: 0.20}, ANGLER_DAYS = 14;
+  // First-hand field checks from data/field-checks.js count both ways, for two weeks.
+  const FIELD_WEIGHT = {river: 0.25, lake: 0.25}, FIELD_DAYS = 14;
+  const FIELD_VALUE = {none: 15, slow: 35, fair: 55, good: 80, great: 95};
+  const FIELD_WORD = {none: 'No fish', slow: 'Slow', fair: 'Fair', good: 'Good', great: 'Great'};
+  // Score caps: Excellent needs this many inputs and, on a river, a live flow reading.
+  const EXCELLENT_INPUTS = 3, CAP_GOOD = 79, CAP_FAIR = 64;
   const kindOf = w => w.kind === 'river' ? 'river' : 'lake';
   const species = w => w.planning.score_species || w.planning.target_species;
 
@@ -75,7 +84,7 @@
     const parts = [];
     if (fresh(data.flow) && data.flow.median7 > 0) {
       const r = data.flow.latest / data.flow.median7, unit = /ft/.test(data.flow.unit || 'ft') ? 'cfs' : data.flow.unit;
-      const [value, word] = r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : [70, 'Dropping'];
+      const [value, word] = r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : r >= 0.5 ? [70, 'Dropping'] : [35, 'Dropping sharply'];
       parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7)});
     }
     if (fresh(data.temp) && species(w).some(s => COLD_WATER.test(s))) {
@@ -120,6 +129,20 @@
       reason: 'Word of mouth from public Facebook groups and TikTok in the last two weeks, not verified. Angler posts can raise a score but never lower it.'};
   }
 
+  function fieldCheck(w) {
+    const t = today();
+    const check = (window.ORFF_FIELD?.checks || []).filter(c => c.water === w.id && FIELD_VALUE[c.result] != null && days(c.date, t) >= 0 && days(c.date, t) <= FIELD_DAYS)
+      .sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (!check) return null;
+    return {key: 'field', value: FIELD_VALUE[check.result], display: FIELD_WORD[check.result] + ', ' + short(check.date),
+      reason: 'A first-hand trip check on this water. It counts for two weeks and can raise or lower the score.'};
+  }
+  // The irrigation-switch window this water is in today, if any (data/flow-seasons.js).
+  function flowSeason(w) {
+    const md = today().slice(5);
+    return (window.ORFF_FLOW_SEASONS?.[w.id] || []).find(s => s.from <= md && md <= s.to) || null;
+  }
+
   function score(w) {
     const p = w.planning, t = today(), kind = kindOf(w), notes = [];
     const noticeActive = !!p.score_notice && (!p.score_notice_until || t <= p.score_notice_until);
@@ -127,7 +150,8 @@
     if (noticeActive && p.score_species) notes.push(p.score_species_note || 'Scored for ' + p.score_species.join(' and ') + ' only.');
     if (p.score_notice && !noticeActive) notes.push('The closure listed through ' + short(p.score_notice_until) + ' has ended. Confirm the reopening with the source before fishing.');
     const found = kind === 'river' ? [reportTone(w), runStrength(w), conditions(w), reportFreshness(w), stocking(w)] : [stocking(w), reportTone(w), reportFreshness(w)];
-    const factors = found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]}));
+    const field = fieldCheck(w);
+    const factors = [...found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]})), ...(field ? [{...field, label: LABELS.field, weight: FIELD_WEIGHT[kind]}] : [])];
     if (!factors.some(f => f.key !== 'cond')) return {status: 'insufficient', reason: factors.length ? 'Only gauge readings are available. A score also needs a dated report, a dam count or a stocking record.' : 'No dated report, dam count, gauge reading or stocking record yet, so there is nothing to score.'};
     const total = factors.reduce((s, f) => s + f.weight, 0);
     let value = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0) / total);
@@ -140,6 +164,16 @@
     }
     const unverified = p.alerts.filter(a => a.status === 'unverified').length;
     const counted = factors.filter(f => f.key !== 'angler').length;
+    // Caps keep a thin score from reading as a sure thing.
+    const season = flowSeason(w), liveFlow = factors.some(f => f.key === 'cond');
+    if (season) notes.push(season.note);
+    if (season && kind === 'river' && !liveFlow && value > CAP_FAIR) {
+      value = CAP_FAIR; notes.push('There is no live flow reading during this switch, so the score is capped at Fair. Check the flow before you go.');
+    } else if (value > CAP_GOOD && kind === 'river' && !liveFlow) {
+      value = CAP_GOOD; notes.push('There is no live flow reading for this reach, so the score is capped at Good.');
+    } else if (value > CAP_GOOD && counted < EXCELLENT_INPUTS) {
+      value = CAP_GOOD; notes.push('Only ' + counted + ' inputs are available, so the score is capped at Good.');
+    }
     const confidence = counted >= 3 && unverified === 0 ? 'High' : counted >= 2 && unverified <= 1 ? 'Medium' : 'Low';
     const label = value >= 80 ? 'Excellent' : value >= 65 ? 'Good' : value >= 45 ? 'Fair' : 'Slow';
     const missing = Object.keys(WEIGHTS[kind]).filter(k => !factors.some(f => f.key === k)).map(k => LABELS[k]);
