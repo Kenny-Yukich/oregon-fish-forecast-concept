@@ -105,15 +105,19 @@ for (const lid of forecastLids) {
 }
 // US Army Corps of Engineers reservoirs: pool elevation, rule curve (the planned pool) and outflow.
 const CDA = 'https://cwms-data.usace.army.mil/cwms-data/timeseries?';
-const DAM_SERIES = {elev: 'Elev-Forebay.Inst.0.0.MIXED-REV', rule: 'Elev-RuleCurve.Inst.~1Day.0.CENWP-CALC', outflow: 'Flow-Out.Inst.0.0.MIXED-REV'};
+// Each value tries its series in order; the instantaneous outflow series is often empty, so hourly averages back it up.
+const DAM_SERIES = {elev: ['Elev-Forebay.Inst.0.0.MIXED-REV', 'Elev-Forebay.Inst.1Hour.0.CBT-REV'], rule: ['Elev-RuleCurve.Inst.~1Day.0.CENWP-CALC'],
+  outflow: ['Flow-Out.Inst.0.0.MIXED-REV', 'Flow-Out.Ave.1Hour.1Hour.CBT-REV', 'Flow-Out.Ave.1Hour.1Hour.CBT-RAW']};
 for (const dam of dams) {
   const entry = {name: dam.name};
-  for (const [key, ts] of Object.entries(DAM_SERIES)) {
-    try {
-      const json = await getJSON(CDA + new URLSearchParams({name: dam.id + '.' + ts, office: dam.office, unit: 'EN', begin: new Date(Date.now() - 7 * 86400000).toISOString(), end: new Date().toISOString(), format: 'json'}), {accept: 'application/json;version=2'});
-      const vals = (json.values || []).filter(v => Number.isFinite(v[1]));
-      if (vals.length) entry[key] = {latest: Math.round(vals.at(-1)[1] * 100) / 100, unit: json.units || null, time: new Date(vals.at(-1)[0]).toISOString(), week_ago: vals[0][1]};
-    } catch (e) { console.log(`${dam.id} ${key}: failed: ${e.message}`); }
+  for (const [key, names] of Object.entries(DAM_SERIES)) {
+    for (const ts of names) {
+      try {
+        const json = await getJSON(CDA + new URLSearchParams({name: dam.id + '.' + ts, office: dam.office, unit: 'EN', begin: new Date(Date.now() - 7 * 86400000).toISOString(), end: new Date().toISOString(), format: 'json'}), {accept: 'application/json;version=2'});
+        const vals = (json.values || []).filter(v => Number.isFinite(v[1]));
+        if (vals.length) { entry[key] = {latest: Math.round(vals.at(-1)[1] * 100) / 100, unit: json.units || null, time: new Date(vals.at(-1)[0]).toISOString(), week_ago: vals[0][1]}; break; }
+      } catch (e) { console.log(`${dam.id} ${key} (${ts}): failed: ${e.message}`); }
+    }
   }
   if (entry.elev || entry.outflow) result.reservoirs[dam.id] = entry;
   console.log(`${dam.id}: ` + ['elev', 'rule', 'outflow'].map(k => entry[k] ? `${k} ${entry[k].latest}` : `${k} none`).join(', '));
