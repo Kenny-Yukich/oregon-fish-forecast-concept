@@ -352,7 +352,7 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .factors .bar { grid-column: 1 / -1; background: var(--paper-3); height: 6px; }
 .factors .bar i { background: var(--ink); }
 .factors p { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--muted); }
-.aside { position: sticky; top: 100px; display: grid; gap: 14px; }
+.aside { display: grid; gap: 14px; align-content: start; }
 .card { padding: 26px; border-radius: var(--radius); background: var(--paper-2); }
 .card.ink { background: var(--ink); color: var(--on-ink); }
 .card h2 { font: 400 1.6rem/1.1 var(--display); letter-spacing: -0.015em; margin: 0 0 14px; }
@@ -400,7 +400,6 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
   .row a { grid-template-columns: 40px minmax(0, 2fr) minmax(0, 1.2fr) 110px 44px; }
   .row .c-cond { display: none; }
   .d-body > .inner { grid-template-columns: 1fr; }
-  .aside { position: static; }
 }
 @media (max-width: 900px) {
   .nav-links { position: fixed; inset: 0; z-index: -1; flex-direction: column; justify-content: center; gap: 4px; padding: 0 var(--gutter); background: var(--ink-deep); color: var(--on-ink); visibility: hidden; opacity: 0; transition: opacity .35s, visibility 0s .35s; }
