@@ -1,6 +1,7 @@
 /* Fishing scores, shown to every visitor.
    The formula is transparent and uses only data already on the site: the dated report's wording and age,
-   dam counts against last year, USGS flow and water temperature, and ODFW stocking. It has not yet been
+   dam counts against last year, USGS flow and water temperature, and ODFW stocking. A newer WDFW creel report
+   from data/auto-reports.js stands in for the dated report. It has not yet been
    checked against catch results. A rules notice withholds a score unless the record names the species that can
    still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman). */
 (() => {
@@ -31,7 +32,21 @@
   const kindOf = w => w.kind === 'river' ? 'river' : 'lake';
   const species = w => w.planning.score_species || w.planning.target_species;
 
+  // A WDFW creel report read by scripts/fetch-reports.mjs (data/auto-reports.js) stands in for the record's report when it is newer.
+  const AUTO_TONE = {positive: 80, mixed: 55, negative: 30, neutral: 55};
+  function autoReport(w) {
+    const a = window.ORFF_AUTO?.reports?.[w.id], r = w.planning.report;
+    return a?.reported_on && (!r?.reported_on || a.reported_on > r.reported_on) ? a : null;
+  }
+  // ODFW in-season rules from the same file never withhold a score; an active closure or restriction adds a note.
+  const activeRule = (w, t) => (window.ORFF_AUTO?.rules?.[w.id] || []).some(r => (r.kind === 'closure' || r.kind === 'restriction') && r.effective_from <= t && (!r.effective_to || t <= r.effective_to));
+
   function reportTone(w) {
+    const a = autoReport(w);
+    if (a) {
+      const value = AUTO_TONE[a.signal] ?? 55;
+      return {key: 'tone', value, display: value >= 75 ? 'Positive' : value >= 45 ? 'Mixed' : 'Slow', reason: 'WDFW creel report, ' + a.period + ': “' + a.summary + '”'};
+    }
     const r = w.planning.report;
     if (!r?.reported_on) return null;
     const text = r.summary;
@@ -41,11 +56,11 @@
     return {key: 'tone', value, display: word, reason: '“' + text + '”'};
   }
   function reportFreshness(w) {
-    const r = w.planning.report;
+    const a = autoReport(w), r = a || w.planning.report;
     if (!r?.reported_on) return null;
     const age = days(r.reported_on, today());
     const value = age <= 7 ? 100 : age <= 14 ? 80 : age <= 30 ? 55 : 25;
-    return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: 'Reported ' + r.reported_on + '. Older reports count for less.'};
+    return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: (a ? 'WDFW creel report for ' + a.period + ', through ' : 'Reported ') + r.reported_on + '. Older reports count for less.'};
   }
   function runStrength(w) {
     const links = window.ORFF_COUNT_STATIONS?.waters?.[w.id] || [];
@@ -126,6 +141,7 @@
     if (noticeActive && !p.score_species) return {status: 'withheld', reason: p.score_notice + (p.score_notice_until ? ' The notice runs through ' + short(p.score_notice_until) + '.' : '')};
     if (noticeActive && p.score_species) notes.push(p.score_species_note || 'Scored for ' + p.score_species.join(' and ') + ' only.');
     if (p.score_notice && !noticeActive) notes.push('The closure listed through ' + short(p.score_notice_until) + ' has ended. Confirm the reopening with the source before fishing.');
+    if (activeRule(w, t)) notes.push('An in-season rule change applies here. Check it before you go.');
     const found = kind === 'river' ? [reportTone(w), runStrength(w), conditions(w), reportFreshness(w), stocking(w)] : [stocking(w), reportTone(w), reportFreshness(w)];
     const factors = found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]}));
     if (!factors.some(f => f.key !== 'cond')) return {status: 'insufficient', reason: factors.length ? 'Only gauge readings are available. A score also needs a dated report, a dam count or a stocking record.' : 'No dated report, dam count, gauge reading or stocking record yet, so there is nothing to score.'};
@@ -147,5 +163,5 @@
   }
   const formula = kind => Object.entries(WEIGHTS[kind]).map(([k, v]) => LABELS[k].toLowerCase() + ' ' + Math.round(v * 100) + '%').join(', ');
 
-  window.ORFFPreview = {get on() { return on; }, set, score, formula};
+  window.ORFFPreview = {get on() { return on; }, set, score, formula, autoReport};
 })();

@@ -96,6 +96,15 @@ Open `#/stocking` from the main navigation.
 - **Display:** posts show for 30 days.
 - **Not in the guide yet:** `elsewhere` lists other waters anglers talked about, by number of posts, as a guide to which locations to add next.
 
+## Automatic reports and rules
+
+`data/auto-reports.js` is written by `scripts/fetch-reports.mjs`, which runs every morning in the daily data workflow.
+
+- **WDFW creel report:** reads the Southwest Washington creel page, finds the newest weekly PDF and has Claude summarize it for the eight Washington and Columbia guide waters (period, report end date, one-sentence summary with numbers, which section of the river it covers, and a positive, mixed, negative or neutral signal). When this report is newer than a water's own report, water pages show it as the latest report and the score uses it for report tone and freshness. The page's tributary weir status table is copied as published, without Claude.
+- **ODFW regulation updates:** reads ODFW's in-season regulation updates page and has Claude list the rule changes in effect or starting within 14 days for each Oregon guide water. They show under **Before you go** as "ODFW regulation update" notices. They never withhold a score; an active closure or restriction adds a score note.
+- **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
+- **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
+
 ## Fishing scores
 
 Every visitor sees the scores; there is no preview switch or paid tier on the site right now. The formula lives in `assets/member-preview.js` and both designs use it.
