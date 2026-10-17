@@ -289,6 +289,23 @@
   function homeHTML() { return heroHTML + wire() + shortlist() + anglers() + counts() + directory() + stocking() + method() + principles(); }
 
   /* ---------- Water page ---------- */
+  // NWS forecast from data/weather.js. Hidden when missing, over 48 hours old or every period has passed.
+  function weatherBlock(w) {
+    const d = window.ORFF_WEATHER?.waters?.[w.id], at = Date.parse(d?.at || window.ORFF_WEATHER?.fetched_at || 0), now = Date.now();
+    if (!d?.grid || !(now - at < 48 * 3600000)) return '';
+    const periods = (d.periods || []).filter(p => Date.parse(p.start) + 12 * 3600000 > now && Number.isFinite(p.temp));
+    if (!periods.length) return '';
+    const page = 'https://forecast.weather.gov/MapClick.php?' + new URLSearchParams({lat: d.grid.lat, lon: d.grid.lon});
+    const fah = p => Math.round(/C/i.test(p.tempUnit || '') ? p.temp * 9 / 5 + 32 : p.temp);
+    const alerts = (d.alerts || []).filter(a => a.event && !(Date.parse(a.ends) < now));
+    return '<div class="card wx" data-reveal><h2>Weather</h2>' +
+      (alerts.length ? '<div class="notices">' + alerts.map(a => '<div class="notice"><div class="notice-label">' + icon('danger-triangle-linear') + esc(a.event) + '</div>' +
+        (a.headline ? '<p>' + esc(a.headline) + '</p>' : '') + ext(page, 'Read the NWS alert') + '</div>').join('') + '</div>' : '') +
+      '<ul class="wx-list">' + periods.map(p => '<li><div class="l-top"><strong>' + esc(p.name) + '</strong><span class="num">' + fah(p) + '°F</span></div><p>' +
+        [p.short, p.wind && 'Wind ' + p.wind, p.precip > 0 && p.precip + '% chance of precipitation'].filter(Boolean).map(esc).join(' · ') + '</p></li>').join('') + '</ul>' +
+      '<p class="small">National Weather Service forecast for this spot, read ' + time(new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Los_Angeles'}).format(at), true) + '. ' + ext(page, 'Full forecast') + '</p></div>';
+  }
+
   function waterHTML(w) {
     const p = w.planning, s = score(w), f = freshness(w), g = gauge(w);
     const points = p.access_points?.length ? p.access_points : p.access_point ? [{label: p.access_point.label, type: 'Documented access', note: p.access_summary, map_query: p.access_point.map_query}] : [];
@@ -370,7 +387,7 @@
       '<div class="d-score">' + scoreBlock + '</div></div>' +
       '<dl class="facts">' + facts.map(([l, v]) => '<div><dt>' + l + '</dt><dd>' + esc(v) + '</dd></div>').join('') + '</dl></div></header>' +
       '<div class="d-body"><div class="inner"><div class="d-main">' + report + notices + river + fish + stock + season + breakdown + '</div>' +
-      '<aside class="aside" aria-label="Access and sources">' + access + sources + '</aside></div></div>' +
+      '<aside class="aside" aria-label="Access, weather and sources">' + access + weatherBlock(w) + sources + '</aside></div></div>' +
       '<nav class="next" aria-label="More waters"><a href="#/water/' + esc(prev.id) + '"><small>Previous water</small><strong>' + esc(prev.name) + '</strong></a><a href="#/water/' + esc(next.id) + '"><small>Next water</small><strong>' + esc(next.name) + '</strong></a></nav></article>';
   }
 
