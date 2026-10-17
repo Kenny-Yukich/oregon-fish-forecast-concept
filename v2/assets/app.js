@@ -39,9 +39,14 @@
   let origin = store.get('origin', packet.defaultOrigin);
   const mapsRoute = dest => 'https://www.google.com/maps/dir/?' + new URLSearchParams({api: '1', origin, destination: dest, travelmode: 'driving'});
 
+  // A newer WDFW creel report from data/auto-reports.js stands in for the record's report; the score formula decides which.
+  const autoReport = w => window.ORFFPreview?.autoReport?.(w) || null;
+  const latest = w => autoReport(w) || w.planning.report;
+  // ODFW in-season rules from the same file that have not ended.
+  const rulesFor = id => (window.ORFF_AUTO?.rules?.[id] || []).filter(r => !r.effective_to || r.effective_to >= today());
   // Reports: freshness from today, so the page ages honestly.
   function freshness(w) {
-    const r = w.planning.report;
+    const r = latest(w);
     if (!r?.reported_on) return {cls: 'none', text: 'No dated report', age: Infinity};
     const age = daysBetween(r.reported_on, today());
     return {cls: age <= 10 ? 'fresh' : age > 30 ? 'stale' : '', text: 'Reported ' + fmtDate(r.reported_on), age};
@@ -147,7 +152,7 @@
         '<a class="pick" href="#/water/' + esc(w.id) + '" data-reveal>' +
         '<div class="ring-row">' + ring(s.value) + '<div><small>Fishing score</small><strong>' + esc(s.label) + '</strong><small>' + esc(s.confidence) + ' confidence</small></div></div>' +
         '<div><h3>' + esc(w.name) + '</h3><p class="reach">' + esc(w.reach) + '</p>' + (s.notes?.length ? '<p class="pick-note">' + icon('danger-triangle-linear') + esc(s.notes[0]) + '</p>' : '') + '</div>' +
-        '<blockquote>' + esc(w.planning.report.summary.length > 140 ? w.planning.report.summary.slice(0, 137).trim() + '…' : w.planning.report.summary) + '</blockquote>' +
+        '<blockquote>' + esc(latest(w).summary.length > 140 ? latest(w).summary.slice(0, 137).trim() + '…' : latest(w).summary) + '</blockquote>' +
         '<div class="foot"><span>' + esc(w.region) + ' · ' + esc(f.text) + '</span><span class="go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></div></a>').join('') +
       '</div><p class="score-note">Every score shows its inputs and rules notices on the water page.</p></div></section>';
   }
@@ -313,13 +318,22 @@
     const scoreBlock = s.status === 'scored'
       ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence</p>'
       : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : s.status === 'unavailable' ? 'Score unavailable' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
-    const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? (/^NWPS-/.test(g.mon.station) ? 'NOAA gauge' : 'USGS gauge') : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length]];
+    const rules = rulesFor(w.id), auto = autoReport(w), wdfw = window.ORFF_AUTO?.sources?.wdfw, regs = window.ORFF_AUTO?.sources?.odfw_regs;
+    const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? (/^NWPS-/.test(g.mon.station) ? 'NOAA gauge' : 'USGS gauge') : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length + rules.length]];
 
-    const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2><p class="quote" data-reveal>' + esc(p.report.summary) + '</p>' +
-      '<div class="quote-meta"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span><span>Source checked ' + time(p.report.checked_on, true) + '</span>' + (p.report.url ? ext(p.report.url, 'Original report') : '') + '</div>' +
-      '<div class="callout" data-reveal><strong>Where this report applies</strong>' + esc(p.report.coverage) + '</div>' + anglerBlock(w) + '</section>';
+    const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2>' + (auto
+      ? '<p class="quote" data-reveal>' + esc(auto.summary) + '</p>' +
+        '<div class="quote-meta"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span><span>Creel checks ' + esc(auto.period) + (wdfw?.read_on ? ', read ' + time(wdfw.read_on, true) : '') + '</span>' + ext(auto.url, 'WDFW creel report') + '</div>' +
+        '<div class="callout" data-reveal><strong>Where this report applies</strong>' + esc(auto.coverage) + ' Read automatically from WDFW’s weekly creel report.</div>'
+      : '<p class="quote" data-reveal>' + esc(p.report.summary) + '</p>' +
+        '<div class="quote-meta"><span class="chip ' + f.cls + '">' + esc(f.text) + '</span><span>Source checked ' + time(p.report.checked_on, true) + '</span>' + (p.report.url ? ext(p.report.url, 'Original report') : '') + '</div>' +
+        '<div class="callout" data-reveal><strong>Where this report applies</strong>' + esc(p.report.coverage) + '</div>') + anglerBlock(w) + '</section>';
 
-    const notices = p.alerts.length ? '<section aria-labelledby="n-h"><h2 id="n-h" class="d-h">Before you go</h2><div class="notices">' + p.alerts.map(a =>
+    // ODFW rule updates show as recorded notices. They do not withhold the score; an active closure or restriction adds a score note.
+    const ruleDates = r => r.effective_from > today() ? 'Starts ' + time(r.effective_from, true) + (r.effective_to ? ', through ' + time(r.effective_to, true) : '') : r.effective_to ? 'In effect through ' + time(r.effective_to, true) : 'In effect since ' + time(r.effective_from, true);
+    const notices = p.alerts.length || rules.length ? '<section aria-labelledby="n-h"><h2 id="n-h" class="d-h">Before you go</h2><div class="notices">' + rules.map(r =>
+      '<div class="notice" data-reveal><div class="notice-label">' + icon('danger-triangle-linear') + 'ODFW regulation update</div><p>' + esc(r.summary) + '</p>' +
+      '<small>' + ruleDates(r) + (regs?.read_on ? '. Read ' + time(regs.read_on, true) : '') + '</small>' + ext(r.url, 'Read source') + '</div>').join('') + p.alerts.map(a =>
       '<div class="notice' + (a.status === 'unverified' ? ' unverified' : '') + '" data-reveal><div class="notice-label">' + icon(a.status === 'unverified' ? 'info-circle-linear' : 'danger-triangle-linear') + (a.status === 'unverified' ? 'Needs a trip-day check' : 'Recorded notice') + '</div><p>' + esc(a.summary) + '</p>' +
       '<small>' + (a.checked_on ? 'Source checked ' + time(a.checked_on, true) : 'Current status unverified') + '</small>' + ext(a.url, 'Read source') + '</div>').join('') + '</div></section>' : '';
 

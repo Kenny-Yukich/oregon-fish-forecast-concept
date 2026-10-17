@@ -10,6 +10,7 @@ on:
       - 'scripts/fetch-stocking.mjs'
       - 'scripts/fetch-conditions.mjs'
       - 'scripts/fetch-weather.mjs'
+      - 'scripts/fetch-reports.mjs'
       - '.github/workflows/daily-data.yml'
 
 permissions:
@@ -22,7 +23,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       STRICT: ${{ github.event_name == 'pull_request' && '1' || '0' }}
     steps:
@@ -37,14 +38,28 @@ jobs:
       - name: Fetch USGS river flow and temperature
         run: node scripts/fetch-conditions.mjs
       - name: Fetch National Weather Service forecasts and alerts
+        continue-on-error: true
         run: node scripts/fetch-weather.mjs
+      # Claude only reads a source when it changed (a new WDFW creel PDF or new ODFW rules text), so pull requests only check the script parses.
+      - name: Check the reports and rules script
+        if: github.event_name == 'pull_request'
+        run: node --check scripts/fetch-reports.mjs
+      - name: Read WDFW creel reports and ODFW regulation updates
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund @anthropic-ai/sdk@0.135.0
+          node scripts/fetch-reports.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |
-          files="data/counts.js data/stocking.js data/conditions.js data/weather.js"
+          files="data/counts.js data/stocking.js data/conditions.js data/weather.js data/auto-reports.js"
           if git diff --quiet -- $files; then echo "Data unchanged."; exit 0; fi
           git config user.name "daily-data bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add $files
-          git commit -m "Update daily fish counts, stocking, river conditions and weather"
+          git commit -m "Update daily fish counts, stocking, river conditions, weather and reports"
           git push
