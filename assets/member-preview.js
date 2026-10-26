@@ -1,8 +1,12 @@
 /* Fishing scores, shown to every visitor.
    The formula is transparent and uses only data already on the site: the dated report's wording and age,
-   dam counts against last year, USGS flow and water temperature, and ODFW stocking. It has not yet been
+   dam counts against last year, USGS flow and water temperature, and ODFW stocking. A newer WDFW creel report
+   from data/auto-reports.js stands in for the dated report. It has not yet been
    checked against catch results. A rules notice withholds a score unless the record names the species that can
-   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman). */
+   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman).
+   First-hand field checks (data/field-checks.js) move a score either way. A score needs three inputs, and on a river a
+   live flow reading, to reach Excellent. During an irrigation switch (data/flow-seasons.js) a river with no live flow
+   reading is capped at Fair. */
 (() => {
   'use strict';
   // Scores are open to everyone, so `on` is always true. `set` stays as a no-op for older callers.
@@ -25,13 +29,33 @@
     river: {tone: 0.30, run: 0.25, cond: 0.20, fresh: 0.15, stock: 0.10},
     lake: {stock: 0.40, tone: 0.35, fresh: 0.25}
   };
-  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking', angler: 'Angler posts'};
+  const LABELS = {tone: 'Report tone', fresh: 'Report freshness', run: 'Run strength', cond: 'River conditions', stock: 'Recent stocking', angler: 'Angler posts', field: 'Field check'};
   // Angler posts from data/angler.js can raise a score but never lower it, and only count for two weeks.
   const ANGLER_WEIGHT = {river: 0.15, lake: 0.20}, ANGLER_DAYS = 14;
+  // First-hand field checks from data/field-checks.js count both ways, for two weeks.
+  const FIELD_WEIGHT = {river: 0.25, lake: 0.25}, FIELD_DAYS = 14;
+  const FIELD_VALUE = {none: 15, slow: 35, fair: 55, good: 80, great: 95};
+  const FIELD_WORD = {none: 'No fish', slow: 'Slow', fair: 'Fair', good: 'Good', great: 'Great'};
+  // Score caps: Excellent needs this many inputs and, on a river, a live flow reading.
+  const EXCELLENT_INPUTS = 3, CAP_GOOD = 79, CAP_FAIR = 64;
   const kindOf = w => w.kind === 'river' ? 'river' : 'lake';
   const species = w => w.planning.score_species || w.planning.target_species;
 
+  // A WDFW creel report read by scripts/fetch-reports.mjs (data/auto-reports.js) stands in for the record's report when it is newer.
+  const AUTO_TONE = {positive: 80, mixed: 55, negative: 30, neutral: 55};
+  function autoReport(w) {
+    const a = window.ORFF_AUTO?.reports?.[w.id], r = w.planning.report;
+    return a?.reported_on && (!r?.reported_on || a.reported_on > r.reported_on) ? a : null;
+  }
+  // ODFW in-season rules from the same file never withhold a score; an active closure or restriction adds a note.
+  const activeRule = (w, t) => (window.ORFF_AUTO?.rules?.[w.id] || []).some(r => (r.kind === 'closure' || r.kind === 'restriction') && r.effective_from <= t && (!r.effective_to || t <= r.effective_to));
+
   function reportTone(w) {
+    const a = autoReport(w);
+    if (a) {
+      const value = AUTO_TONE[a.signal] ?? 55;
+      return {key: 'tone', value, display: value >= 75 ? 'Positive' : value >= 45 ? 'Mixed' : 'Slow', reason: 'WDFW creel report, ' + a.period + ': “' + a.summary + '”'};
+    }
     const r = w.planning.report;
     if (!r?.reported_on) return null;
     const text = r.summary;
@@ -41,11 +65,11 @@
     return {key: 'tone', value, display: word, reason: '“' + text + '”'};
   }
   function reportFreshness(w) {
-    const r = w.planning.report;
+    const a = autoReport(w), r = a || w.planning.report;
     if (!r?.reported_on) return null;
     const age = days(r.reported_on, today());
     const value = age <= 7 ? 100 : age <= 14 ? 80 : age <= 30 ? 55 : 25;
-    return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: 'Reported ' + r.reported_on + '. Older reports count for less.'};
+    return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: (a ? 'WDFW creel report for ' + a.period + ', through ' : 'Reported ') + r.reported_on + '. Older reports count for less.'};
   }
   function runStrength(w) {
     const links = window.ORFF_COUNT_STATIONS?.waters?.[w.id] || [];
@@ -66,7 +90,8 @@
     return {key: 'run', value, display: Math.round(ratio * 100) + '% of last year',
       reason: best.v.label + ' at ' + best.meta.name + ': ' + num(best.v.ytd) + ' this year vs ' + num(best.v.last_year_ytd) + ' by the same date last year, through ' + best.through + '.'};
   }
-  // Flow trend and water temperature from the river's USGS gauge, read daily by the data workflow.
+  // Flow and water temperature from the river's gauge (USGS, or NOAA for Reclamation gauges), read daily, plus
+  // the NOAA river forecast where there is one.
   function conditions(w) {
     const c = window.ORFF_MONITORING?.[w.id], data = c?.station && window.ORFF_CONDITIONS?.stations?.[c.station];
     if (!data) return null;
@@ -75,8 +100,18 @@
     const parts = [];
     if (fresh(data.flow) && data.flow.median7 > 0) {
       const r = data.flow.latest / data.flow.median7, unit = /ft/.test(data.flow.unit || 'ft') ? 'cfs' : data.flow.unit;
-      const [value, word] = r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : [70, 'Dropping'];
-      parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7)});
+      // Against the 30-day median first: a river that dropped or rose more than a week ago still reads as off normal.
+      const r30 = data.flow.median30 > 0 ? data.flow.latest / data.flow.median30 : 1;
+      const [value, word] = r30 < 0.5 ? [30, 'Far below its 30-day level'] : r30 > 2.5 ? [25, 'Far above its 30-day level']
+        : r > 2 ? [25, 'Rising fast'] : r > 1.3 ? [50, 'Rising'] : r >= 0.75 ? [85, 'Steady flow'] : r >= 0.5 ? [70, 'Dropping'] : [35, 'Dropping sharply'];
+      parts.push({value, word, detail: num(data.flow.latest) + ' ' + unit + ' against a 7-day median of ' + num(data.flow.median7) + (data.flow.median30 ? ' and a 30-day median of ' + num(data.flow.median30) : '')});
+    }
+    // A NOAA river forecast that more than doubles the flow in the next three days.
+    const fc = c.forecast && window.ORFF_CONDITIONS.forecasts?.[c.forecast];
+    if (fc && fresh(data.flow)) {
+      const soon = fc.points.filter(p => p.flow != null && Date.parse(p.time) - Date.now() <= 72 * 3600000);
+      const peak = soon.length ? Math.max(...soon.map(p => p.flow)) : null;
+      if (peak && peak > 2 * data.flow.latest) parts.push({value: 30, word: 'Big rise forecast', detail: 'NOAA forecasts up to ' + num(peak) + ' cfs in the next three days'});
     }
     if (fresh(data.temp) && species(w).some(s => COLD_WATER.test(s))) {
       const cel = /F/.test(data.temp.unit || '') ? (data.temp.latest - 32) * 5 / 9 : data.temp.latest, fah = cel * 9 / 5 + 32;
@@ -120,14 +155,30 @@
       reason: 'Word of mouth from public Facebook groups and TikTok in the last two weeks, not verified. Angler posts can raise a score but never lower it.'};
   }
 
+  function fieldCheck(w) {
+    const t = today();
+    const check = (window.ORFF_FIELD?.checks || []).filter(c => c.water === w.id && FIELD_VALUE[c.result] != null && days(c.date, t) >= 0 && days(c.date, t) <= FIELD_DAYS)
+      .sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (!check) return null;
+    return {key: 'field', value: FIELD_VALUE[check.result], display: FIELD_WORD[check.result] + ', ' + short(check.date),
+      reason: 'A first-hand trip check on this water. It counts for two weeks and can raise or lower the score.'};
+  }
+  // The irrigation-switch window this water is in today, if any (data/flow-seasons.js).
+  function flowSeason(w) {
+    const md = today().slice(5);
+    return (window.ORFF_FLOW_SEASONS?.[w.id] || []).find(s => s.from <= md && md <= s.to) || null;
+  }
+
   function score(w) {
     const p = w.planning, t = today(), kind = kindOf(w), notes = [];
     const noticeActive = !!p.score_notice && (!p.score_notice_until || t <= p.score_notice_until);
     if (noticeActive && !p.score_species) return {status: 'withheld', reason: p.score_notice + (p.score_notice_until ? ' The notice runs through ' + short(p.score_notice_until) + '.' : '')};
     if (noticeActive && p.score_species) notes.push(p.score_species_note || 'Scored for ' + p.score_species.join(' and ') + ' only.');
     if (p.score_notice && !noticeActive) notes.push('The closure listed through ' + short(p.score_notice_until) + ' has ended. Confirm the reopening with the source before fishing.');
+    if (activeRule(w, t)) notes.push('An in-season rule change applies here. Check it before you go.');
     const found = kind === 'river' ? [reportTone(w), runStrength(w), conditions(w), reportFreshness(w), stocking(w)] : [stocking(w), reportTone(w), reportFreshness(w)];
-    const factors = found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]}));
+    const field = fieldCheck(w);
+    const factors = [...found.filter(Boolean).map(f => ({...f, label: LABELS[f.key], weight: WEIGHTS[kind][f.key]})), ...(field ? [{...field, label: LABELS.field, weight: FIELD_WEIGHT[kind]}] : [])];
     if (!factors.some(f => f.key !== 'cond')) return {status: 'insufficient', reason: factors.length ? 'Only gauge readings are available. A score also needs a dated report, a dam count or a stocking record.' : 'No dated report, dam count, gauge reading or stocking record yet, so there is nothing to score.'};
     const total = factors.reduce((s, f) => s + f.weight, 0);
     let value = Math.round(factors.reduce((s, f) => s + f.value * f.weight, 0) / total);
@@ -140,6 +191,16 @@
     }
     const unverified = p.alerts.filter(a => a.status === 'unverified').length;
     const counted = factors.filter(f => f.key !== 'angler').length;
+    // Caps keep a thin score from reading as a sure thing.
+    const season = flowSeason(w), liveFlow = factors.some(f => f.key === 'cond');
+    if (season) notes.push(season.note);
+    if (season && kind === 'river' && !liveFlow && value > CAP_FAIR) {
+      value = CAP_FAIR; notes.push('There is no live flow reading during this switch, so the score is capped at Fair. Check the flow before you go.');
+    } else if (value > CAP_GOOD && kind === 'river' && !liveFlow) {
+      value = CAP_GOOD; notes.push('There is no live flow reading for this reach, so the score is capped at Good.');
+    } else if (value > CAP_GOOD && counted < EXCELLENT_INPUTS) {
+      value = CAP_GOOD; notes.push('Only ' + counted + ' inputs are available, so the score is capped at Good.');
+    }
     const confidence = counted >= 3 && unverified === 0 ? 'High' : counted >= 2 && unverified <= 1 ? 'Medium' : 'Low';
     const label = value >= 80 ? 'Excellent' : value >= 65 ? 'Good' : value >= 45 ? 'Fair' : 'Slow';
     const missing = Object.keys(WEIGHTS[kind]).filter(k => !factors.some(f => f.key === k)).map(k => LABELS[k]);
@@ -147,5 +208,5 @@
   }
   const formula = kind => Object.entries(WEIGHTS[kind]).map(([k, v]) => LABELS[k].toLowerCase() + ' ' + Math.round(v * 100) + '%').join(', ');
 
-  window.ORFFPreview = {get on() { return on; }, set, score, formula};
+  window.ORFFPreview = {get on() { return on; }, set, score, formula, autoReport};
 })();
