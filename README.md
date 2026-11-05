@@ -28,14 +28,9 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 - Monitoring coverage entries for every water. Sixteen USGS station connections can request actual latest observations individually. Three operator references, two historical references and three unresolved coverage gaps remain honestly labeled. Not every water has a working live feed.
 - Nearby, upstream, downstream and mainstem/tributary differences are stated explicitly. No station substitutes for a public access point or on-site safety assessment.
 
-## Southwest Washington rivers
+## Access details
 
-Seven Kelso and Longview area reaches were added on October 14, 2026: the Cowlitz (Kelso to Castle Rock, and Barrier Dam to Blue Creek), Coweeman, Toutle, Kalama (Modrow Bridge), Lewis (Woodland to Merwin Dam) and Elochoman. They use the same record format and the same honesty rules as the Oregon waters.
-
-- WDFW and most source sites could not be opened directly from the editing environment, so these records were built from search excerpts of the linked sources. Every Washington rules alert is therefore labeled **Needs a trip-day check** until someone confirms it at the source.
-- Coweeman, Toutle and Elochoman have no verified public fishing access, so they get no driving link. Coweeman's score is withheld while it is reported closed through October 31.
-- Records can now list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions, the way TroutRoute lists access points by river. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
-- Five of the reaches have USGS gauges connected (Castle Rock, below Mayfield Dam, Tower Road, Italian Creek, Ariel). Coweeman and Elochoman are listed as coverage gaps.
+Records can list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
 
 ## Water map
 
@@ -44,7 +39,7 @@ Open `#/map` from the main navigation, or **Map** in any water's section bar. In
 - A satellite base (Esri World Imagery with place labels) or the USGS topo base, with the USGS National Map hydrography layer on top so every stream and lake shows in blue. The hydrography layer can be switched off.
 - One pin per water from `data/map.js`, forest for rivers and blue for lakes. Pins mark the approximate area of each reach. They are not access points, and directions still use only documented access points.
 - Choosing a river with a USGS gauge traces its channel about 25 km up and downstream from that gauge using the USGS NLDI service, drawn as a gold line. The trace can run past the named reach, and the page says so. If it fails, the card says the line is unavailable.
-- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, and deep links such as `#/map?water=lewis-river-woodland`.
+- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, and deep links such as `#/map?water=rogue-river-touvelle`.
 - Leaflet 1.9.4 is vendored in `assets/vendor/leaflet` (BSD-2-Clause, license included). Tiles and river lines are fetched by the visitor's browser only on the map page.
 
 Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
@@ -96,6 +91,7 @@ Open `#/stocking` from the main navigation.
 - **Started:** Oct 15, 2026, with a hand-run collection back to Sept 15 (578 Facebook posts and 48 TikTok videos from that month). The homepage count is the number of posts read from the last 30 days.
 - **Written up generically:** a short summary, the date and a link to the source post. No names, handles or photos.
 - **Location honesty:** each entry says when a post was on a different section of the river or did not say where.
+- **Oregon only:** new social reports must identify an Oregon water. Washington waters and uncertain locations are excluded, including from the "not in the guide yet" list. Shared Columbia reports must be relevant to an Oregon reach.
 - **Scores:** a catch post on the water's own reach (or with the section unstated), from the last 14 days, can raise the score through an "Angler posts" input (15% for rivers, 20% for lakes). It is kept only when it raises the score, never lowers it, never creates a score where there was none, never overrides a rules hold and never raises confidence. Posts from other sections, conditions notes and secondhand mentions are shown but never scored.
 - **Display:** posts show for 30 days.
 - **Not in the guide yet:** `elsewhere` lists other waters anglers talked about, by number of posts, as a guide to which locations to add next.
@@ -105,7 +101,7 @@ Open `#/stocking` from the main navigation.
 `scripts/fetch-conditions.mjs` runs every morning and writes `data/conditions.js` from four keyless sources. Each one fails on its own, so one outage never blanks the rest.
 
 - **USGS:** 30 days of flow and water temperature for every USGS gauge in `data/monitoring.js`.
-- **NOAA National Water Prediction Service:** gauges USGS does not carry. These are Reclamation's PRVO gauge below Bowman Dam (Crooked River) and the Elochoman stage gauge. NOAA river forecasts (Northwest River Forecast Center) cover the Lower Deschutes at Moody, Umpqua, McKenzie, Wilson, Siletz, Rogue, Clackamas, Cowlitz, Toutle and Lewis.
+- **NOAA National Water Prediction Service:** supplies Reclamation's PRVO gauge below Bowman Dam (Crooked River), which USGS does not carry. NOAA river forecasts (Northwest River Forecast Center) cover the Lower Deschutes at Moody, Umpqua, McKenzie, Wilson, Siletz, Rogue and Clackamas.
 - **US Army Corps of Engineers (CWMS):** Detroit Lake pool, the planned rule-curve level and outflow.
 - **Reclamation Hydromet:** Haystack and Henry Hagg pool levels and the Bowman water temperature. Reclamation often refuses cloud requests, so this is optional.
 
@@ -115,7 +111,7 @@ Open `#/stocking` from the main navigation.
 
 `data/auto-reports.js` is written by `scripts/fetch-reports.mjs`, which runs every morning in the daily data workflow.
 
-- **WDFW creel report:** reads the Southwest Washington creel page, finds the newest weekly PDF and has Claude summarize it for the eight Washington and Columbia guide waters (period, report end date, one-sentence summary with numbers, which section of the river it covers, and a positive, mixed, negative or neutral signal). When this report is newer than a water's own report, water pages show it as the latest report and the score uses it for report tone and freshness. The page's tributary weir status table is copied as published, without Claude.
+- **WDFW creel report:** finds the newest weekly Columbia River creel PDF and has Claude summarize it for the Oregon guide's Columbia River reach (period, report end date, one-sentence summary with numbers, which section of the river it covers, and a positive, mixed, negative or neutral signal). When this report is newer than a water's own report, water pages show it as the latest report and the score uses it for report tone and freshness. The report's coverage explains where its catch checks apply to the Columbia River.
 - **ODFW regulation updates:** reads ODFW's in-season regulation updates page and has Claude list the rule changes in effect or starting within 14 days for each Oregon guide water. They show under **Before you go** as "ODFW regulation update" notices. They never withhold a score; an active closure or restriction adds a score note.
 - **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
 - **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
@@ -140,10 +136,10 @@ Every visitor sees the scores; there is no preview switch or paid tier on the si
   - Report freshness, 25%.
   - A lake ODFW isn't stocking scores on its report alone, with lower confidence.
 - **Rules notices.**
-  - A notice withholds the score unless the record lists the species that can still be scored (`score_species`, used for trout on both Lower Deschutes reaches, where steelhead and coho are restricted) or the notice has an end date that has passed (`score_notice_until`, used for the Coweeman closure through Oct 31).
+  - A notice withholds the score unless the record lists the species that can still be scored (`score_species`, used for trout on both Lower Deschutes reaches, where steelhead and coho are restricted) or the notice has an end date that has passed (`score_notice_until`).
   - Either way, the notice stays visible.
 - **Missing inputs.** Missing inputs are skipped and lower confidence, and unverified rule notices lower it too. A water needs at least one input besides gauge readings to be scored.
-- **Unscored on Oct 14, 2026.** Crooked River below Opal Springs and the Elochoman, which have no dated report. Coweeman is held until its closure ends.
+- **Undated reports.** Crooked River below Opal Springs has no dated fishing report; missing report inputs remain unavailable.
 - **Where scores appear.** In the directory, a score shows under each water's name, with a **Best score first** sort. Water pages show the score with a breakdown of every input and its source.
 - **Not yet tested against catches.** The formula has not been checked against catch results. Scores are shown without a label on the site.
 

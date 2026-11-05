@@ -62,9 +62,10 @@ const REPORT_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['reports'],
   properties: {reports: {type: 'array', items: {
     type: 'object', additionalProperties: false,
-    required: ['url', 'water_id', 'elsewhere_water', 'kind', 'where', 'note', 'signal', 'scoring'],
+    required: ['url', 'state', 'water_id', 'elsewhere_water', 'kind', 'where', 'note', 'signal', 'scoring'],
     properties: {
       url: {type: 'string'},
+      state: {type: 'string', enum: ['OR', 'WA', 'other', 'unknown']},
       water_id: {type: 'string'},
       elsewhere_water: {type: 'string'},
       kind: {type: 'string', enum: ['catch', 'guide', 'conditions', 'mention']},
@@ -78,15 +79,16 @@ const REPORT_SCHEMA = {
 
 export function systemPrompt(waters, elsewhereNames) {
   const list = waters.map(w => `- ${w.id}: ${w.name}, ${w.reach} (${w.region}; ${w.kind}; ${w.planning.target_species.join(', ')})`).join('\n');
-  return `You read public social media posts from Oregon and Southwest Washington anglers for a fishing guide website and pick out real fishing reports.
+  return `You read public social media posts for an Oregon-only fishing guide and pick out real fishing reports about Oregon waters.
 
 The guide covers these waters. Each is one named reach or lake:
 ${list}
 
-For each post that reports fishing on an identifiable water (a catch, a guide's report of how fishing is going, or conditions such as water level, temperature or ramp status), return one report. Leave out everything else: gear sales, questions, ads that only list open seats or prices, memes, welcome posts, and posts from outside Oregon and Southwest Washington.
+For each post that reports fishing on an identifiable Oregon water (a catch, a guide's report of how fishing is going, or conditions such as water level, temperature or ramp status), return one report. Leave out everything else: gear sales, questions, ads that only list open seats or prices, memes, welcome posts, Washington waters, and places whose state cannot be established. The Columbia is a shared river: include Oregon reaches or river-wide reports relevant to an Oregon reach, but exclude Washington-bank-only reports and Washington tributaries.
 
 Fields:
 - url: the post's url, exactly as given.
+- state: OR for an Oregon water or the shared Columbia under the rule above. WA, other and unknown are excluded from publication, including the elsewhere list.
 - water_id: the guide water the post is about, or "none". Match on the river or lake, then judge the section. A post on the same river but clearly a different section still gets that water_id, with the section described in "where". Only use ids from the list.
 - elsewhere_water: when the post is about a water or a section that is not one of the guide's reaches, a short common name for it (for example "Alsea and Yaquina", "Deschutes in and near Bend", "Columbia estuary (Astoria, Buoy 10)"). Reuse one of these names when it fits: ${elsewhereNames.join('; ') || '(none yet)'}. Otherwise "".
 - kind: catch, guide (a guide or charter describing the fishing), conditions, or mention (secondhand or indirect).
@@ -131,20 +133,20 @@ export function merge(current, posts, reports, waterIds, today, readCounts) {
   const byUrl = new Map(posts.map(p => [p.url, p]));
   const start = daysAgo(today, WINDOW_DAYS);
   const waters = {};
-  for (const [id, list] of Object.entries(current.waters || {})) waters[id] = list.filter(p => p.date >= start);
-  const elsewherePosts = (current.elsewhere_posts || []).filter(p => p.date >= start);
+  for (const [id, list] of Object.entries(current.waters || {})) if (waterIds.has(id)) waters[id] = list.filter(p => p.date >= start);
+  const elsewherePosts = (current.elsewhere_posts || []).filter(p => p.date >= start && p.state === 'OR');
   const known = new Set([...Object.values(waters).flat(), ...elsewherePosts].map(p => p.url));
   let added = 0;
   for (const r of reports) {
     const post = byUrl.get(r.url);
-    if (!post || known.has(r.url) || post.date < start || !r.note.trim()) continue;
+    if (!post || r.state !== 'OR' || known.has(r.url) || post.date < start || !r.note.trim()) continue;
     const id = waterIds.has(r.water_id) ? r.water_id : null;
     if (id) {
       (waters[id] ||= []).push({date: post.date, platform: post.platform, kind: r.kind, where: r.where.trim(), note: r.note.trim(), signal: r.signal,
         scoring: r.scoring && (r.kind === 'catch' || r.kind === 'guide'), url: post.url});
       added++;
     }
-    if (r.elsewhere_water.trim()) { elsewherePosts.push({date: post.date, water: r.elsewhere_water.trim(), note: r.note.trim(), url: post.url}); if (!id) added++; }
+    if (r.elsewhere_water.trim()) { elsewherePosts.push({date: post.date, state: 'OR', water: r.elsewhere_water.trim(), note: r.note.trim(), url: post.url}); if (!id) added++; }
     known.add(r.url);
   }
   for (const id of Object.keys(waters)) { waters[id].sort((a, b) => b.date.localeCompare(a.date)); if (!waters[id].length) delete waters[id]; }

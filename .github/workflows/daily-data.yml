@@ -11,6 +11,7 @@ on:
       - 'scripts/fetch-conditions.mjs'
       - 'scripts/fetch-weather.mjs'
       - 'scripts/fetch-reports.mjs'
+      - 'scripts/check-data.mjs'
       - '.github/workflows/daily-data.yml'
 
 permissions:
@@ -53,6 +54,8 @@ jobs:
         run: |
           npm install --no-save --no-package-lock --no-audit --no-fund @anthropic-ai/sdk@0.135.0
           node scripts/fetch-reports.mjs
+      - name: Verify Oregon data relationships
+        run: node scripts/check-data.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |

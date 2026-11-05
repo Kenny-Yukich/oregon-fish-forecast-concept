@@ -104,8 +104,8 @@ test('two successful empty sources record a completed check without needing the 
 const facebookPost = {url: 'https://www.facebook.com/groups/fixture/posts/new', time: '2026-10-18T18:00:00Z', text: 'Caught trout on the lower Test River.'};
 const tiktokPost = {webVideoUrl: 'https://www.tiktok.com/@fixture/video/new', createTimeISO: '2026-11-04T18:00:00Z', text: 'Trout biting on the lower Test River today.'};
 const reports = [
-  {url: facebookPost.url, water_id: 'test-river', elsewhere_water: '', kind: 'catch', where: '', note: 'Trout were caught on the lower river.', signal: 'positive', scoring: true},
-  {url: tiktokPost.webVideoUrl, water_id: 'test-river', elsewhere_water: '', kind: 'catch', where: '', note: 'An angler reported trout biting on the lower river.', signal: 'positive', scoring: true}
+  {url: facebookPost.url, state: 'OR', water_id: 'test-river', elsewhere_water: '', kind: 'catch', where: '', note: 'Trout were caught on the lower river.', signal: 'positive', scoring: true},
+  {url: tiktokPost.webVideoUrl, state: 'OR', water_id: 'test-river', elsewhere_water: '', kind: 'catch', where: '', note: 'An angler reported trout biting on the lower river.', signal: 'positive', scoring: true}
 ];
 
 test('a completed catch-up keeps source dates, adds missed reports once, and expires old data', t => {
@@ -145,4 +145,21 @@ test('a failed report-reading service preserves both data files after collection
   assert.match(result.stdout + result.stderr, /Reading posts failed/);
   assert.equal(result.dataBytes, result.initialData);
   assert.equal(result.seenBytes, result.initialSeen);
+});
+
+test('Oregon-only refresh drops removed reaches and excludes Washington and unknown-state reports', t => {
+  const result = runCollector(t, {
+    current: {...oldData,
+      waters: {'removed-washington-river': [{date: '2026-10-20', url: 'https://example.test/old-wa', note: 'Old Washington report.'}]},
+      elsewhere_posts: [
+        {date: '2026-10-20', state: 'OR', water: 'Oregon Lake', note: 'An Oregon report.', url: 'https://example.test/old-or'},
+        {date: '2026-10-20', state: 'WA', water: 'Washington Lake', note: 'A Washington report.', url: 'https://example.test/old-wa-elsewhere'}
+      ]},
+    facebook: [facebookPost], tiktok: [tiktokPost],
+    reports: [{...reports[0], state: 'WA', elsewhere_water: 'Washington Lake'}, {...reports[1], state: 'unknown'}]
+  });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.deepEqual(result.data.waters, {});
+  assert.deepEqual(result.data.elsewhere.map(p => p.water), ['Oregon Lake']);
+  assert.equal(result.data.elsewhere_posts.length, 1);
 });

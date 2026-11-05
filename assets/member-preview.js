@@ -3,7 +3,7 @@
    dam counts against last year, USGS flow and water temperature, and ODFW stocking. A newer WDFW creel report
    from data/auto-reports.js stands in for the dated report. It has not yet been
    checked against catch results. A rules notice withholds a score unless the record names the species that can
-   still be scored (Lower Deschutes trout) or the notice has an end date that has passed (Coweeman).
+   still be scored (Lower Deschutes trout) or the notice has an end date that has passed.
    First-hand field checks (data/field-checks.js) move a score either way. A score needs three inputs, and on a river a
    live flow reading, to reach Excellent. During an irrigation switch (data/flow-seasons.js) a river with no live flow
    reading is capped at Fair. */

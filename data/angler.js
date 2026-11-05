@@ -252,73 +252,85 @@ window.ORFF_ANGLER = {
       "date": "2026-11-01",
       "water": "Deschutes in and near Bend",
       "note": "Angler caught and released a brightly colored trout on the fly during fall fishing.",
-      "url": "https://www.tiktok.com/@outdoorguy35/video/7703260227830828302"
+      "url": "https://www.tiktok.com/@outdoorguy35/video/7703260227830828302",
+      "state": "OR"
     },
     {
       "date": "2026-10-19",
       "water": "Lower Rogue (Gold Beach)",
       "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/",
+      "state": "OR"
     },
     {
       "date": "2026-10-15",
       "water": "Chetco estuary (Brookings)",
       "note": "A guide reports putting nice fish in the bag over the last four days in the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2060805951270967/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2060805951270967/",
+      "state": "OR"
     },
     {
       "date": "2026-10-14",
       "water": "Alsea and Yaquina",
       "note": "A guide is booking fall Chinook trips, with coho twitching on the Yaquina planned for early November.",
-      "url": "https://www.facebook.com/groups/474041098053000/permalink/1384007457056355/"
+      "url": "https://www.facebook.com/groups/474041098053000/permalink/1384007457056355/",
+      "state": "OR"
     },
     {
       "date": "2026-10-14",
       "water": "Chetco estuary (Brookings)",
       "note": "After a slow day, a lone angler landed a Chinook on the last pass near the jetty while nearby boats hooked up.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2059232391428323/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2059232391428323/",
+      "state": "OR"
     },
     {
       "date": "2026-10-14",
       "water": "Columbia near The Dalles",
       "note": "A guide called upper Columbia coho fishing “on fire.”",
-      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4410782009237143/"
+      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4410782009237143/",
+      "state": "OR"
     },
     {
       "date": "2026-10-09",
       "water": "Chetco estuary (Brookings)",
       "note": "A guide boat had a good day on the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055177341833828/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055177341833828/",
+      "state": "OR"
     },
     {
       "date": "2026-10-09",
       "water": "Chetco estuary (Brookings)",
       "note": "A guide posted the day’s Chinook catches from the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055096841841878/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055096841841878/",
+      "state": "OR"
     },
     {
       "date": "2026-10-09",
       "water": "Wickiup and Paulina lakes",
       "note": "A guide boat was limiting on kokanee at Wickiup and Paulina.",
-      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4404449596537051/"
+      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4404449596537051/",
+      "state": "OR"
     },
     {
       "date": "2026-10-08",
       "water": "Chetco estuary (Brookings)",
       "note": "A lodge called it peak season on the Chetco estuary, with solid fishing expected to improve with dry weather and big tides.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2054318251919737/"
+      "url": "https://www.facebook.com/groups/672427923442117/permalink/2054318251919737/",
+      "state": "OR"
     },
     {
       "date": "2026-10-08",
       "water": "Deschutes in and near Bend",
       "note": "A crisp morning produced whitefish on the fly.",
-      "url": "https://www.tiktok.com/@outdoorguy35/video/7694373540111387917"
+      "url": "https://www.tiktok.com/@outdoorguy35/video/7694373540111387917",
+      "state": "OR"
     },
     {
       "date": "2026-10-06",
       "water": "Emigrant Lake",
       "note": "An angler posted a day of fishing at Emigrant Lake near Ashland.",
-      "url": "https://www.tiktok.com/@getrightkell/video/7693779241850178846"
+      "url": "https://www.tiktok.com/@getrightkell/video/7693779241850178846",
+      "state": "OR"
     }
   ],
   "read_log": [
