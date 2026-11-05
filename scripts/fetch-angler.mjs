@@ -1,17 +1,15 @@
 // Collects new angler posts from public Facebook groups and TikTok (via Apify), has Claude read them, and merges
 // the fishing reports into data/angler.js. Run weekly by .github/workflows/angler-posts.yml. Node 18+.
 // Needs APIFY_TOKEN and ANTHROPIC_API_KEY. Without them, or when a step fails, the existing file is kept.
-// STRICT=1 exits non-zero on failure instead of keeping the old file.
+// Failed checks exit non-zero and leave the existing data files unchanged.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import Anthropic from '@anthropic-ai/sdk';
 
 const OUT = new URL('../data/angler.js', import.meta.url);
 const SEEN = new URL('../data/angler-seen.json', import.meta.url);
-const STRICT = process.env.STRICT === '1';
 const WINDOW_DAYS = 30;      // posts stay on the site this long
 const SEEN_DAYS = 45;        // how long post links are remembered so they are not read twice
-const MAX_LOOKBACK = 15;     // after a missed week, catch up on at most this many days
+const MAX_LOOKBACK = WINDOW_DAYS; // catch up on every post still eligible for display
 const MODEL = 'claude-opus-5-5';
 
 export const GROUPS = [
@@ -101,6 +99,7 @@ A post can name more than one water; return the most specific one. Return an emp
 }
 
 async function readPosts(posts, waters, elsewhereNames) {
+  const {default: Anthropic} = await import('@anthropic-ai/sdk');
   const client = new Anthropic();
   const reports = [];
   for (let i = 0; i < posts.length; i += 60) {
@@ -186,9 +185,7 @@ window.ORFF_ANGLER = ${JSON.stringify(data, null, 2)};
 /* ---------- Main ---------- */
 async function main() {
   if (!process.env.APIFY_TOKEN || !process.env.ANTHROPIC_API_KEY) {
-    console.log('Angler posts: APIFY_TOKEN or ANTHROPIC_API_KEY is not set. Keeping the existing data/angler.js.');
-    if (STRICT) process.exit(1);
-    return;
+    throw new Error('APIFY_TOKEN or ANTHROPIC_API_KEY is not set. Configure both repository secrets before running.');
   }
   const today = pacificDate(Date.now());
   const win = {};
@@ -202,25 +199,17 @@ async function main() {
   const oldest = daysAgo(today, lookback);
 
   const posts = [];
-  let collected = 0;
   try {
     const fb = await runActor('apify/facebook-groups-scraper', {startUrls: GROUPS.map(g => ({url: g.url})), resultsLimit: 60 * lookback, viewOption: 'CHRONOLOGICAL', onlyPostsNewerThan: `${lookback} days`}, 2);
     posts.push(...fb.map(fromFacebook));
-    collected++;
     console.log(`Facebook: ${fb.length} posts from ${GROUPS.length} groups, last ${lookback} days`);
-  } catch (e) { console.log('Facebook failed: ' + e.message); }
+  } catch (e) { throw new Error('Facebook collection failed: ' + e.message); }
   try {
     const tt = await runActor('clockworks/tiktok-scraper', {hashtags: TIKTOK.hashtags, profiles: TIKTOK.profiles, profileSorting: 'latest', oldestPostDateUnified: `${lookback} days`, resultsPerPage: 30, commentsPerPost: 0,
       shouldDownloadVideos: false, shouldDownloadCovers: false, shouldDownloadAvatars: false, shouldDownloadMusicCovers: false, shouldDownloadSlideshowImages: false}, 1);
     posts.push(...tt.filter(t => t.webVideoUrl).map(fromTikTok));
-    collected++;
     console.log(`TikTok: ${tt.length} videos`);
-  } catch (e) { console.log('TikTok failed: ' + e.message); }
-  if (!collected) {
-    console.log('No posts collected. Keeping the existing data/angler.js.');
-    if (STRICT) process.exit(1);
-    return;
-  }
+  } catch (e) { throw new Error('TikTok collection failed: ' + e.message); }
 
   // The look-back overlaps the last run, so posts already seen are dropped before counting and reading.
   // Older posts (pinned posts, popular hashtag videos) are left out too.
@@ -236,9 +225,7 @@ async function main() {
       reports = await readPosts(fresh, waters, elsewhereNames);
       console.log(`Claude found ${reports.length} reports`);
     } catch (e) {
-      console.log('Reading posts failed: ' + (e instanceof Anthropic.APIError ? `API ${e.status} ${e.message}` : e.message) + '. Keeping the existing file.');
-      if (STRICT) process.exit(1);
-      return;
+      throw new Error('Reading posts failed: ' + e.message);
     }
   }
   const {data, added} = merge(current, fresh, reports, new Set(waters.map(w => w.id)), today, counts);
@@ -253,4 +240,4 @@ async function main() {
   console.log(`Wrote data/angler.js: ${added} new, ${Object.values(data.waters).flat().length} guide-water posts, ${data.elsewhere.length} other waters`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(e => { console.log('Angler posts failed: ' + e.message); process.exit(STRICT ? 1 : 0); });
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(e => { console.error('Angler posts failed: ' + e.message); process.exitCode = 1; });

@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - 'scripts/fetch-angler.mjs'
+      - 'scripts/fetch-angler.test.mjs'
+      - 'scripts/test-fixtures/**'
       - '.github/workflows/angler-posts.yml'
 
 permissions:
@@ -26,10 +28,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      # Each run costs a little (Apify and the Claude API), so pull requests only check the script parses.
-      - name: Check the angler posts script
-        if: github.event_name == 'pull_request'
-        run: node --check scripts/fetch-angler.mjs
+      # Offline checks run on pull requests too, without API credentials or collection charges.
+      - name: Check the angler posts collector
+        run: |
+          node --check scripts/fetch-angler.mjs
+          node --test scripts/fetch-angler.test.mjs
+      - name: Verify collection credentials
+        if: github.event_name != 'pull_request'
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          for name in APIFY_TOKEN ANTHROPIC_API_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name repository secret is missing. Social reports were not refreshed."
+              exit 1
+            fi
+          done
       - name: Fetch angler posts from Facebook groups and TikTok
         if: github.event_name != 'pull_request'
         env:
