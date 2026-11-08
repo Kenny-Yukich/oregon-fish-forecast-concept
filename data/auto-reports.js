@@ -6,7 +6,7 @@
      They show as notices and never withhold a score.
    - weirs: empty; Washington tributary weirs are outside this guide. */
 window.ORFF_AUTO = {
-  "checked_on": "2026-11-07",
+  "checked_on": "2026-11-08",
   "sources": {
     "wdfw": {
       "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest",
