@@ -7,11 +7,11 @@
    - Posts stay for 30 days. `elsewhere` lists waters anglers talked about that are not in the guide yet.
    - `read_log` counts the posts read, by the day they were posted; `reviewed` is the total for the last 30 days. */
 window.ORFF_ANGLER = {
-  "checked_on": "2026-11-05",
-  "window_start": "2026-10-06",
+  "checked_on": "2026-11-09",
+  "window_start": "2026-10-10",
   "reviewed": {
-    "facebook_posts": 420,
-    "tiktok_videos": 32
+    "facebook_posts": 403,
+    "tiktok_videos": 28
   },
   "sources": [
     {
@@ -120,16 +120,6 @@ window.ORFF_ANGLER = {
         "signal": "positive",
         "scoring": false,
         "url": "https://www.tiktok.com/@outdoorguy35/video/7703260227830828302"
-      },
-      {
-        "date": "2026-10-08",
-        "platform": "TikTok",
-        "kind": "catch",
-        "where": "Near Bend, upstream of this reach",
-        "note": "A regular fly-fishing poster said a crisp morning produced whitefish.",
-        "signal": "positive",
-        "scoring": false,
-        "url": "https://www.tiktok.com/@outdoorguy35/video/7694373540111387917"
       }
     ],
     "diamond-lake": [
@@ -192,6 +182,16 @@ window.ORFF_ANGLER = {
     ],
     "lower-deschutes-warm-springs-trout-creek": [
       {
+        "date": "2026-11-07",
+        "platform": "TikTok",
+        "kind": "catch",
+        "where": "Deschutes, section not stated (tagged near Metolius)",
+        "note": "November outing on the Deschutes produced some big fish, according to the angler's video.",
+        "signal": "positive",
+        "scoring": true,
+        "url": "https://www.tiktok.com/@kennyyukich/video/7705560605050064159"
+      },
+      {
         "date": "2026-10-26",
         "platform": "Facebook",
         "kind": "guide",
@@ -207,13 +207,13 @@ window.ORFF_ANGLER = {
     {
       "water": "Chetco estuary (Brookings)",
       "note": "A guide reports putting nice fish in the bag over the last four days in the Chetco estuary.",
-      "posts": 5,
+      "posts": 2,
       "latest": "2026-10-15"
     },
     {
       "water": "Deschutes in and near Bend",
       "note": "Angler caught and released a brightly colored trout on the fly during fall fishing.",
-      "posts": 2,
+      "posts": 1,
       "latest": "2026-11-01"
     },
     {
@@ -233,18 +233,6 @@ window.ORFF_ANGLER = {
       "note": "A guide called upper Columbia coho fishing “on fire.”",
       "posts": 1,
       "latest": "2026-10-14"
-    },
-    {
-      "water": "Wickiup and Paulina lakes",
-      "note": "A guide boat was limiting on kokanee at Wickiup and Paulina.",
-      "posts": 1,
-      "latest": "2026-10-09"
-    },
-    {
-      "water": "Emigrant Lake",
-      "note": "An angler posted a day of fishing at Emigrant Lake near Ashland.",
-      "posts": 1,
-      "latest": "2026-10-06"
     }
   ],
   "elsewhere_posts": [
@@ -289,71 +277,9 @@ window.ORFF_ANGLER = {
       "note": "A guide called upper Columbia coho fishing “on fire.”",
       "url": "https://www.facebook.com/groups/1552453421736697/permalink/4410782009237143/",
       "state": "OR"
-    },
-    {
-      "date": "2026-10-09",
-      "water": "Chetco estuary (Brookings)",
-      "note": "A guide boat had a good day on the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055177341833828/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-09",
-      "water": "Chetco estuary (Brookings)",
-      "note": "A guide posted the day’s Chinook catches from the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2055096841841878/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-09",
-      "water": "Wickiup and Paulina lakes",
-      "note": "A guide boat was limiting on kokanee at Wickiup and Paulina.",
-      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4404449596537051/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-08",
-      "water": "Chetco estuary (Brookings)",
-      "note": "A lodge called it peak season on the Chetco estuary, with solid fishing expected to improve with dry weather and big tides.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2054318251919737/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-08",
-      "water": "Deschutes in and near Bend",
-      "note": "A crisp morning produced whitefish on the fly.",
-      "url": "https://www.tiktok.com/@outdoorguy35/video/7694373540111387917",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-06",
-      "water": "Emigrant Lake",
-      "note": "An angler posted a day of fishing at Emigrant Lake near Ashland.",
-      "url": "https://www.tiktok.com/@getrightkell/video/7693779241850178846",
-      "state": "OR"
     }
   ],
   "read_log": [
-    {
-      "date": "2026-10-06",
-      "facebook_posts": 15,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-07",
-      "facebook_posts": 21,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-08",
-      "facebook_posts": 16,
-      "tiktok_videos": 4
-    },
-    {
-      "date": "2026-10-09",
-      "facebook_posts": 20,
-      "tiktok_videos": 0
-    },
     {
       "date": "2026-10-10",
       "facebook_posts": 11,
@@ -486,7 +412,27 @@ window.ORFF_ANGLER = {
     },
     {
       "date": "2026-11-05",
-      "facebook_posts": 4,
+      "facebook_posts": 9,
+      "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-06",
+      "facebook_posts": 12,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-07",
+      "facebook_posts": 15,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-08",
+      "facebook_posts": 12,
+      "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-09",
+      "facebook_posts": 11,
       "tiktok_videos": 0
     }
   ]
