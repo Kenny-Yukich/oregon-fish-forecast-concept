@@ -6,7 +6,7 @@
      They show as notices and never withhold a score.
    - weirs: empty; Washington tributary weirs are outside this guide. */
 window.ORFF_AUTO = {
-  "checked_on": "2026-11-12",
+  "checked_on": "2026-11-13",
   "sources": {
     "wdfw": {
       "url": "https://wdfw.wa.gov/fishing/reports/creel/southwest",
@@ -15,8 +15,8 @@ window.ORFF_AUTO = {
     },
     "odfw_regs": {
       "url": "https://myodfw.com/articles/regulation-updates",
-      "hash": "3a9c736c43266891a6db74cd90e63813a8a2f574ffc88d865bf8658e3a558d47",
-      "read_on": "2026-11-10"
+      "hash": "4353476554ec85ddc1536ad98350cdb6abbdbcfcdeab83d5ab94810946c134a6",
+      "read_on": "2026-11-13"
     }
   },
   "reports": {
@@ -35,7 +35,7 @@ window.ORFF_AUTO = {
     "lower-deschutes-warm-springs-trout-creek": [
       {
         "water_id": "lower-deschutes-warm-springs-trout-creek",
-        "summary": "Deschutes River from Sherars Falls up to the Pelton Reregulating Reservoir is closed to angling for and retention of steelhead and coho salmon.",
+        "summary": "Angling for and retention of steelhead and coho salmon is closed on the Deschutes from Sherars Falls upstream to the Pelton Reregulating Reservoir.",
         "effective_from": "2026-08-15",
         "effective_to": "2026-12-31",
         "species": [
@@ -49,7 +49,7 @@ window.ORFF_AUTO = {
     "lower-deschutes-moody": [
       {
         "water_id": "lower-deschutes-moody",
-        "summary": "Deschutes River from the mouth up to the railroad trestle below Sherars Falls is closed to angling for and retention of salmon and steelhead.",
+        "summary": "Angling for and retention of salmon and steelhead is closed on the Deschutes from the I-84 bridge at the mouth to the trestle below Sherars Falls.",
         "effective_from": "2026-08-15",
         "effective_to": "2026-12-31",
         "species": [
@@ -63,7 +63,7 @@ window.ORFF_AUTO = {
     "columbia-river-chinook-landing": [
       {
         "water_id": "columbia-river-chinook-landing",
-        "summary": "In Columbia River fall salmon and steelhead fisheries, boat anglers may keep fishing until the combined daily adult bag limit for everyone aboard is reached.",
+        "summary": "In fall mainstem salmon and steelhead fisheries from Buoy 10 to the Highway 395 Bridge, boat anglers may keep fishing until the boat's combined daily limit is reached.",
         "effective_from": "2026-08-01",
         "effective_to": "2026-12-31",
         "species": [
@@ -76,20 +76,20 @@ window.ORFF_AUTO = {
       },
       {
         "water_id": "columbia-river-chinook-landing",
-        "summary": "Columbia River from Buoy 10 to Bonneville Dam allows hatchery coho and hatchery steelhead retention, two adults daily; all Chinook must be released.",
+        "summary": "From Buoy 10 to Bonneville Dam, hatchery coho and hatchery steelhead may be kept, two adult daily, while all Chinook must be released.",
         "effective_from": "2026-11-01",
         "effective_to": "2026-12-31",
         "species": [
+          "Chinook salmon",
           "Coho salmon",
-          "Steelhead",
-          "Chinook salmon"
+          "Steelhead"
         ],
         "kind": "restriction",
         "url": "https://myodfw.com/articles/regulation-updates"
       },
       {
         "water_id": "columbia-river-chinook-landing",
-        "summary": "Sturgeon retention is closed on the Columbia River mainstem from Buoy 10 to McNary Dam; catch and release fishing remains allowed outside sanctuaries.",
+        "summary": "Sturgeon retention is closed on the Columbia from Buoy 10 to McNary Dam; catch and release is allowed outside sanctuary closure areas.",
         "effective_from": "2026-11-03",
         "effective_to": "",
         "species": [
@@ -102,7 +102,7 @@ window.ORFF_AUTO = {
     "umpqua-river-elkton": [
       {
         "water_id": "umpqua-river-elkton",
-        "summary": "Mainstem Umpqua River limits wild adult Chinook to one per day and five for the period.",
+        "summary": "On the mainstem Umpqua from the jetties to the forks, the wild adult Chinook limit is one daily and five for the period.",
         "effective_from": "2026-07-01",
         "effective_to": "2026-11-30",
         "species": [
@@ -115,13 +115,37 @@ window.ORFF_AUTO = {
     "wilson-river-mills-bridge": [
       {
         "water_id": "wilson-river-mills-bridge",
-        "summary": "Wilson River from Highway 101 to Jordan Creek limits wild adult Chinook to one per day and five for the period in aggregate.",
+        "summary": "On the Wilson River from Highway 101 to Jordan Creek, the wild adult Chinook limit is one daily and five for the period in aggregate.",
         "effective_from": "2026-08-01",
         "effective_to": "2026-11-30",
         "species": [
           "Chinook salmon"
         ],
         "kind": "restriction",
+        "url": "https://myodfw.com/articles/regulation-updates"
+      }
+    ],
+    "siletz-river-jack-morgan": [
+      {
+        "water_id": "siletz-river-jack-morgan",
+        "summary": "On the Siletz River up to Illahee boat ramp, no more than ten adult wild Chinook may be retained for the period in aggregate.",
+        "effective_from": "2026-08-01",
+        "effective_to": "2026-12-31",
+        "species": [
+          "Chinook salmon"
+        ],
+        "kind": "restriction",
+        "url": "https://myodfw.com/articles/regulation-updates"
+      },
+      {
+        "water_id": "siletz-river-jack-morgan",
+        "summary": "Chinook retention opens on the Siletz River from above Ojalla Bridge upstream to Illahee boat ramp.",
+        "effective_from": "2026-10-07",
+        "effective_to": "2026-12-31",
+        "species": [
+          "Chinook salmon"
+        ],
+        "kind": "opening",
         "url": "https://myodfw.com/articles/regulation-updates"
       }
     ]
