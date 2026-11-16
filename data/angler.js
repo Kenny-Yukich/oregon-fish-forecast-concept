@@ -7,11 +7,11 @@
    - Posts stay for 30 days. `elsewhere` lists waters anglers talked about that are not in the guide yet.
    - `read_log` counts the posts read, by the day they were posted; `reviewed` is the total for the last 30 days. */
 window.ORFF_ANGLER = {
-  "checked_on": "2026-11-09",
-  "window_start": "2026-10-10",
+  "checked_on": "2026-11-16",
+  "window_start": "2026-10-17",
   "reviewed": {
-    "facebook_posts": 403,
-    "tiktok_videos": 28
+    "facebook_posts": 380,
+    "tiktok_videos": 25
   },
   "sources": [
     {
@@ -52,16 +52,6 @@ window.ORFF_ANGLER = {
         "signal": "positive",
         "scoring": false,
         "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/"
-      },
-      {
-        "date": "2026-10-14",
-        "platform": "TikTok",
-        "kind": "catch",
-        "where": "Rogue, section not stated",
-        "note": "An angler posted a fall steelhead from the Rogue.",
-        "signal": "positive",
-        "scoring": true,
-        "url": "https://www.tiktok.com/@trevor.meek05/video/7696686242481638686"
       }
     ],
     "detroit-lake-mongold": [
@@ -74,28 +64,6 @@ window.ORFF_ANGLER = {
         "signal": "positive",
         "scoring": true,
         "url": "https://www.facebook.com/groups/474041098053000/permalink/1400851952038572/"
-      },
-      {
-        "date": "2026-10-12",
-        "platform": "TikTok",
-        "kind": "catch",
-        "where": "Tagged at Detroit Lake",
-        "note": "A kokanee catch was posted from Detroit Lake.",
-        "signal": "positive",
-        "scoring": true,
-        "url": "https://www.tiktok.com/@cade.140/video/7696009452800986399"
-      }
-    ],
-    "henry-hagg-lake": [
-      {
-        "date": "2026-10-11",
-        "platform": "Facebook",
-        "kind": "mention",
-        "where": "",
-        "note": "An angler asked where trout were biting near Portland “besides Hagg Lake,” suggesting Hagg has been giving up trout.",
-        "signal": "positive",
-        "scoring": false,
-        "url": "https://www.facebook.com/groups/1552453421736697/permalink/4407374442911233/"
       }
     ],
     "willamette-river-cathedral-park": [
@@ -124,26 +92,46 @@ window.ORFF_ANGLER = {
     ],
     "diamond-lake": [
       {
-        "date": "2026-10-11",
+        "date": "2026-11-11",
         "platform": "Facebook",
-        "kind": "conditions",
-        "where": "",
-        "note": "The lakeside resort posted a 26°F Sunday morning.",
-        "signal": "neutral",
-        "scoring": false,
-        "url": "https://www.facebook.com/groups/474041098053000/permalink/1381501610640273/"
+        "kind": "catch",
+        "where": "Diamond Lake, area not stated",
+        "note": "Four days of fishing produced big tiger and brown trout released, plus plenty of rainbow trout through October and November.",
+        "signal": "positive",
+        "scoring": true,
+        "url": "https://www.facebook.com/groups/1552453421736697/permalink/4443300239318653/"
       }
     ],
     "columbia-river-chinook-landing": [
       {
-        "date": "2026-10-14",
+        "date": "2026-11-13",
         "platform": "Facebook",
-        "kind": "guide",
-        "where": "Near The Dalles, well upstream of this reach",
-        "note": "A guide called upper Columbia coho fishing “on fire.”",
+        "kind": "catch",
+        "where": "Astoria estuary, far downstream of this reach",
+        "note": "A coho was landed near Astoria a few weeks earlier trolling a glow flasher setup.",
         "signal": "positive",
         "scoring": false,
-        "url": "https://www.facebook.com/groups/1552453421736697/permalink/4410782009237143/"
+        "url": "https://www.facebook.com/groups/474041098053000/permalink/1412931120830655/"
+      },
+      {
+        "date": "2026-11-11",
+        "platform": "Facebook",
+        "kind": "catch",
+        "where": "Buoy 10, far downstream of this reach",
+        "note": "Angler's last salmon of the season came at Buoy 10 about two weeks earlier on a spinner and flasher rig.",
+        "signal": "positive",
+        "scoring": false,
+        "url": "https://www.facebook.com/groups/474041098053000/permalink/1410702404386860/"
+      },
+      {
+        "date": "2026-11-11",
+        "platform": "Facebook",
+        "kind": "catch",
+        "where": "Buoy 10, far downstream of this reach",
+        "note": "Angler's last salmon of the season came at Buoy 10 about two weeks earlier on a spinner and flasher rig.",
+        "signal": "positive",
+        "scoring": false,
+        "url": "https://www.facebook.com/groups/474041098053000/permalink/1410702204386880/"
       }
     ],
     "odell-lake-princess-creek": [
@@ -205,10 +193,22 @@ window.ORFF_ANGLER = {
   },
   "elsewhere": [
     {
-      "water": "Chetco estuary (Brookings)",
-      "note": "A guide reports putting nice fish in the bag over the last four days in the Chetco estuary.",
-      "posts": 2,
-      "latest": "2026-10-15"
+      "water": "Columbia estuary (Astoria, Buoy 10)",
+      "note": "A coho was landed near Astoria a few weeks earlier trolling a glow flasher setup.",
+      "posts": 3,
+      "latest": "2026-11-13"
+    },
+    {
+      "water": "Howard Prairie Lake",
+      "note": "A rainbow trout just over 24 inches was caught on November 11.",
+      "posts": 1,
+      "latest": "2026-11-12"
+    },
+    {
+      "water": "Fourmile Lake (Klamath Falls)",
+      "note": "An angler shared a nice fish caught at the lake near Klamath Falls.",
+      "posts": 1,
+      "latest": "2026-11-12"
     },
     {
       "water": "Deschutes in and near Bend",
@@ -221,21 +221,44 @@ window.ORFF_ANGLER = {
       "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
       "posts": 1,
       "latest": "2026-10-19"
-    },
-    {
-      "water": "Alsea and Yaquina",
-      "note": "A guide is booking fall Chinook trips, with coho twitching on the Yaquina planned for early November.",
-      "posts": 1,
-      "latest": "2026-10-14"
-    },
-    {
-      "water": "Columbia near The Dalles",
-      "note": "A guide called upper Columbia coho fishing “on fire.”",
-      "posts": 1,
-      "latest": "2026-10-14"
     }
   ],
   "elsewhere_posts": [
+    {
+      "date": "2026-11-13",
+      "state": "OR",
+      "water": "Columbia estuary (Astoria, Buoy 10)",
+      "note": "A coho was landed near Astoria a few weeks earlier trolling a glow flasher setup.",
+      "url": "https://www.facebook.com/groups/474041098053000/permalink/1412931120830655/"
+    },
+    {
+      "date": "2026-11-12",
+      "state": "OR",
+      "water": "Howard Prairie Lake",
+      "note": "A rainbow trout just over 24 inches was caught on November 11.",
+      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4445035759145101/"
+    },
+    {
+      "date": "2026-11-12",
+      "state": "OR",
+      "water": "Fourmile Lake (Klamath Falls)",
+      "note": "An angler shared a nice fish caught at the lake near Klamath Falls.",
+      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4444944035820940/"
+    },
+    {
+      "date": "2026-11-11",
+      "state": "OR",
+      "water": "Columbia estuary (Astoria, Buoy 10)",
+      "note": "Angler's last salmon of the season came at Buoy 10 about two weeks earlier on a spinner and flasher rig.",
+      "url": "https://www.facebook.com/groups/474041098053000/permalink/1410702404386860/"
+    },
+    {
+      "date": "2026-11-11",
+      "state": "OR",
+      "water": "Columbia estuary (Astoria, Buoy 10)",
+      "note": "Angler's last salmon of the season came at Buoy 10 about two weeks earlier on a spinner and flasher rig.",
+      "url": "https://www.facebook.com/groups/474041098053000/permalink/1410702204386880/"
+    },
     {
       "date": "2026-11-01",
       "water": "Deschutes in and near Bend",
@@ -249,72 +272,9 @@ window.ORFF_ANGLER = {
       "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
       "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/",
       "state": "OR"
-    },
-    {
-      "date": "2026-10-15",
-      "water": "Chetco estuary (Brookings)",
-      "note": "A guide reports putting nice fish in the bag over the last four days in the Chetco estuary.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2060805951270967/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-14",
-      "water": "Alsea and Yaquina",
-      "note": "A guide is booking fall Chinook trips, with coho twitching on the Yaquina planned for early November.",
-      "url": "https://www.facebook.com/groups/474041098053000/permalink/1384007457056355/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-14",
-      "water": "Chetco estuary (Brookings)",
-      "note": "After a slow day, a lone angler landed a Chinook on the last pass near the jetty while nearby boats hooked up.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2059232391428323/",
-      "state": "OR"
-    },
-    {
-      "date": "2026-10-14",
-      "water": "Columbia near The Dalles",
-      "note": "A guide called upper Columbia coho fishing “on fire.”",
-      "url": "https://www.facebook.com/groups/1552453421736697/permalink/4410782009237143/",
-      "state": "OR"
     }
   ],
   "read_log": [
-    {
-      "date": "2026-10-10",
-      "facebook_posts": 11,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-11",
-      "facebook_posts": 14,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-12",
-      "facebook_posts": 18,
-      "tiktok_videos": 5
-    },
-    {
-      "date": "2026-10-13",
-      "facebook_posts": 10,
-      "tiktok_videos": 3
-    },
-    {
-      "date": "2026-10-14",
-      "facebook_posts": 16,
-      "tiktok_videos": 3
-    },
-    {
-      "date": "2026-10-15",
-      "facebook_posts": 16,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-16",
-      "facebook_posts": 11,
-      "tiktok_videos": 0
-    },
     {
       "date": "2026-10-17",
       "facebook_posts": 18,
@@ -428,11 +388,46 @@ window.ORFF_ANGLER = {
     {
       "date": "2026-11-08",
       "facebook_posts": 12,
-      "tiktok_videos": 0
+      "tiktok_videos": 3
     },
     {
       "date": "2026-11-09",
+      "facebook_posts": 19,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-10",
+      "facebook_posts": 13,
+      "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-11",
       "facebook_posts": 11,
+      "tiktok_videos": 2
+    },
+    {
+      "date": "2026-11-12",
+      "facebook_posts": 11,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-13",
+      "facebook_posts": 8,
+      "tiktok_videos": 2
+    },
+    {
+      "date": "2026-11-14",
+      "facebook_posts": 5,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-15",
+      "facebook_posts": 8,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-16",
+      "facebook_posts": 9,
       "tiktok_videos": 0
     }
   ]
