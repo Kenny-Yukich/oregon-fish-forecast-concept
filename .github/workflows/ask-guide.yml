@@ -1,0 +1,50 @@
+name: Eddy check
+
+# Offline tests on every run. On pushes to branches other than main and on manual runs, it also asks Claude
+# Haiku 5.5 ten sample questions through the real endpoint code (server/try.mjs) and writes the answers to the
+# run summary. That costs well under one cent a run. Pull requests stay offline, with no API charges.
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'server/**'
+      - '!server/**.md'
+      - 'v2/assets/ask.js'
+      - 'assets/ask-config.js'
+      - '.github/workflows/ask-guide.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+      - '!server/**.md'
+      - 'v2/assets/ask.js'
+      - 'assets/ask-config.js'
+      - '.github/workflows/ask-guide.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the endpoint's dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Offline tests
+        run: npm test
+      - name: Check the chat script parses
+        run: node --check ../v2/assets/ask.js
+      - name: Ask Claude Haiku 5.5 sample questions
+        if: github.event_name != 'pull_request'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node try.mjs
