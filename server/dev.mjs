@@ -1,4 +1,4 @@
-// Runs the whole site locally with the Ask the guide endpoint switched on.
+// Runs the whole site locally with Eddy's endpoint switched on.
 //   cd server && npm install && ANTHROPIC_API_KEY=... npm start   (then open http://localhost:8787)
 // Serves the repository root as static files, answers POST /api/ask, and serves an assets/ask-config.js that
 // points the chat at that endpoint (the committed one leaves the chat hidden until a host is configured).
@@ -48,4 +48,4 @@ createServer(async (req, res) => {
     if (!res.headersSent) res.writeHead(500);
     res.end();
   }
-}).listen(port, () => console.log('Oregon Fish Forecast with Ask the guide: http://localhost:' + port));
+}).listen(port, () => console.log('Oregon Fish Forecast with Eddy: http://localhost:' + port));

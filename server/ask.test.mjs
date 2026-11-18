@@ -1,4 +1,4 @@
-// Offline tests for the Ask the guide endpoint. No API calls: a stand-in client replays canned stream events.
+// Offline tests for Eddy's endpoint. No API calls: a stand-in client replays canned stream events.
 // Run: cd server && npm test
 import test from 'node:test';
 import assert from 'node:assert/strict';

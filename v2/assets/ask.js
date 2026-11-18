@@ -1,4 +1,4 @@
-/* Ask the guide: a chat panel where visitors ask about the guide waters. Answers come from Claude Haiku on the
+/* Eddy: the AI fishing assistant, a chat panel where visitors ask about the guide waters. Answers come from Claude Haiku on the
    server (server/ask.mjs), grounded in the same data files this page reads. The panel only appears when
    assets/ask-config.js names an endpoint, so the static site never shows a chat that cannot answer.
    The conversation is kept for this tab only (sessionStorage). */
@@ -57,7 +57,7 @@
   launch.className = 'ask-launch';
   launch.setAttribute('aria-expanded', 'false');
   launch.setAttribute('aria-controls', 'ask-panel');
-  launch.innerHTML = icon('compass-linear') + '<span>Ask the guide</span>';
+  launch.innerHTML = icon('compass-linear') + '<span>Ask Eddy</span>';
 
   const panel = document.createElement('section');
   panel.className = 'ask-panel';
@@ -66,17 +66,17 @@
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-labelledby', 'ask-title');
   panel.innerHTML =
-    '<header class="ask-head"><div><p class="eyebrow on-ink">Answers from this morning’s data</p><h2 id="ask-title" class="display">Ask the guide</h2></div>' +
+    '<header class="ask-head"><div><p class="eyebrow on-ink">AI fishing assistant</p><h2 id="ask-title" class="display">Eddy</h2></div>' +
       '<div class="ask-head-actions"><button type="button" class="ask-reset" hidden>New chat</button>' +
-      '<button type="button" class="ask-close" aria-label="Close Ask the guide">' + icon('close-circle-linear') + '</button></div></header>' +
+      '<button type="button" class="ask-close" aria-label="Close Eddy">' + icon('close-circle-linear') + '</button></div></header>' +
     '<div class="ask-log" data-lenis-prevent tabindex="-1"></div>' +
     '<p class="sr-only" aria-live="polite" data-ask-status></p>' +
     '<form class="ask-form" novalidate>' +
       '<label class="sr-only" for="ask-input">Your question</label>' +
-      '<textarea id="ask-input" rows="1" maxlength="' + MAX + '" placeholder="Ask about a water, fish counts or stocking" autocomplete="off"></textarea>' +
+      '<textarea id="ask-input" rows="1" maxlength="' + MAX + '" placeholder="Ask Eddy about a river or lake" autocomplete="off"></textarea>' +
       '<button type="submit" class="ask-send" aria-label="Send question">' + icon('arrow-right-linear') + '</button>' +
     '</form>' +
-    '<p class="ask-note">Answers by Claude, an AI, from the reports, gauges, counts and stocking on this site. They can be wrong. Check ODFW’s current rules before you fish.</p>';
+    '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
   document.body.append(launch, panel);
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
@@ -87,7 +87,7 @@
   function bubble(role, html) {
     const el = document.createElement('div');
     el.className = 'ask-msg ' + (role === 'user' ? 'from-user' : 'from-guide');
-    el.innerHTML = '<span class="sr-only">' + (role === 'user' ? 'You said:' : 'The guide said:') + ' </span><div class="ask-body">' + html + '</div>';
+    el.innerHTML = '<span class="sr-only">' + (role === 'user' ? 'You said:' : 'Eddy said:') + ' </span><div class="ask-body">' + html + '</div>';
     log.append(el);
     return el;
   }
@@ -104,7 +104,7 @@
   }
   function renderAll() {
     log.innerHTML = '';
-    const intro = bubble('guide', '<p>Ask about any of the 24 waters in the guide: how a river looks this morning, where fish are moving, what ODFW is stocking. I answer only from the data on this site and say when something is missing.</p>');
+    const intro = bubble('guide', '<p>I’m Eddy. Ask me about any of the 24 waters in the guide: how a river looks this morning, where fish are moving, what ODFW is stocking. I answer only from the data on this site and say when something is missing.</p>');
     intro.classList.add('ask-intro');
     if (!history.length) intro.insertAdjacentHTML('beforeend', suggestions());
     for (const m of history) bubble(m.role, m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : format(m.content));
@@ -127,13 +127,13 @@
     input.value = ''; grow();
     busy = new AbortController();
     form.setAttribute('aria-busy', 'true');
-    status.textContent = 'The guide is answering.';
+    status.textContent = 'Eddy is answering.';
     reset.hidden = false;
     let text = '', end = null;
     try {
       const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
       if (!res.ok || !res.body) {
-        end = await res.json().catch(() => null) || {type: 'error', message: 'The guide could not answer just now. Try again shortly.'};
+        end = await res.json().catch(() => null) || {type: 'error', message: 'Eddy could not answer just now. Try again shortly.'};
       } else {
         const reader = res.body.getReader(), decoder = new TextDecoder();
         let buffer = '';
@@ -152,7 +152,7 @@
         }
       }
     } catch (e) {
-      end = e.name === 'AbortError' ? {type: 'stopped'} : {type: 'error', message: 'Could not reach the guide. Check your connection and try again.'};
+      end = e.name === 'AbortError' ? {type: 'stopped'} : {type: 'error', message: 'Could not reach Eddy. Check your connection and try again.'};
     }
     out.classList.remove('pending');
     busy = null;
@@ -161,12 +161,12 @@
       if (end.stop === 'max_tokens') { text += '\n\n(The answer was cut short. Ask a narrower question for the rest.)'; body.innerHTML = format(text); }
       history.push({role: 'assistant', content: text});
       store.save(history);
-      status.textContent = 'The guide answered: ' + body.innerText;
+      status.textContent = 'Eddy answered: ' + body.innerText;
     } else {
       // A failed turn is taken back out of the conversation, so the next question starts clean.
       history.pop();
       store.save(history);
-      const note = end?.type === 'refusal' ? end.message : end?.type === 'stopped' ? 'Stopped.' : end?.message || 'The guide did not answer. Try again.';
+      const note = end?.type === 'refusal' ? end.message : end?.type === 'stopped' ? 'Stopped.' : end?.message || 'Eddy did not answer. Try again.';
       out.classList.add('ask-error');
       body.innerHTML = (text.trim() ? format(text) : '') + '<p class="ask-error-note">' + esc(note) + '</p>' +
         (end?.type === 'refusal' || end?.type === 'stopped' ? '' : '<button type="button" class="ask-retry" data-q="' + esc(question) + '">Try again</button>');

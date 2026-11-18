@@ -1,7 +1,7 @@
 {
-  "name": "orff-ask-the-guide",
+  "name": "orff-eddy",
   "private": true,
-  "description": "The Ask the guide endpoint for Oregon Fish Forecast. See server/README.md.",
+  "description": "Eddy, the AI fishing assistant for Oregon Fish Forecast. See server/README.md.",
   "type": "module",
   "engines": {
     "node": ">=20"

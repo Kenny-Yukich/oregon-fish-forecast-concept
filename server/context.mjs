@@ -1,4 +1,4 @@
-// Builds the site data the Ask the guide assistant reads.
+// Builds the site data Eddy, the AI fishing assistant, reads.
 // It runs the same data files and score formula the pages load (data/*.js, assets/member-preview.js), so the
 // assistant sees the numbers a visitor sees. Field-check wording stays out, as it does on the site.
 import vm from 'node:vm';

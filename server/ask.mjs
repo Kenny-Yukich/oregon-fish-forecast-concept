@@ -1,4 +1,4 @@
-// The Ask the guide endpoint: POST a short conversation, get Claude Haiku 5.5's answer streamed back as
+// The endpoint behind Eddy, the site's AI fishing assistant: POST a short conversation, get Claude Haiku 5.5's answer streamed back as
 // newline-delimited JSON. The answer is grounded in the site's own data (server/context.mjs); the visitor
 // can only send their question, earlier turns and the guide water they are viewing.
 //
@@ -19,7 +19,7 @@ export const LIMITS = {
   maxTokens: 3000        // room for adaptive thinking plus a short answer
 };
 
-export const INSTRUCTIONS = `You are "Ask the guide", the assistant on Oregon Fish Forecast, a website that puts dated fishing reports, river gauges, dam counts, ODFW trout stocking and weather for 24 Oregon waters on one page. Visitors are anglers deciding where and when to fish.
+export const INSTRUCTIONS = `You are Eddy, the AI fishing assistant on Oregon Fish Forecast, a website that puts dated fishing reports, river gauges, dam counts, ODFW trout stocking and weather for 24 Oregon waters on one page. Visitors are anglers deciding where and when to fish. If someone asks what you are, say you are Eddy, an AI assistant built on Claude, made by Anthropic.
 
 Answer only from the site data that follows these instructions. It is rebuilt from the site's data files, which refresh every morning. If the answer is not in the data, say so plainly and point to the source link or the water's page. Never fill a gap with a guess or with general knowledge presented as current fact.
 
@@ -116,11 +116,11 @@ export function buildParams(context, {messages, page}, {model = MODEL, maxTokens
 }
 
 function friendly(error) {
-  if (error instanceof Anthropic.RateLimitError) return 'The guide is busy right now. Try again in a minute.';
-  if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) return 'The guide is not set up correctly on the server.';
-  if (error instanceof Anthropic.BadRequestError) return 'The guide could not read that question. Start a new conversation and try again.';
-  if (error instanceof Anthropic.APIError && error.status >= 500) return 'The guide is having trouble right now. Try again shortly.';
-  return 'The guide could not answer just now. Try again shortly.';
+  if (error instanceof Anthropic.RateLimitError) return 'Eddy is busy right now. Try again in a minute.';
+  if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) return 'Eddy is not set up correctly on the server.';
+  if (error instanceof Anthropic.BadRequestError) return 'Eddy could not read that question. Start a new conversation and try again.';
+  if (error instanceof Anthropic.APIError && error.status >= 500) return 'Eddy is having trouble right now. Try again shortly.';
+  return 'Eddy could not answer just now. Try again shortly.';
 }
 
 /* ---------- Handler ---------- */
@@ -142,7 +142,7 @@ export function createAskHandler({
     const ownOrigin = new URL(request.url).origin;
     const okOrigin = !origin || origin === ownOrigin || allowed.has(origin);
     const headers = okOrigin && origin && origin !== ownOrigin ? cors(origin) : {};
-    if (!okOrigin) return json(403, 'This site is not allowed to use the guide.');
+    if (!okOrigin) return json(403, 'This site is not allowed to use Eddy.');
     if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers});
     if (request.method !== 'POST') return json(405, 'Use POST.', {...headers, allow: 'POST, OPTIONS'});
 
@@ -154,7 +154,7 @@ export function createAskHandler({
     let context;
     try { context = await getContext(); } catch (e) {
       console.error('ask: site data failed to load:', e.message);
-      return json(503, 'The guide could not load today’s data. Try again shortly.', headers);
+      return json(503, 'Eddy could not load today’s data. Try again shortly.', headers);
     }
     let input;
     try { input = validateBody(body, new Set(context.waters.map(w => w.id))); } catch (e) {
@@ -162,7 +162,7 @@ export function createAskHandler({
       throw e;
     }
     if (!perVisitor(clientIp(request))) return json(429, 'That’s a lot of questions in a short time. Wait a few minutes and try again.', headers);
-    if (!overall('all')) return json(429, 'The guide has had a busy hour. Try again later.', headers);
+    if (!overall('all')) return json(429, 'Eddy has had a busy hour. Try again later.', headers);
 
     const params = buildParams(context, input, {model});
     const encoder = new TextEncoder();

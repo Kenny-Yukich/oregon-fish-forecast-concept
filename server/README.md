@@ -1,6 +1,6 @@
-# Ask the guide
+# Eddy, the AI fishing assistant
 
-A chat panel on the homepage ("Ask the guide") where visitors ask about the 24 guide waters. Claude Haiku 5.5 answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts.
+An "Ask Eddy" chat panel on the homepage and water pages where visitors ask about the 24 guide waters. Eddy runs on Claude Haiku 5.5 and answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts.
 
 ## How it fits together
 
@@ -28,7 +28,7 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 ## Tests
 
 - `npm test`: offline tests with a stand-in client (no API calls).
-- `node try.mjs`: asks Haiku 5.5 nine sample questions in eight conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river and an off-topic request) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
+- `node try.mjs`: asks Haiku 5.5 ten sample questions in nine conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request and "Who are you?") and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
 ## Cost
