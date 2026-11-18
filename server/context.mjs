@@ -221,11 +221,11 @@ function stockingDirectoryBlock(g, today, byId) {
     const gw = guideFor(name);
     // ODFW's own name only where it carries a qualifier the readable name may lose, such as "LAVA LK, B".
     const odfw = list[0].odfw_name && /[,(]/.test(list[0].odfw_name) ? ' [' + list[0].odfw_name + ']' : '';
-    const line = '- ' + name + odfw + ': last ' + (past ? when(past) : 'none') + '; next ' + (next.length ? next.map(when).join(', ') : 'none') + (gw ? ' · #/water/' + gw.id : '');
+    const line = '- ' + name + odfw + ': recent ' + (past ? when(past) : 'none') + '; next ' + (next.length ? next.map(when).join(', ') : 'none') + (gw ? ' · #/water/' + gw.id : '');
     (regions.get(region) || regions.set(region, []).get(region)).push(line);
   }
   const out = ['## Every water on the ODFW trout stocking schedule (' + byWater.size + ' waters; planned releases, not confirmed)',
-    'Format: water: last = the most recent planned stocking week within the last ' + keepWeeks + ' weeks (older releases are not kept, so "none" does not mean never stocked); next = the next two planned weeks. Numbers in brackets after a date are trout. ODFW\'s own name is in square brackets where it has a qualifier. A #/water/ link means the water has a guide page.'];
+    'Format: water: recent = its most recent planned stocking week within the last ' + keepWeeks + ' weeks ("recent none" means none in that window, not never; older releases are not kept); next = its next two planned weeks. Numbers in brackets after a date are trout. ODFW\'s own name is in square brackets where it has a qualifier. A #/water/ link means the water has a guide page.'];
   for (const region of [...regions.keys()].sort()) out.push(region + ':', ...regions.get(region).sort());
   return out.join('\n');
 }

@@ -158,7 +158,7 @@ test('context lists every stocked water and ODFW zone reports, and survives a mi
   const names = new Set(site.ORFF_STOCKING.rows.map(r => r.waterbody));
   assert.match(context.text, new RegExp('## Every water on the ODFW trout stocking schedule \\(' + names.size + ' waters'));
   for (const name of names) assert.ok(context.text.includes('\n- ' + name), 'missing stocked water ' + name);
-  assert.match(context.text, /- Lava Lake \(B\) \[LAVA LK, B\]: last /);
+  assert.match(context.text, /- Lava Lake \(B\) \[LAVA LK, B\]: recent /);
   const zones = Object.values(site.ORFF_ODFW_REPORTS?.zones || {});
   assert.ok(zones.length >= 7, 'ODFW zone reports load');
   for (const z of zones) assert.ok(context.text.includes('### ' + z.name + ' report'), z.name);
