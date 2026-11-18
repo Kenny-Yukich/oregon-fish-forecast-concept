@@ -153,3 +153,20 @@ test('rate limits per visitor', async () => {
   assert.equal(other.status, 200);
   await readAnswer(other);
 });
+
+test('context lists every stocked water and ODFW zone reports, and survives a missing reports file', async () => {
+  const names = new Set(site.ORFF_STOCKING.rows.map(r => r.waterbody));
+  assert.match(context.text, new RegExp('## Every water on the ODFW trout stocking schedule \\(' + names.size + ' waters'));
+  for (const name of names) assert.ok(context.text.includes('\n- ' + name), 'missing stocked water ' + name);
+  assert.match(context.text, /- Lava Lake \(B\) \[LAVA LK, B\]: last /);
+  const zones = Object.values(site.ORFF_ODFW_REPORTS?.zones || {});
+  assert.ok(zones.length >= 7, 'ODFW zone reports load');
+  for (const z of zones) assert.ok(context.text.includes('### ' + z.name + ' report'), z.name);
+  const read = localSource();
+  const original = console.error; console.error = () => {};
+  try {
+    const without = buildContext(await loadSite(path => path === 'data/odfw-reports.js' ? Promise.reject(new Error('HTTP 404')) : read(path)), '2026-11-18');
+    assert.ok(!without.text.includes('## ODFW weekly fishing reports'));
+    assert.equal(without.waters.length, context.waters.length);
+  } finally { console.error = original; }
+});

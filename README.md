@@ -117,6 +117,14 @@ Open `#/stocking` from the main navigation.
 - **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
 - **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
 
+## ODFW weekly zone reports
+
+`scripts/fetch-odfw-reports.mjs` runs every morning in the daily data workflow and writes `data/odfw-reports.js`: ODFW's weekly fishing report for each of its eight zones (Northwest, Southwest, Willamette, Central, Northeast, Southeast, Columbia and Marine), in ODFW's own words. No API key or AI is involved.
+
+- Most report pages carry no date, so each zone records `changed_on`, the first day its exact text was read, plus any date written in the report.
+- A zone that fails keeps its previous text, and the step is allowed to fail without stopping the daily data commit.
+- Only Eddy reads this file; the pages do not show it yet. It lets Eddy speak to waters outside the guide.
+
 ## Fishing scores
 
 - **Field checks.** `data/field-checks.js` holds first-hand trip checks by the site owner. A check moves that water's score up or down for 14 days (25% weight). Its wording stays in the background: the score breakdown only shows "Field check", a one-word result and the date.

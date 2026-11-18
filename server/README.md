@@ -4,7 +4,7 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
 
 ## How it fits together
 
-- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 75K characters of plain text (about 32K tokens for Haiku 5.5), one block per water plus statewide counts, stocking and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
+- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 110K characters of plain text (about 47K tokens for Haiku 5.5): one block per guide water, statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
 - **`ask.mjs`** is the endpoint: `POST` a conversation, get the answer streamed back as newline-delimited JSON. It is a web-standard `(Request) => Response` handler.
   - Model `claude-haiku-5-5`, effort `low`, adaptive thinking (the model's default), up to 3,000 output tokens.
   - The instructions and site data go in the system prompt and are cached, so repeat questions within five minutes read the data at a tenth of the price.
@@ -28,7 +28,7 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 ## Tests
 
 - `npm test`: offline tests with a stand-in client (no API calls).
-- `node try.mjs`: asks Haiku 5.5 ten sample questions in nine conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request and "Who are you?") and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
+- `node try.mjs`: asks Haiku 5.5 twelve sample questions in eleven conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request, "Who are you?", Lava Lake (stocking schedule only) and Malheur Reservoir (ODFW zone report only)) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
 ## Cost

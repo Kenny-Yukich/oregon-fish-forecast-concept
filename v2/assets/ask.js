@@ -107,7 +107,7 @@
   }
   function renderAll() {
     log.innerHTML = '';
-    const intro = bubble('guide', '<p>I’m Eddy. Ask me about any of the 24 waters in the guide: how a river looks this morning, where fish are moving, what ODFW is stocking. I answer only from the data on this site and say when something is missing.</p>');
+    const intro = bubble('guide', '<p>I’m Eddy. Ask me how a river looks this morning, where fish are moving or what ODFW is stocking. I know the ' + waters.length + ' guide waters in detail, plus ODFW’s stocking schedule and weekly reports for the rest of Oregon. I answer only from that data and say when something is missing.</p>');
     intro.classList.add('ask-intro');
     if (!history.length) intro.insertAdjacentHTML('beforeend', suggestions());
     for (const m of history) bubble(m.role, m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : format(m.content));
