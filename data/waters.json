@@ -1877,7 +1877,7 @@
         },
         "alerts": [
           {
-            "summary": "The Forest Service lists Lava Lake Campground and its boating site as closed for the season. The campground closed Oct 18, 2026 and tentatively reopens May 15.",
+            "summary": "The Forest Service lists Lava Lake Campground and its boating site as closed for the season (closed Oct 18, 2026; tentatively reopens May 15). The lake itself stays open to fishing under the 2026 regulations.",
             "status": "advisory",
             "checked_on": "2026-11-18",
             "url": "https://www.fs.usda.gov/r06/deschutes/recreation/lava-lake-campground"
