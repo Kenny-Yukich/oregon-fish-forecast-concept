@@ -45,10 +45,14 @@ Speed in that check: the first text appeared in about 0.4 seconds when the cache
 
 ## Putting it online
 
-GitHub Pages only serves files, so the endpoint needs a host that runs code and keeps the API key secret. Any host that takes a web-standard handler works. Once it is up, put its URL in `assets/ask-config.js` and add the site's origin to the allowed origins.
+GitHub Pages only serves files, so Eddy's endpoint runs on its own Netlify project, **oregon-fish-forecast-eddy** (https://oregon-fish-forecast-eddy.netlify.app). It is separate from the oregonfishforecast.com project. The website itself stays on GitHub Pages and calls `https://oregon-fish-forecast-eddy.netlify.app/api/ask`.
 
-Settings the endpoint reads on a host:
+- `netlify.toml`, `netlify/functions/eddy.mjs` and `public/` (a placeholder page) are the Netlify project. Deploy with this folder (`server/`) as the base directory.
+- Production deploys are public so site visitors can reach Eddy; deploy previews need a Netlify team login.
+- Once the endpoint answers, `assets/ask-config.js` holds its URL, which turns the chat on.
 
-- `ANTHROPIC_API_KEY`: the key, stored as a secret on the host.
-- `ORFF_SITE_URL`: where to read the data files, for example `https://kenny-yukich.github.io/oregon-fish-forecast-concept/`, so answers follow the daily data commits without a redeploy.
-- `ORFF_ALLOWED_ORIGINS`: comma-separated sites allowed to call it, for example `https://kenny-yukich.github.io`.
+Settings the function reads (Netlify project, Project configuration, Environment variables, scope Functions):
+
+- `ANTHROPIC_API_KEY` (required, mark it secret): the key Eddy uses. Redeploy after adding or changing it.
+- `ORFF_SITE_URL` (optional): where to read the data files. Defaults to `https://kenny-yukich.github.io/oregon-fish-forecast-concept/`, so answers follow the daily data commits without a redeploy.
+- `ORFF_ALLOWED_ORIGINS` (optional): comma-separated sites allowed to call Eddy. Defaults to `https://kenny-yukich.github.io`.
