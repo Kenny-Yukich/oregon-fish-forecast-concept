@@ -4,7 +4,7 @@ A chat panel on the homepage ("Ask the guide") where visitors ask about the 24 g
 
 ## How it fits together
 
-- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 75K characters of plain text (about 20K tokens), one block per water plus statewide counts, stocking and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
+- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 75K characters of plain text (about 32K tokens for Haiku 5.5), one block per water plus statewide counts, stocking and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
 - **`ask.mjs`** is the endpoint: `POST` a conversation, get the answer streamed back as newline-delimited JSON. It is a web-standard `(Request) => Response` handler.
   - Model `claude-haiku-5-5`, effort `low`, adaptive thinking (the model's default), up to 3,000 output tokens.
   - The instructions and site data go in the system prompt and are cached, so repeat questions within five minutes read the data at a tenth of the price.
@@ -28,12 +28,20 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 ## Tests
 
 - `npm test`: offline tests with a stand-in client (no API calls).
-- `node try.mjs`: asks Haiku 5.5 eight sample questions (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river and an off-topic request) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
+- `node try.mjs`: asks Haiku 5.5 nine sample questions in eight conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river and an off-topic request) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
 ## Cost
 
-Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens. A question reads about 20K tokens of site data: about $0.002 the first time and about $0.0003 when the cached copy is used, plus a few hundred output tokens (about $0.0002). A thousand questions a month is roughly $0.50 to $2. Set a monthly spend limit on the API key's workspace in the Claude Console as a backstop.
+Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens; cached reads cost a tenth and cache writes 1.25 times the input price. Each question reads about 32K tokens of instructions and site data:
+
+- The first question in a five-minute window writes the cache: about $0.004.
+- Questions within five minutes of another read the cache: about $0.0003.
+- Answers run 100 to 1,300 output tokens, thinking included: $0.0001 to $0.0007.
+
+The first live check (Nov 18, 2026) asked 9 questions for $0.0086 in total. A thousand questions a month would cost roughly $0.50 if they cluster and up to about $5 if each one arrives alone. Set a monthly spend limit on the API key's workspace in the Claude Console as a backstop.
+
+Speed in that check: the first text appeared in about 0.4 seconds when the cache was warm and 4.4 seconds on the first, uncached question.
 
 ## Putting it online
 

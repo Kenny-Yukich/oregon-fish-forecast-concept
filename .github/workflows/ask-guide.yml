@@ -1,7 +1,7 @@
 name: Ask the guide check
 
 # Offline tests on every run. On pushes to branches other than main and on manual runs, it also asks Claude
-# Haiku 5.5 eight sample questions through the real endpoint code (server/try.mjs) and writes the answers to the
+# Haiku 5.5 nine sample questions through the real endpoint code (server/try.mjs) and writes the answers to the
 # run summary. That costs well under one cent a run. Pull requests stay offline, with no API charges.
 on:
   workflow_dispatch:
@@ -10,12 +10,14 @@ on:
       - main
     paths:
       - 'server/**'
+      - '!server/**.md'
       - 'v2/assets/ask.js'
       - 'assets/ask-config.js'
       - '.github/workflows/ask-guide.yml'
   pull_request:
     paths:
       - 'server/**'
+      - '!server/**.md'
       - 'v2/assets/ask.js'
       - 'assets/ask-config.js'
       - '.github/workflows/ask-guide.yml'

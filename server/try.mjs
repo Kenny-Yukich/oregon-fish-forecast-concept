@@ -1,7 +1,7 @@
 // Asks Claude Haiku 5.5 a set of sample questions through the real endpoint code and prints the answers,
 // timings and token use. Needs ANTHROPIC_API_KEY. Run by .github/workflows/ask-guide.yml, or by hand:
 //   cd server && ANTHROPIC_API_KEY=... node try.mjs
-// About 8 questions over the cached site data: well under one cent per run at Haiku 5.5 prices.
+// Nine questions over the cached site data: about $0.009 a run at Haiku 5.5 prices.
 import {appendFileSync} from 'node:fs';
 import {createAskHandler, anthropicClient, MODEL} from './ask.mjs';
 import {contextCache, localSource} from './context.mjs';
