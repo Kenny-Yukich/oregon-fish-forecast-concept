@@ -77,7 +77,10 @@
       '<button type="submit" class="ask-send" aria-label="Send question">' + icon('arrow-right-linear') + '</button>' +
     '</form>' +
     '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
-  document.body.append(launch, panel);
+  // Eddy appears only once its endpoint says it is ready, so the page never shows a chat that cannot answer
+  // (for example before the Netlify project is deployed, or while it has no API key).
+  fetch(endpoint, {method: 'GET', cache: 'no-store'}).then(r => r.ok ? r.json() : null).catch(() => null)
+    .then(status => { if (status?.ok) document.body.append(launch, panel); });
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
   const send = panel.querySelector('.ask-send'), reset = panel.querySelector('.ask-reset'), status = panel.querySelector('[data-ask-status]');

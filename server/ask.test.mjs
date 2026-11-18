@@ -131,7 +131,16 @@ test('origins, methods, body size and bad JSON', async () => {
   await readAnswer(same);
   const pre = await handler(new Request('https://ask.example/api/ask', {method: 'OPTIONS', headers: {origin: 'https://kenny-yukich.github.io'}}));
   assert.equal(pre.status, 204);
-  assert.equal((await ask(handler, null, {method: 'GET'})).status, 405);
+  const health = await ask(handler, null, {method: 'GET', origin: 'https://kenny-yukich.github.io'});
+  assert.equal(health.status, 200, 'GET is the readiness check');
+  assert.equal((await health.json()).ok, true);
+  assert.equal(health.headers.get('access-control-allow-origin'), 'https://kenny-yukich.github.io');
+  assert.equal((await ask(handler, null, {method: 'PUT'})).status, 405);
+  const unready = createAskHandler({getContext: async () => context, client: fakeClient(), ready: false, onUsage: quiet});
+  assert.equal((await ask(unready, null, {method: 'GET'})).status, 503, 'no API key: not ready, so the chat stays hidden');
+  const probe = fakeClient();
+  await ask(createAskHandler({getContext: async () => context, client: probe, onUsage: quiet}), null, {method: 'GET'});
+  assert.equal(probe.calls.length, 0, 'the readiness check never calls Claude');
   assert.equal((await ask(handler, 'x'.repeat(LIMITS.bodyBytes + 1))).status, 413);
   assert.equal((await ask(handler, '{not json')).status, 400);
 });

@@ -132,10 +132,11 @@ export function createAskHandler({
   allowedOrigins = [],           // origins allowed to call this from a browser, besides the endpoint's own
   perVisitor = rateLimiter({limit: 20, windowMs: 10 * 60 * 1000}),
   overall = rateLimiter({limit: 600, windowMs: 60 * 60 * 1000}),
-  onUsage = (usage, meta) => console.log('ask', JSON.stringify({...meta, ...usage}))
+  onUsage = (usage, meta) => console.log('ask', JSON.stringify({...meta, ...usage})),
+  ready = true                   // false when the host has no API key: GET then reports Eddy as not ready
 }) {
   const allowed = new Set(allowedOrigins.map(o => o.replace(/\/$/, '')));
-  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin'} : {};
+  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin'} : {};
   const json = (status, message, headers) => new Response(JSON.stringify({type: 'error', message}), {status, headers: {'content-type': 'application/json', ...headers}});
 
   return async function handleAsk(request) {
@@ -145,7 +146,10 @@ export function createAskHandler({
     const headers = okOrigin && origin && origin !== ownOrigin ? cors(origin) : {};
     if (!okOrigin) return json(403, 'This site is not allowed to use Eddy.');
     if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers});
-    if (request.method !== 'POST') return json(405, 'Use POST.', {...headers, allow: 'POST, OPTIONS'});
+    // GET is the readiness check the chat makes before it shows itself. It never calls Claude.
+    if (request.method === 'GET') return new Response(JSON.stringify(ready ? {ok: true, name: 'Eddy', model} : {ok: false, message: 'Eddy is not set up yet.'}),
+      {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
+    if (request.method !== 'POST') return json(405, 'Use POST.', {...headers, allow: 'GET, POST, OPTIONS'});
 
     const raw = await request.text();
     if (raw.length > LIMITS.bodyBytes) return json(413, 'That request is too large.', headers);
@@ -226,6 +230,7 @@ export function askHandlerFromEnv(env = process.env) {
   return createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
-    allowedOrigins: (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)
+    allowedOrigins: (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean),
+    ready: !!env.ANTHROPIC_API_KEY
   });
 }

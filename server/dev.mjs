@@ -14,8 +14,8 @@ const port = Number(process.env.PORT || 8787);
 const TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json', '.webp': 'image/webp', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8', '.md': 'text/plain; charset=utf-8'};
 
-if (!process.env.ANTHROPIC_API_KEY) console.warn('ANTHROPIC_API_KEY is not set: the page loads, but questions will get an error.');
-const handleAsk = createAskHandler({getContext: contextCache(localSource(root)), client: anthropicClient()});
+if (!process.env.ANTHROPIC_API_KEY) console.warn('ANTHROPIC_API_KEY is not set: the site loads, but the Eddy chat stays hidden.');
+const handleAsk = createAskHandler({getContext: contextCache(localSource(root)), client: anthropicClient(), ready: !!process.env.ANTHROPIC_API_KEY});
 
 createServer(async (req, res) => {
   try {

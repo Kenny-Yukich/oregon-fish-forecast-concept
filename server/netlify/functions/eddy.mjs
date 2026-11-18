@@ -17,4 +17,4 @@ export default async request => {
   return handler(request);
 };
 
-export const config = {path: '/api/ask', method: ['POST', 'OPTIONS']};
+export const config = {path: '/api/ask', method: ['GET', 'POST', 'OPTIONS']};
