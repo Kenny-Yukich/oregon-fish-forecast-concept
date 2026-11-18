@@ -36,8 +36,9 @@ const ask = (handler, body, {origin, ip = '1.2.3.4', method = 'POST'} = {}) => h
 const question = {messages: [{role: 'user', content: 'Where should I fish for trout this week?'}]};
 const quiet = () => {};
 
-test('context covers all 24 guide waters with scores and keeps field-check wording out', () => {
-  assert.equal(context.waters.length, 24);
+test('context covers every guide water with scores and keeps field-check wording out', () => {
+  assert.equal(context.waters.length, site.ORFF_DATA.waters.length);
+  assert.ok(context.waters.some(w => w.id === 'lava-lake-campground'), 'Lava Lake has a guide page');
   for (const w of context.waters) assert.ok(context.text.includes('Page: #/water/' + w.id + ' '), w.id);
   assert.match(context.text, /Score: (\d+\/100|withheld|none)/);
   assert.match(context.text, /## Dam counts/);

@@ -11,5 +11,7 @@ window.ORFF_STOCKING_MATCH = {
   "odell-lake-princess-creek": ["Odell Lake"],
   "wallowa-lake-state-park": ["Wallowa Lake"],
   "mckenzie-river-leaburg": ["below Leaburg Dam"],
-  "fall-river-above-falls": ["Fall River"]
+  "fall-river-above-falls": ["Fall River"],
+  // ODFW lists Big Lava Lake as "LAVA LK, B", shown as "Lava Lake (B)"; "Lava Lake (L)" is Little Lava Lake.
+  "lava-lake-campground": ["Lava Lake (B"]
 };

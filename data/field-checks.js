@@ -6,5 +6,5 @@
    - conditions: short background notes, never displayed. */
 window.ORFF_FIELD = {checks: [
   {date: '2026-10-16', water: 'crooked-river-bowman-dam', result: 'none', hours: 2, conditions: ['very low water, about 6 inches deep on average with a few holes to 4 feet']},
-  {date: '2026-10-16', water: 'Deschutes River at Tumalo State Park', result: 'none', hours: 2, conditions: ['current too fast']}
+  {date: '2026-10-16', water: 'deschutes-river-tumalo', result: 'none', hours: 2, conditions: ['current too fast']}
 ]};

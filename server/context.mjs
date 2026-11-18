@@ -152,7 +152,7 @@ function waterBlock(g, w, today) {
   const a = g.ORFFPreview.autoReport?.(w), r = a || p.report;
   if (r?.reported_on) {
     out.push('Latest report (' + r.reported_on + ', ' + ago(r.reported_on, today) + (a ? ', WDFW creel report for ' + a.period : '') + '): "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : ''));
-  } else out.push('Latest report: no dated fishing report.');
+  } else out.push('Latest report: no dated fishing report.' + (r?.summary ? ' Note: "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : '') : ''));
   for (const n of p.alerts || []) out.push('Notice (' + n.status + '): ' + clean(n.summary) + (n.url ? ' Source: ' + n.url : ''));
   for (const rule of (g.ORFF_AUTO?.rules?.[w.id] || []).filter(x => !x.effective_to || x.effective_to >= today)) {
     out.push('ODFW in-season rule (' + rule.kind + ', ' + rule.effective_from + (rule.effective_to ? ' to ' + rule.effective_to : ', no end date') + '): ' + clean(rule.summary) + ' Source: ' + rule.url);

@@ -7,6 +7,10 @@ window.ORFF_FLOW_SEASONS = {
     {from: '04-01', to: '05-15', change: 'rise', note: 'Irrigation season is starting. Bowman Dam releases go up for the summer, so the tailwater can be high and fast for a while.'},
     {from: '10-01', to: '11-15', change: 'drop', note: 'Irrigation season is ending. Bowman Dam releases are cut for the winter, and the tailwater can drop to a trickle within days.'}
   ],
+  "deschutes-river-tumalo": [
+    {from: '04-01', to: '05-15', change: 'drop', note: 'Irrigation season is starting. Canals in Bend take most of the river, so flows below Bend drop sharply.'},
+    {from: '10-01', to: '11-15', change: 'rise', note: 'Irrigation season is ending. Canals in Bend shut off and that water stays in the river, so flows below Bend rise quickly.'}
+  ],
   "middle-deschutes-culver": [
     {from: '04-01', to: '05-15', change: 'drop', note: 'Irrigation season is starting. Canals in Bend take most of the river, so flows below Bend drop sharply.'},
     {from: '10-01', to: '11-15', change: 'rise', note: 'Irrigation season is ending. Canals in Bend shut off and that water stays in the river, so flows below Bend rise quickly.'}
