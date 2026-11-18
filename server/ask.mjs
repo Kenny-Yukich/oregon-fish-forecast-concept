@@ -8,6 +8,7 @@
 // Stream lines: {"type":"text","text":"..."} then one of
 //   {"type":"done","stop":"end_turn"|"max_tokens"}, {"type":"refusal","message":"..."}, {"type":"error","message":"..."}
 import Anthropic from '@anthropic-ai/sdk';
+import {contextCache, localSource, remoteSource} from './context.mjs';
 
 export const MODEL = 'claude-haiku-5-5';
 
@@ -221,8 +222,7 @@ export function anthropicClient(apiKey = process.env.ANTHROPIC_API_KEY) {
 
 // The handler as a host runs it, configured from environment settings (see server/README.md):
 // ANTHROPIC_API_KEY, ORFF_SITE_URL (read the data files from the published site) and ORFF_ALLOWED_ORIGINS.
-export async function askHandlerFromEnv(env = process.env) {
-  const {contextCache, localSource, remoteSource} = await import('./context.mjs');
+export function askHandlerFromEnv(env = process.env) {
   return createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),

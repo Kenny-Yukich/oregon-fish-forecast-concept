@@ -1,0 +1,8 @@
+# Eddy's endpoint on Netlify. This is a separate Netlify project from oregonfishforecast.com.
+# The site itself stays on GitHub Pages; this project only runs netlify/functions/eddy.mjs at /api/ask.
+[build]
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
