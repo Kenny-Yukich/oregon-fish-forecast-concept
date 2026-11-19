@@ -134,7 +134,7 @@ Open `#/stocking` from the main navigation.
 - **Caps.** A score needs three inputs, and on a river a live flow reading, to reach Excellent; otherwise it is capped at Good. A flow that falls below half its 7-day median reads "Dropping sharply".
 - **Irrigation switches.** `data/flow-seasons.js` lists rivers whose flow changes sharply when irrigation season starts (April to mid-May) or ends (October to mid-November): the Crooked below Bowman Dam and the Deschutes below Bend. In those windows the page and short-list card carry a note, and a river with no live flow reading is capped at Fair.
 
-Every visitor sees the scores for free. Eddy, the AI assistant, can be sold as a pass ($4.99 a month or $39.99 a year) that also brings morning email alerts for the waters a guest follows (see server/README.md); selling is off until it is switched on. The formula lives in `assets/member-preview.js` and both designs use it.
+Every visitor sees the scores for free. Eddy, the AI assistant, can be sold as a pass ($4.99 a month or $39.99 a year) that also brings morning email alerts for the waters a guest follows (see server/README.md). Selling is switched on and opens to the public once the Eddy project has a live Stripe key. The formula lives in `assets/member-preview.js` and both designs use it.
 
 - **River scores.** Each river gets a 0–100 score with a label (Excellent, Good, Fair or Slow) and a confidence rating, built by `assets/member-preview.js` from inputs already on the site:
   - Report tone, 30%.
