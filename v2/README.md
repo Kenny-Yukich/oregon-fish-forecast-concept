@@ -10,9 +10,10 @@ The homepage reads the shared data files (`data/*.js`) and score formula (`asset
 
 ## Direction
 
-- **Idea:** "Read the river before you drive." A forest-ink field almanac: big Fraunces headlines, mono numbers for anything from a source, cream paper sections.
-- **Hero:** the supplied river illustration. A Three.js shader animates only the river: a mask is built from the artwork's own blue, and the water is redrawn with flowing foam in the same flat style. Pointer or touch sends a ripple. The static artwork stays underneath as the poster.
-- **Sections:** live wire of counts and gauges, this week's short list (top scores), what anglers are posting (from `data/angler.js`), fish counts from Bonneville, The Dalles and Willamette Falls, the full directory with search and filters, ODFW stocking this week, how a score is built (one pinned, scrubbed sequence), principles.
+- **Idea:** "Where are you fishing?" The homepage asks one question and answers it three ways: a search box, this week's short list, and Eddy. A forest-ink field almanac: big Fraunces headlines, mono numbers for anything from a source, cream paper sections.
+- **Hero:** on paper, the question and a search box beside the supplied river illustration. Typing suggests matching waters (arrow keys and Enter choose one); Enter alone opens the directory searched for those words, or the water itself when only one matches. A Three.js shader animates only the river: a mask is built from the artwork's own blue, and the water is redrawn with flowing foam in the same flat style. Pointer or touch sends a ripple. The static artwork stays underneath as the poster. When Eddy is available to the visitor, an "Ask Eddy" card sits on the artwork and the floating button waits until the card has scrolled away.
+- **Homepage:** the hero, the live wire of counts and gauges, and this week's short list: the five top scores as rows, each with its reach, the one input that says most about it today (in the score formula's own words) and any rules note.
+- **Pages:** everything else has its own address, so the homepage stays short: `#/waters` (the full directory with search and filters; `#/waters?q=<words>` opens it searched), `#/counts` (Bonneville, The Dalles and Willamette Falls), `#/stocking` (ODFW stocking this week), `#/reports` (what anglers are posting, from `data/angler.js`; `#/anglers` still works) and `#/method` (how a score is built, and the principles). The navigation sits on paper or on forest ink, whichever the page opens with.
 - **Water pages:** `#/water/<id>` with report, notices, this morning's gauge reading against its 7-day median, dam counts, stocking, season and methods, score breakdown, access with editable driving origin, and sources.
 - Map and full stocking schedule link to the classic site at `classic/`.
 
@@ -20,7 +21,7 @@ The homepage reads the shared data files (`data/*.js`) and score formula (`asset
 
 - GSAP 3.12.5 + ScrollTrigger. **Lenis** is the only smooth-scroll engine (Locomotive Scroll is not installed).
 - Headings reveal word by word; the unsplit text stays in an `sr-only` span and the animated words are `aria-hidden`.
-- `prefers-reduced-motion: reduce`: no Lenis, no scrubbing or pinning, no shader, no marquee animation. Final states render immediately.
+- `prefers-reduced-motion: reduce`: no Lenis, no scroll-triggered motion, no shader, no marquee animation. Final states render immediately.
 - No JavaScript: the hero, artwork and footer render, with a note linking the classic site and `waters.json`.
 - The shader pauses offscreen and in hidden tabs, caps pixel ratio at 1.5, handles context loss, and is skipped on `file://` (ES modules need a server). The page still works from `file://` without it.
 
@@ -34,4 +35,4 @@ The homepage reads the shared data files (`data/*.js`) and score formula (`asset
 
 ## Checked
 
-Rendered in headless Chromium at 1440 and 390 wide: hero shader, deep links to each section, directory search/filter/empty state/reset, mobile menu, water pages, reduced motion and JavaScript disabled. No console errors. The shader was checked with a software GPU, so it is worth a look on a real phone.
+Rendered in headless Chromium at 1440, 820 and 390 wide: hero shader, homepage search (suggestions, keyboard, no match), the "Ask Eddy" card against a stand-in endpoint, each page by deep link and from the menu, directory search/filter/empty state/reset and Back, mobile menu, water pages, reduced motion and JavaScript disabled. No console errors. The shader was checked with a software GPU, so it is worth a look on a real phone.

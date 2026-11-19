@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0f2e22">
-  <meta name="description" content="Oregon Fish Forecast, version two. Dated reports, river gauges, dam counts and trout stocking for 28 Oregon reaches, on one page.">
+  <meta name="description" content="Oregon Fish Forecast. Search 28 Oregon reaches for dated reports, river gauges, dam counts and trout stocking.">
   <title>Oregon Fish Forecast · Read the river</title>
   <link rel="icon" href="assets/weather-fish.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="nav" id="nav">
+  <header class="nav on-paper" id="nav">
     <div class="nav-inner">
       <a class="mark" href="#/" aria-label="Oregon Fish Forecast, home">
         <img src="assets/weather-fish.webp" width="720" height="348" alt="">
@@ -47,14 +47,12 @@
       </a>
       <nav aria-label="Main">
         <ul class="nav-links" id="nav-links">
-          <li><a href="#/waters">Waters</a></li>
+          <li><a href="#/waters">Explore waters</a></li>
           <li><a href="#/counts">Fish counts</a></li>
           <li><a href="#/stocking">Stocking</a></li>
-          <li><a href="#/method">Method</a></li>
-          <li><a href="classic/#/map">Map <span aria-hidden="true">↗</span></a></li>
+          <li><a href="#/reports">Reports</a></li>
         </ul>
       </nav>
-      <a class="nav-cta" href="#/waters">Find a water</a>
       <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
         <span class="sr-only">Menu</span><span class="bars" aria-hidden="true"></span>
       </button>
@@ -63,29 +61,34 @@
 
   <main id="main" tabindex="-1">
     <div id="view">
-      <!-- Static first frame. It is complete without JavaScript, WebGL or motion. -->
+      <!-- Static first frame. It is complete without JavaScript, WebGL or motion (the search needs JavaScript). -->
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="eyebrow on-ink">Oregon · 28 reaches · refreshed every morning</p>
-          <h1 id="hero-title" class="hero-title" data-split>Read the river <em>before you drive.</em></h1>
-          <div class="hero-foot">
-            <p class="hero-lede">Dated fishing reports, river gauges, dam counts and ODFW trout stocking for every reach, side by side. When something is missing, we say so.</p>
-            <div class="hero-actions">
-              <a class="btn btn-sun" href="#/waters">Find today’s water</a>
-              <a class="btn btn-ghost" href="#/method">How it works</a>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Oregon · 28 reaches · refreshed every morning</p>
+            <h1 id="hero-title" class="hero-title" data-split>Where are you <em>fishing?</em></h1>
+            <form class="hero-search" id="hero-search" role="search" action="#/waters" autocomplete="off">
+              <label class="sr-only" for="hero-q">Search a lake, river or reach</label>
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="11.5" cy="11.5" r="9.5"/><path d="M18.2173 18.2178L21.9999 22.0004"/></g></svg>
+              <input id="hero-q" type="search" placeholder="Search a lake, river or reach" autocomplete="off" spellcheck="false">
+              <button type="submit" class="hero-search-btn">Search</button>
+              <ul class="hero-suggest" id="hero-suggest" role="listbox" aria-label="Matching waters" hidden></ul>
+              <p class="sr-only" id="hero-status" role="status"></p>
+            </form>
+          </div>
+          <figure class="plate" id="plate">
+            <div class="plate-frame">
+              <img class="plate-img" src="assets/river-country-landscape.webp" width="1280" height="683" alt="Illustration of a blue river winding between evergreen forest toward snowy mountains under a yellow sun." fetchpriority="high">
             </div>
-          </div>
+            <!-- Filled by v2/assets/ask.js when Eddy is available to this visitor. -->
+            <div class="hero-eddy" id="hero-eddy"></div>
+          </figure>
         </div>
-        <figure class="plate" id="plate">
-          <div class="plate-frame">
-            <img class="plate-img" src="assets/river-country-landscape.webp" width="1280" height="683" alt="Illustration of a blue river winding between evergreen forest toward snowy mountains under a yellow sun." fetchpriority="high">
-          </div>
-          <figcaption>Supplied Oregon Fish Forecast artwork. It shows river country in general, not any listed water.</figcaption>
-        </figure>
       </section>
       <noscript>
+        <style>.hero-search { display: none; }</style>
         <section class="noscript">
-          <p>The water directory, fish counts and stocking lists need JavaScript. The <a href="classic/">classic site</a> has the same records, and the raw data is in <a href="data/waters.json">waters.json</a>.</p>
+          <p>Search, the water directory, fish counts and stocking lists need JavaScript. The <a href="classic/">classic site</a> has the same records, and the raw data is in <a href="data/waters.json">waters.json</a>.</p>
         </section>
       </noscript>
     </div>
@@ -101,7 +104,8 @@
             <li><a href="#/waters">All waters</a></li>
             <li><a href="#/counts">Fish counts</a></li>
             <li><a href="#/stocking">Trout stocking</a></li>
-            <li><a href="#/method">Method</a></li>
+            <li><a href="#/reports">Angler reports</a></li>
+            <li><a href="#/method">How scores work</a></li>
           </ul>
         </div>
         <div>
@@ -115,7 +119,7 @@
         </div>
         <div>
           <h2 class="footer-h">Credits</h2>
-          <p>Fish and river artwork supplied by Oregon Fish Forecast. Icons: <a href="https://icon-sets.iconify.design/solar/" target="_blank" rel="noopener noreferrer">Solar</a> by 480 Design (CC BY 4.0). Motion: GSAP, Lenis. River shader: Three.js.</p>
+          <p>Fish and river artwork supplied by Oregon Fish Forecast. The river illustration shows river country in general, not any listed water. Icons: <a href="https://icon-sets.iconify.design/solar/" target="_blank" rel="noopener noreferrer">Solar</a> by 480 Design (CC BY 4.0). Motion: GSAP, Lenis. River shader: Three.js.</p>
         </div>
       </div>
     </div>
