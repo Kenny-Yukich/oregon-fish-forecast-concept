@@ -21,3 +21,10 @@ test('EDDY_FREE_PER_DAY on Netlify overrides either way', () => {
   assert.equal(netlifySettings(getter({STRIPE_SECRET_KEY: 'sk_test_abc', EDDY_FREE_PER_DAY: '5'})).EDDY_FREE_PER_DAY, '5');
   assert.equal(netlifySettings(getter({STRIPE_SECRET_KEY: 'sk_live_abc', EDDY_FREE_PER_DAY: '0'})).EDDY_FREE_PER_DAY, '0');
 });
+
+test('the key is also read under the misspelled name STRIP_SECRET_KEY, and the right name wins', () => {
+  const s = netlifySettings(getter({STRIP_SECRET_KEY: 'sk_live_typo'}));
+  assert.equal(s.STRIPE_SECRET_KEY, 'sk_live_typo');
+  assert.equal(s.EDDY_FREE_PER_DAY, '3');
+  assert.equal(netlifySettings(getter({STRIPE_SECRET_KEY: 'sk_live_right', STRIP_SECRET_KEY: 'sk_test_old'})).STRIPE_SECRET_KEY, 'sk_live_right');
+});
