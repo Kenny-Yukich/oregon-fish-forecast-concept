@@ -1,0 +1,8 @@
+# Netlify redirect rules for oregonfishforecast.com (the "oregon-fish-forecast" project publishes this folder).
+# orfishforecast.com is a second address for the same site. It forwards here so there is one address:
+# Eddy passes, the owner's unlock and saved settings are kept per address by the browser, and would otherwise split.
+# The path, any ?query and any #/water/... route carry over. The ! applies the rule even though the page exists.
+https://orfishforecast.com/*      https://oregonfishforecast.com/:splat  301!
+https://www.orfishforecast.com/*  https://oregonfishforecast.com/:splat  301!
+http://orfishforecast.com/*       https://oregonfishforecast.com/:splat  301!
+http://www.orfishforecast.com/*   https://oregonfishforecast.com/:splat  301!
