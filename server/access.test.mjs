@@ -146,3 +146,18 @@ test('the checkout routes are rate limited per visitor', async () => {
   assert.equal(last.status, 429);
   assert.equal((await call(billing, 'POST', {path: '/api/eddy/checkout', ip: '8.8.8.8'})).status, 200);
 });
+
+test('with free questions switched off (before launch), visitors are offered a pass at once', async () => {
+  const stripe = fakeStripe(), client = fakeClient();
+  const access = createAccess({ownerHash: sha256(OWNER), stripe, passSecret: SECRET, usage: memoryUsage(), salt: 's', now: () => DAY, freePerDay: 0});
+  const ask = createAskHandler({getContext: async () => context, client, allowedOrigins: [SITE], access, onUsage: quiet});
+  const status = await (await call(ask, 'GET')).json();
+  assert.deepEqual([status.access, status.limit, status.remaining], ['free', 0, 0]);
+  const res = await call(ask, 'POST');
+  assert.equal(res.status, 402);
+  assert.equal((await res.json()).reason, 'pass_required');
+  assert.equal(client.calls.length, 0, 'no free question reaches Claude');
+  assert.equal((await call(ask, 'POST', {key: OWNER})).status, 200, 'the owner still asks freely');
+  const pass = access.passFor({id: 'sub_9', customer: 'cus_9', items: {data: [{current_period_end: DAY / 1000 + 86400 * 30}]}});
+  assert.equal((await call(ask, 'POST', {pass})).status, 200, 'pass holders still ask');
+});

@@ -34,7 +34,7 @@ How to answer:
 - Angler posts are word of mouth from public social media and are not verified.
 - Gauges are often upstream or downstream of the reach, not at the access point. Weather is for the general area.
 - Stocking is ODFW's planned schedule, not confirmed releases.
-- The data has three levels. Guide waters have full detail. Waters on ODFW's stocking schedule have only their latest and next planned stockings; past stockings are kept for a few weeks, so "recent none" means none recently, not never. ODFW's weekly zone reports are ODFW's own words about many other waters; attribute them, for example "ODFW's Central Zone report (text from Nov 18) says...", and give the date shown.
+- The data has three levels. Guide waters have full detail. Waters on ODFW's stocking schedule have only their latest and next planned stockings; past stockings are kept for a few weeks, so "recent none" means none recently, not never. ODFW's weekly zone reports are ODFW's own words about many other waters; attribute them, for example "ODFW's Central Zone report says...". Most report pages carry no date: then say the page is undated and give the day its text was first seen here (for example "undated; first seen here Nov 18"), never call that day the report's date. When a report has a written date, give that date, and give the date shown.
 - Regulations: mention any notice or ODFW in-season rule in the data, and tell the visitor to check ODFW's current regulations before fishing. Never state seasons, bag limits, gear rules or closures that are not in the data.
 - Do not estimate drive times or distances. You can name the region and the access point, and point to the water's page, which has directions.
 - A water without a guide page: say the guide does not cover it in full yet, then share whatever the data does have for it: its ODFW stocking schedule, any mention in an ODFW zone report, and any note under "Not in the guide yet" (word of mouth), each with its date. Do not give it a score, conditions or access details the data does not have. If nothing in the data mentions it, say so and point to ODFW's zone report for its area.
@@ -182,8 +182,8 @@ export function createAskHandler({
     }
     if (grant.remaining === 0) {
       if (grant.kind === 'paid') return new Response(JSON.stringify({type: 'limit', message: 'You’ve asked ' + grant.limit + ' questions today, the most a pass allows. Your questions reset at midnight Pacific.'}), {status: 429, headers: {'content-type': 'application/json', ...headers}});
-      return new Response(JSON.stringify({type: 'paywall', reason: grant.expired ? 'expired' : 'free_used', price: access.plan.price, paid_per_day: access.plan.paidPerDay,
-        message: grant.expired ? 'Your Eddy pass has ended.' : 'You’ve used today’s ' + grant.limit + ' free questions.'}), {status: 402, headers: {'content-type': 'application/json', ...headers}});
+      return new Response(JSON.stringify({type: 'paywall', reason: grant.expired ? 'expired' : grant.limit === 0 ? 'pass_required' : 'free_used', price: access.plan.price, paid_per_day: access.plan.paidPerDay,
+        message: grant.expired ? 'Your Eddy pass has ended.' : grant.limit === 0 ? 'Eddy is for Eddy pass holders.' : 'You’ve used today’s ' + grant.limit + ' free questions.'}), {status: 402, headers: {'content-type': 'application/json', ...headers}});
     }
     if (!perVisitor(clientIp(request))) return json(429, 'That’s a lot of questions in a short time. Wait a few minutes and try again.', headers);
     if (!overall('all')) return json(429, 'Eddy has had a busy hour. Try again later.', headers);
@@ -255,13 +255,15 @@ export const hasAccess = (request, accessHash) => !accessHash || matchesHash(req
 //   STRIPE_SECRET_KEY                      turns on Eddy passes and free questions; sk_test_ keys use Stripe's test mode
 //   STRIPE_PRICE_ID (optional)             a Stripe price to sell instead of the built-in $4.99/month
 //   EDDY_PASS_SECRET (optional)            signs passes; defaults to a secret derived from the Stripe key
+//   EDDY_FREE_PER_DAY (optional)           free questions a day for visitors without a pass (default 3; 0 = none)
 // Returns {ask, billing}: the /api/ask handler and the /api/eddy/* handler.
 export function eddyFromEnv(env = process.env, {usage = null} = {}) {
   const allowedOrigins = (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const ownerHash = env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null;
   const stripe = env.STRIPE_SECRET_KEY ? stripeClient(env.STRIPE_SECRET_KEY, {priceId: env.STRIPE_PRICE_ID || null}) : null;
   const passSecret = env.EDDY_PASS_SECRET || (env.STRIPE_SECRET_KEY ? sha256('eddy-pass-v1:' + env.STRIPE_SECRET_KEY) : null);
-  const access = createAccess({ownerHash, stripe, passSecret, usage: stripe ? (usage || memoryUsage()) : null, salt: passSecret || ''});
+  const freePerDay = env.EDDY_FREE_PER_DAY != null && env.EDDY_FREE_PER_DAY !== '' ? Number(env.EDDY_FREE_PER_DAY) : undefined;
+  const access = createAccess({ownerHash, stripe, passSecret, usage: stripe ? (usage || memoryUsage()) : null, salt: passSecret || '', freePerDay});
   const ask = createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
