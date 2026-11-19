@@ -9,6 +9,8 @@ window.ORFF_MAP = {
     "middle-deschutes-culver": [44.418, -121.293],
     "deschutes-river-tumalo": [44.129, -121.331],
     "lava-lake-campground": [43.914, -121.766],
+    "howard-prairie-reservoir": [42.217, -122.378],
+    "fourmile-lake-campground": [42.455, -122.247],
     "crooked-river-opal-springs": [44.489, -121.298],
     "metolius-river-grandview": [44.626, -121.478],
     "crooked-river-bowman-dam": [44.105, -120.800],

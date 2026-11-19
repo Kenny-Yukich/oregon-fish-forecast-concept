@@ -1918,6 +1918,180 @@
         ]
       },
       "readings": null
+    },
+    {
+      "id": "howard-prairie-reservoir",
+      "name": "Howard Prairie Reservoir",
+      "reach": "Howard Prairie Resort and Klum Landing",
+      "kind": "reservoir",
+      "region": "Southern Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "howard-prairie-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Bass",
+          "Bullhead catfish",
+          "Panfish"
+        ],
+        "access_summary": "County resort and parks: ramps, marina, bank",
+        "access_detail": "Jackson County runs Howard Prairie Resort (campground, boat ramp, marina, store and cafe) and parks around the lake, including Klum Landing with a 2-lane boat ramp; ODFW also lists launches at Willow Point and Grizzly Park. ODFW notes an angling jetty, an accessible fishing platform and good bank fishing at the campgrounds. Jackson County charges a daily parking fee.",
+        "access_point": {
+          "label": "Howard Prairie Resort",
+          "map_query": "Howard Prairie Resort Hyatt Prairie Road Ashland Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Howard Prairie Resort",
+            "type": "Boat ramp and marina",
+            "note": "Resort campground, boat ramp, marina, store and cafe; boat rentals in season.",
+            "map_query": "Howard Prairie Resort Hyatt Prairie Road Ashland Oregon",
+            "source": "https://www.jacksoncountyor.gov/departments/parks/camping/howard_prairie_resort/index.php"
+          },
+          {
+            "label": "Klum Landing Park & Boat Ramp",
+            "type": "Boat ramp",
+            "note": "2-lane boat ramp and first-come campground off Dam Road.",
+            "map_query": "Klum Landing Park Howard Prairie Lake Oregon",
+            "source": "https://www.jacksoncountyor.gov/departments/parks/camping/howard_prairie_lake_campgrounds_/klum_landing_park___boat_ramp.php"
+          }
+        ],
+        "seasonal_summary": "Lake open all year; county sites close in late fall",
+        "seasonal_detail": "The 2026 regulations keep Southwest Zone lakes open all year for trout, and Howard Prairie has no exception. Jackson County's sites are seasonal: the resort campground runs about April 3 to October 31 and Klum Landing May 15 to October 26 in 2026. ODFW's stocking schedule plans its releases for April and May.",
+        "methods": "ODFW says all lake-fishing techniques for trout and bass work here, and the campgrounds give good bank access.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Howard Prairie was found. ODFW says it is stocked with rainbow trout and also holds bass, panfish and bullhead catfish; Jackson County calls its trout and bass fishing some of the best in Southern Oregon.",
+          "reported_on": null,
+          "checked_on": "2026-11-19",
+          "coverage": "Standing ODFW and county descriptions, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Jackson County lists day use, campgrounds and boat ramps at Howard Prairie as closed for the 2026 season, and boat rentals and the store are finished for the year. The lake itself stays open to fishing under the 2026 regulations.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.jacksoncountyor.gov/departments/parks/camping/howard_prairie_resort/index.php"
+          },
+          {
+            "summary": "In dry years irrigation drawdown can leave the ramps, marina and docks dry, as in 1992-93 and 2020. Lake level, snow and ice need a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.dfw.state.or.us/news/2020/06_June/061020.asp"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Southwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Medford",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Jackson County Parks: Howard Prairie Resort",
+            "url": "https://www.jacksoncountyor.gov/departments/parks/camping/howard_prairie_resort/index.php"
+          },
+          {
+            "label": "Jackson County Parks: Klum Landing Park & Boat Ramp",
+            "url": "https://www.jacksoncountyor.gov/departments/parks/camping/howard_prairie_lake_campgrounds_/klum_landing_park___boat_ramp.php"
+          },
+          {
+            "label": "ODFW news, June 10, 2020: Howard Prairie drawdown",
+            "url": "https://www.dfw.state.or.us/news/2020/06_June/061020.asp"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "fourmile-lake-campground",
+      "name": "Fourmile Lake",
+      "reach": "Fourmile Lake Campground and Day Use Area",
+      "kind": "reservoir",
+      "region": "Southern Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "fourmile-lake-campground",
+        "target_species": [
+          "Rainbow trout",
+          "Kokanee",
+          "Brook trout",
+          "Lake trout"
+        ],
+        "access_summary": "Forest Service campground and day use: primitive ramp, bank",
+        "access_detail": "Fourmile Lake Campground and Day Use Area sit at the end of Forest Road 3661 off Highway 140, at the southern edge of the Sky Lakes Wilderness. ODFW describes a primitive boat ramp and beach launch, and says bank fishing can be productive, with the whole shore on Forest Service land. The Forest Service charges a $10 day-use fee per vehicle and has no potable water.",
+        "access_point": {
+          "label": "Fourmile Lake Campground and Day Use Area",
+          "map_query": "Fourmile Lake Campground Forest Road 3661 Klamath County Oregon"
+        },
+        "seasonal_summary": "Lake open all year; road usually open by late June",
+        "seasonal_detail": "The 2026 regulations keep Southeast Zone lakes open all year for trout, and Fourmile Lake has no exception. ODFW says road access is usually available by the end of June; rainbow fishing is good from late June through fall, lake trout from midsummer through fall, trophy brook trout are regularly caught in fall, and kokanee are fair through summer. Rainbows are stocked June through August.",
+        "methods": "ODFW says all lake-fishing techniques work here, and bank fishing can be productive.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Fourmile Lake was found. ODFW describes a 763-acre reservoir at the base of Mt. McLoughlin known for big rainbow trout and abundant kokanee.",
+          "reported_on": null,
+          "checked_on": "2026-11-19",
+          "coverage": "A standing ODFW guide entry, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-southeast-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Forest Service campground season is July 1 to September 5, so the campground is closed now. The lake itself stays open to fishing under the 2026 regulations.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.fs.usda.gov/r06/fremont-winema/recreation/fourmile-lake-campground"
+          },
+          {
+            "summary": "ODFW says road access is usually available by the end of June. Winter road status, snow and ice need a trip-day check, and the lake level changes with snowmelt each year.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.fs.usda.gov/r06/fremont-winema/recreation/fourmile-lake-campground"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Southeast Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Medford",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Forest Service: Fourmile Lake Campground",
+            "url": "https://www.fs.usda.gov/r06/fremont-winema/recreation/fourmile-lake-campground"
+          },
+          {
+            "label": "ODFW Southeast Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
     }
   ]
 }

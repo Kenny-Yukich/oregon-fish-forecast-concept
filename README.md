@@ -24,6 +24,8 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 
 - All 24 supplied Oregon records, preserving actual species, methods, access, alerts, report dates, coverage, sources and October 12 editorial review dates.
 - Two waters added Nov 18, 2026: **Lava Lake** (Big Lava Lake at Lava Lake Campground) and the **Deschutes River at Tumalo State Park**, researched from ODFW's 2026 regulations and Bend-area guides, the Forest Service and Oregon State Parks. Neither has a dated report or live gauge yet, so both show as not scored. ODFW lists Big Lava Lake as "LAVA LK, B" in its stocking schedule.
+- Two more added Nov 19, 2026: **Howard Prairie Reservoir** (Howard Prairie Resort and Klum Landing) and **Fourmile Lake** (Fourmile Lake Campground and Day Use Area), from ODFW's 2026 regulations and Southwest/Southeast Zone guides, Jackson County Parks, ODFW's 2020 Howard Prairie drawdown notice and the Forest Service. Neither has a dated report or a live lake-level feed yet, so both show as not scored.
+- Angler posts filed under "not in the guide yet" before a lake got its page are hidden from that homepage list (Eddy sees them pointed at the new page) until they age out after 30 days.
 - Hash navigation for directory, every water and approach/sources; search by water/reach/region/species; river/lake filters; result counts and resettable empty state.
 - Editable Portland origin saved only in this browser. All 22 driving links use the exact documented map query. No estimated drive durations and no routes to the two unverified gauge locations.
 - Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
