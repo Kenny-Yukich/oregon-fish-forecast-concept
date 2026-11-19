@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="v2/assets/site.css?v=818fd24376">
+  <link rel="stylesheet" href="v2/assets/site.css?v=06a900402b">
   <!-- Shared data. These are the same files the classic site reads, refreshed daily by the data workflow. -->
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
@@ -31,10 +31,10 @@
   <script src="v2/vendor/ScrollTrigger.min.js?v=ad33c2df9a" defer></script>
   <script src="v2/vendor/lenis.min.js?v=c53150d4f8" defer></script>
   <script src="v2/assets/icons.js?v=3a6e74e4d5" defer></script>
-  <script src="v2/assets/app.js?v=e6487db599" defer></script>
+  <script src="v2/assets/app.js?v=610edbc8aa" defer></script>
   <!-- Eddy, the AI fishing assistant. The chat stays hidden unless ask-config.js names an endpoint (see server/README.md). -->
   <script src="assets/ask-config.js?v=d6c148bb6c" defer></script>
-  <script src="v2/assets/ask.js?v=76e59801dd" defer></script>
+  <script src="v2/assets/ask.js?v=9203c31d49" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -60,7 +60,8 @@
   </header>
 
   <main id="main" tabindex="-1">
-    <div id="view">
+    <!-- "booting" holds the footer below the first screen until app.js draws the page, so nothing jumps when it does. -->
+    <div id="view" class="booting">
       <!-- Static first frame. It is complete without JavaScript, WebGL or motion (the search needs JavaScript). -->
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-inner">
@@ -75,6 +76,7 @@
               <ul class="hero-suggest" id="hero-suggest" role="listbox" aria-label="Matching waters" hidden></ul>
               <p class="sr-only" id="hero-status" role="status"></p>
             </form>
+            <a class="hero-jump" href="#/shortlist">See this week’s best waters <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4L12 20M6 14L12 20L18 14"/></svg></a>
           </div>
           <figure class="plate" id="plate">
             <div class="plate-frame">
@@ -86,7 +88,7 @@
         </div>
       </section>
       <noscript>
-        <style>.hero-search { display: none; }</style>
+        <style>.hero-search, .hero-jump { display: none; }</style>
         <section class="noscript">
           <p>Search, the water directory, fish counts and stocking lists need JavaScript. The <a href="classic/">classic site</a> has the same records, and the raw data is in <a href="data/waters.json">waters.json</a>.</p>
         </section>

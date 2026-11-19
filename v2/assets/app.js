@@ -7,6 +7,7 @@
   const packet = window.ORFF_DATA;
   const view = document.getElementById('view');
   if (!packet || !Array.isArray(packet.waters)) {
+    view.classList.remove('booting');
     view.insertAdjacentHTML('beforeend', '<section class="noscript"><p>Water records did not load. Reload the page to try again.</p></section>');
     return;
   }
@@ -95,6 +96,44 @@
       '<p class="small">Word of mouth from public Facebook groups and TikTok, read ' + fmtDate(window.ORFF_ANGLER.checked_on) + '. Not verified. Recent catch posts on this water can raise its score, never lower it.</p></div>';
   }
   const score = w => window.ORFFPreview ? window.ORFFPreview.score(w) : {status: 'unavailable', reason: 'The score formula did not load. Reload the page to see this score.'};
+  // The fish a score is for, in an angler's words: the species the score formula uses ("score_species" when a rule
+  // narrows it, otherwise the target species), grouped. Whitefish is named only when nothing else is.
+  function speciesWord(w) {
+    const groups = [];
+    for (const s of w.planning.score_species || w.planning.target_species) {
+      const g = /steelhead/i.test(s) ? 'steelhead' : /chinook|coho|salmon/i.test(s) ? 'salmon' : /kokanee/i.test(s) ? 'kokanee'
+        : /trout/i.test(s) ? 'trout' : /bass/i.test(s) ? 'bass' : /whitefish/i.test(s) ? 'whitefish' : s.toLowerCase();
+      if (!groups.includes(g)) groups.push(g);
+    }
+    const named = groups.length > 1 ? groups.filter(g => g !== 'whitefish') : groups;
+    if (named.length > 3) return named.slice(0, 2).join(', ') + ' and more';
+    return named.length > 1 ? named.slice(0, -1).join(', ') + ' and ' + named.at(-1) : named[0] || '';
+  }
+  // A gauge by its short name: "Madras gauge", or the place in its station name ("Deschutes River near Madras").
+  function gaugeName(w, g) {
+    if (w.gauge?.label) return w.gauge.label;
+    const name = String(g.mon?.name || '').replace(/\s*[(·].*$/, '');
+    const place = name.match(/\b(?:near|at|below|above)\s+(.+)$/);
+    return place ? place[1] + ' gauge' : name + ' gauge';
+  }
+  // The one rule an angler most needs before going: an ODFW closure or restriction in effect, then a recorded notice,
+  // then a rule that starts soon or another ODFW update, then a notice that needs a trip-day check.
+  function keyRule(w) {
+    const t = today(), rules = rulesFor(w.id), alerts = w.planning.alerts;
+    const hard = r => r.kind === 'closure' || r.kind === 'restriction', live = r => r.effective_from <= t;
+    const regs = window.ORFF_AUTO?.sources?.odfw_regs;
+    const fromRule = r => ({text: r.summary, url: r.url, tone: hard(r) ? 'warn' : 'info',
+      when: live(r) ? (r.effective_to ? 'ODFW, in effect through ' + fmtDate(r.effective_to) : 'ODFW, in effect') : 'ODFW, starts ' + fmtDate(r.effective_from) + (r.effective_to ? ', through ' + fmtDate(r.effective_to) : '')});
+    const rule = rules.find(r => live(r) && hard(r));
+    if (rule) return fromRule(rule);
+    const notice = alerts.find(a => a.status !== 'unverified');
+    if (notice) return {text: notice.summary, url: notice.url, tone: 'warn', when: notice.checked_on ? 'Recorded notice, source checked ' + fmtDate(notice.checked_on) : 'Recorded notice'};
+    const other = rules.find(r => hard(r)) || rules[0];
+    if (other) return fromRule(other);
+    const check = alerts.find(a => a.status === 'unverified');
+    if (check) return {text: check.summary, url: check.url, tone: 'check', when: 'Needs a trip-day check'};
+    return {text: 'No closure or notice is on record for this reach.', url: regs?.url || 'https://myodfw.com/articles/regulation-updates', tone: 'none', when: 'Check ODFW’s current rules before you go', none: true};
+  }
   function stockRows(id) {
     const names = window.ORFF_STOCKING_MATCH?.[id];
     if (!names) return [];
@@ -124,30 +163,36 @@
     for (const code of ['BON', 'TDA', 'WFF']) {
       const s = counts[code];
       if (!s) continue;
+      // Every seven-day count says which seven days, since each dam reports on its own schedule.
       for (const k of ['coho', 'chinook', 'steelhead']) {
         const v = s.species[k];
-        if (v) items.push('<b>' + num(v.last7) + '</b> ' + esc(v.label.toLowerCase()) + ' <span>past ' + esc(meta[code]?.name || code) + ' in 7 days</span>');
+        if (v) items.push('<b>' + num(v.last7) + '</b> ' + esc(v.label.toLowerCase()) + ' <span>past ' + esc(meta[code]?.name || code) + ' in the 7 days to ' + fmtDate(s.through) + '</span>');
       }
     }
     for (const w of waters) {
       const g = gauge(w);
-      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + (g.fah != null ? ' <span>' + Math.round(g.fah) + '°F</span>' : ''));
+      if (g.flow && items.length < 16) items.push('<b>' + num(g.flow.latest) + ' cfs</b> ' + esc(w.name) + ' <span>at the ' + esc(gaugeName(w, g)) + (g.fah != null ? ', ' + Math.round(g.fah) + '°F' : '') + '</span>');
     }
     const t = today(), mon = mondayOf(t);
     const week = (window.ORFF_STOCKING?.rows || []).filter(r => r.week_start === mon);
-    if (week.length) items.push('<b>' + week.length + '</b> waters <span>on ODFW’s trout stocking plan this week</span>');
+    if (week.length) items.push('<b>' + week.length + '</b> ' + (week.length === 1 ? 'water' : 'waters') + ' <span>on ODFW’s trout stocking plan for the week of ' + fmtDate(mon) + '</span>');
     if (!items.length) return '';
     const list = items.map(i => '<li><i class="dot" aria-hidden="true"></i>' + i + '</li>').join('');
     return '<div class="wire" id="wire" role="region" aria-label="Latest readings"><div class="wire-track"><ul>' + list + '</ul><ul aria-hidden="true">' + list + '</ul></div></div>';
   }
 
-  // The one input that says most about a short-listed water today, in the score formula's own words.
-  // News comes first (a field check, catch posts, stocking, the run), then conditions and the report.
+  // One concrete reason to go, from the input that says most about a short-listed water today.
+  // Firm news comes first (our own field check, ODFW stocking, the run, the gauge), then angler posts and the report.
   function whyNow(w, s) {
     const strong = k => s.factors.find(f => f.key === k && f.value >= 70);
-    const pick = ['field', 'angler', 'stock', 'run', 'cond', 'tone'].map(strong).find(Boolean) || [...s.factors].sort((x, y) => y.value - x.value)[0];
+    const pick = ['field', 'stock', 'run', 'cond', 'angler', 'tone'].map(strong).find(Boolean) || [...s.factors].sort((x, y) => y.value - x.value)[0];
     if (!pick) return '';
-    const r = latest(w);
+    const r = latest(w), g = gauge(w);
+    if (pick.key === 'cond') return pick.display.split(' · ')[0] + ' at the ' + gaugeName(w, g) + (g.fah != null ? ', ' + Math.round(g.fah) + '°F' : '');
+    if (pick.key === 'angler') {
+      const post = anglerFor(w.id).find(p => p.scoring && p.kind === 'catch') || anglerFor(w.id).find(p => p.scoring);
+      return post ? 'Angler catch post, ' + fmtDate(post.date) + ' (' + post.platform + ', not verified)' : pick.display;
+    }
     return pick.key === 'field' ? 'Field check: ' + pick.display
       : pick.key === 'stock' ? (/^Week of/.test(pick.display) ? 'ODFW stocking, ' + pick.display.replace(/^W/, 'w') : pick.display + ' (ODFW)')
       : pick.key === 'run' ? 'Run at ' + pick.display
@@ -160,20 +205,23 @@
       .sort((a, b) => b.s.value - a.s.value || a.f.age - b.f.age).slice(0, 5);
     if (!scored.length) return '';
     return '<section class="section home-list" id="shortlist" aria-labelledby="sl-h"><div class="inner">' +
-      '<div class="list-head"><h2 id="sl-h" class="display h-list" tabindex="-1">This week’s <em>short list</em></h2>' +
+      '<div class="list-head"><h2 id="sl-h" class="display h-list" tabindex="-1">This week’s <em>best waters</em></h2>' +
       '<p class="list-sub">Top scores today</p>' +
       '<a class="list-all" href="#/waters">Explore all waters ' + icon('arrow-right-linear') + '</a></div>' +
-      '<ul class="picks">' + scored.map(({w, s}) => {
-        // The first sentence of a rules or score note, so a held or limited score is never shown bare.
-        const note = s.notes?.length ? (s.notes[0].match(/^.*?\.(?=\s|$)/)?.[0] || s.notes[0]) : '';
+      '<ul class="picks">' + scored.map(({w, s, f}) => {
+        // The species note is said by "for trout"; any other note (a rule change, a cap) keeps its first sentence.
+        const note = (s.notes || []).filter(n => n !== w.planning.score_species_note).map(n => n.match(/^.*?\.(?=\s|$)/)?.[0] || n)[0] || '';
+        const kind = w.planning.score_species ? 'Score for ' : 'Fishing score for ';
         return '<li class="pick-row"><a href="#/water/' + esc(w.id) + '">' +
-          '<span class="p-name">' + esc(w.name) + '</span>' +
-          '<span class="p-reach">' + esc(w.reach) + '</span>' +
-          '<span class="p-why">' + esc(whyNow(w, s)) + (note ? '<small>' + icon('danger-triangle-linear') + esc(note) + '</small>' : '') + '</span>' +
-          '<span class="p-score num"><span class="sr-only">Fishing score </span>' + s.value + '<i>/100</i></span>' +
+          '<span class="p-place"><span class="p-name">' + esc(w.name) + '</span><span class="p-reach">' + esc(w.reach) + '</span></span>' +
+          '<span class="p-verdict"><span class="p-line"><span class="p-score num"><span class="sr-only">' + kind + esc(speciesWord(w)) + ': </span>' + s.value + '<i>/100</i></span>' +
+          '<span class="p-for" aria-hidden="true">for ' + esc(speciesWord(w)) + '</span></span>' +
+          '<span class="p-why">' + esc(whyNow(w, s)) + '</span>' +
+          (f.age > 14 || note ? '<span class="p-notes">' + (f.age > 14 ? '<span>' + (f.age === Infinity ? 'No dated report' : 'Latest report ' + fmtDate(latest(w).reported_on)) + '</span>' : '') +
+            (note ? '<span class="p-warn">' + icon('danger-triangle-linear') + esc(note) + '</span>' : '') + '</span>' : '') + '</span>' +
           '<span class="p-go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></a></li>';
       }).join('') + '</ul>' +
-      '<p class="score-note">Scores come from dated reports, river gauges, dam counts and ODFW stocking. Each water page shows every input and any rules notice. <a class="link" href="#/method">How scores work</a></p></div></section>';
+      '<p class="score-note">Scores come from dated reports, river gauges, dam counts and ODFW stocking. Each water page shows every input, how sure the score is and any rules notice. <a class="link" href="#/method">How scores work</a></p></div></section>';
   }
 
   function counts() {
@@ -317,8 +365,8 @@
       '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
   }
 
-  // The homepage: search, the live wire and this week's short list. Each other section is its own page.
-  function homeHTML() { return heroHTML + wire() + shortlist(); }
+  // The homepage: search, this week's short list, then the live wire. Each other section is its own page.
+  function homeHTML() { return heroHTML + shortlist() + wire(); }
   const PAGES = {
     waters: {html: directory, title: 'Explore waters', top: 'paper'},
     counts: {html: counts, title: 'Fish counts', top: 'ink'},
@@ -350,10 +398,21 @@
     const points = p.access_points?.length ? p.access_points : p.access_point ? [{label: p.access_point.label, type: 'Documented access', note: p.access_summary, map_query: p.access_point.map_query}] : [];
     const idx = waters.indexOf(w), prev = waters[(idx - 1 + waters.length) % waters.length], next = waters[(idx + 1) % waters.length];
     const scoreBlock = s.status === 'scored'
-      ? ring(s.value, 150) + '<p>' + esc(s.label) + ' · ' + esc(s.confidence) + ' confidence</p>'
+      ? ring(s.value, 150) + '<p><span class="d-for">For ' + esc(speciesWord(w)) + '</span>' + esc(s.label) + ' · <button type="button" class="d-conf" data-jump="b-h">' + esc(s.confidence) + ' confidence</button></p>'
       : '<div class="held"><strong>' + (s.status === 'withheld' ? 'Score held' : s.status === 'unavailable' ? 'Score unavailable' : 'Not scored') + '</strong>' + esc(s.reason) + '</div>';
     const rules = rulesFor(w.id), auto = autoReport(w), wdfw = window.ORFF_AUTO?.sources?.wdfw, regs = window.ORFF_AUTO?.sources?.odfw_regs;
-    const facts = [['Target species', p.target_species.length], ['Access', points.length ? points.length + (points.length === 1 ? ' point' : ' points') : 'Unverified'], ['Monitoring', g.mon?.station ? (/^NWPS-/.test(g.mon.station) ? 'NOAA gauge' : 'USGS gauge') : g.mon?.mode === 'operator' ? 'Operator' : g.mon?.mode === 'historical' ? 'Historical' : 'None'], ['Notices', p.alerts.length + rules.length]];
+    // What someone at the truck needs first: the fish, where to get on the water, and the rule that could end the trip.
+    const rule = keyRule(w), more = p.alerts.length + rules.length - (rule.none ? 0 : 1), pt = points[0];
+    const quick = '<dl class="quick">' +
+      '<div class="q-species"><dt>' + icon('waterdrop-linear') + 'Target species</dt><dd><strong>' + esc(p.target_species.join(', ')) + '</strong></dd></div>' +
+      '<div class="q-access"><dt>' + icon('map-point-linear') + 'Access point</dt><dd>' + (pt
+        ? '<strong>' + esc(pt.label) + '</strong>' + (pt.note || p.access_summary ? '<small>' + esc(pt.note || p.access_summary) + '</small>' : '') +
+          '<span class="q-acts"><a class="link ext" data-dest="' + esc(pt.map_query) + '" href="' + esc(mapsRoute(pt.map_query)) + '" target="_blank" rel="noopener noreferrer">Directions<span class="sr-only"> to ' + esc(pt.label) + ' in Google Maps (opens in a new tab)</span></a>' +
+          (points.length > 1 ? '<button type="button" class="q-more" data-jump="a-h">' + (points.length - 1) + ' more access ' + (points.length === 2 ? 'point' : 'points') + '</button>' : '') + '</span>'
+        : '<strong>No verified public access</strong><small>No directions are offered for this reach.</small>') + '</dd></div>' +
+      '<div class="q-rule ' + rule.tone + '"><dt>' + icon(rule.tone === 'warn' ? 'danger-triangle-linear' : rule.tone === 'none' ? 'check-circle-linear' : 'info-circle-linear') + 'Key rule</dt><dd><p>' + esc(rule.text) + '</p>' +
+        '<small>' + esc(rule.when) + '</small><span class="q-acts">' + ext(rule.url, rule.none ? 'ODFW rule updates' : 'Source') +
+        (more > 0 ? '<button type="button" class="q-more" data-jump="n-h">' + more + ' more ' + (more === 1 ? 'notice' : 'notices') + '</button>' : '') + '</span></dd></div></dl>';
 
     const report = '<section aria-labelledby="r-h"><p class="eyebrow">Latest report</p><h2 id="r-h" class="sr-only">Latest report</h2>' + (auto
       ? '<p class="quote" data-reveal>' + esc(auto.summary) + '</p>' +
@@ -365,7 +424,7 @@
 
     // ODFW rule updates show as recorded notices. They do not withhold the score; an active closure or restriction adds a score note.
     const ruleDates = r => r.effective_from > today() ? 'Starts ' + time(r.effective_from, true) + (r.effective_to ? ', through ' + time(r.effective_to, true) : '') : r.effective_to ? 'In effect through ' + time(r.effective_to, true) : 'In effect since ' + time(r.effective_from, true);
-    const notices = p.alerts.length || rules.length ? '<section aria-labelledby="n-h"><h2 id="n-h" class="d-h">Before you go</h2><div class="notices">' + rules.map(r =>
+    const notices = p.alerts.length || rules.length ? '<section aria-labelledby="n-h"><h2 id="n-h" class="d-h" tabindex="-1">Before you go</h2><div class="notices">' + rules.map(r =>
       '<div class="notice" data-reveal><div class="notice-label">' + icon('danger-triangle-linear') + 'ODFW regulation update</div><p>' + esc(r.summary) + '</p>' +
       '<small>' + ruleDates(r) + (regs?.read_on ? '. Read ' + time(regs.read_on, true) : '') + '</small>' + ext(r.url, 'Read source') + '</div>').join('') + p.alerts.map(a =>
       '<div class="notice' + (a.status === 'unverified' ? ' unverified' : '') + '" data-reveal><div class="notice-label">' + icon(a.status === 'unverified' ? 'info-circle-linear' : 'danger-triangle-linear') + (a.status === 'unverified' ? 'Needs a trip-day check' : 'Recorded notice') + '</div><p>' + esc(a.summary) + '</p>' +
@@ -413,13 +472,20 @@
     const season = '<section aria-labelledby="se-h"><h2 id="se-h" class="d-h">Season and methods</h2><p class="quote" style="font-size:clamp(1.3rem,2.2vw,1.8rem)" data-reveal>' + esc(p.seasonal_summary) + '</p><p style="margin-top:18px">' + esc(p.seasonal_detail) + '</p><div class="callout"><strong>Methods</strong>' + esc(p.methods) + '</div>' +
       '<p class="small" style="margin-top:16px">Target species: ' + esc(p.target_species.join(', ')) + '.</p></section>';
 
-    const breakdown = s.status === 'scored' ? '<section aria-labelledby="b-h"><h2 id="b-h" class="d-h">How the score adds up</h2><ul class="factors">' + s.factors.map(x =>
+    // How sure the score is, in the formula's own terms, and what ground the report it leans on covers.
+    const unchecked = s.unverified ? s.unverified + (s.unverified === 1 ? ' notice on this water still needs' : ' notices on this water still need') + ' a trip-day check.' : 'Every notice on this water is confirmed.';
+    const coverage = auto ? auto.coverage : p.report?.coverage;
+    const confidence = s.status === 'scored' ? '<div class="confidence" data-reveal><p class="conf-h"><strong>' + esc(s.confidence) + ' confidence</strong><span class="num">' + s.value + '/100 for ' + esc(speciesWord(w)) + '</span></p>' +
+      '<p>Built from ' + s.used + (s.used === 1 ? ' input' : ' inputs') + (s.used <= s.inputs ? ' of the ' + s.inputs + ' a ' + (s.kind === 'river' ? 'river' : 'lake') + ' score can use' : '') + '. ' + unchecked +
+      ' High confidence takes three or more inputs and no unchecked notices; Medium takes two and at most one. Angler posts never change it.</p>' +
+      (coverage ? '<p class="conf-cover"><b>What the report covers:</b> ' + esc(coverage) + '</p>' : '') + '</div>' : '';
+    const breakdown = s.status === 'scored' ? '<section aria-labelledby="b-h"><h2 id="b-h" class="d-h" tabindex="-1">How the score adds up</h2>' + confidence + '<ul class="factors">' + s.factors.map(x =>
       '<li data-reveal><strong>' + esc(x.label) + ' · ' + Math.round(x.weight * 100) + '%</strong><span class="num">' + x.value + '</span><span class="bar"><i data-bar style="transform:scaleX(' + (x.value / 100) + ')"></i></span><p><b>' + esc(x.display) + '.</b> ' + esc(x.reason) + '</p></li>').join('') + '</ul>' +
       (s.missing.length ? '<p class="small" style="margin-top:14px">Not available: ' + esc(s.missing.join(', ')) + '. Missing inputs are skipped, not guessed.</p>' : '') +
       s.notes.map(n => '<div class="callout"><strong>Note</strong>' + esc(n) + '</div>').join('') +
       '</section>' : '';
 
-    const access = '<div class="card ink" data-reveal><h2>Getting there</h2>' + (points.length
+    const access = '<div class="card ink" data-reveal><h2 id="a-h" tabindex="-1">Getting there</h2>' + (points.length
       ? '<ul class="access">' + points.map(pt => '<li><small>' + esc(pt.type || 'Access') + '</small><strong>' + esc(pt.label) + '</strong>' + (pt.note ? '<p>' + esc(pt.note) + '</p>' : '') +
         '<a class="link ext" data-dest="' + esc(pt.map_query) + '" href="' + esc(mapsRoute(pt.map_query)) + '" target="_blank" rel="noopener noreferrer">Directions<span class="sr-only"> to ' + esc(pt.label) + ' in Google Maps (opens in a new tab)</span></a></li>').join('') + '</ul>' +
         (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '') +
@@ -431,9 +497,9 @@
 
     return '<article><header class="d-hero"><div class="inner">' +
       '<a class="crumb" href="#/waters">' + icon('arrow-left-linear') + 'All waters</a>' +
-      '<div class="d-top"><div><p class="eyebrow on-ink">' + esc(w.region) + ' · ' + kindLabel(w) + '</p><h1 class="d-title" data-split tabindex="-1" id="d-title">' + esc(w.name) + '</h1><p class="d-reach">' + esc(w.reach) + '</p><div class="d-follow" data-follow="' + esc(w.id) + '"></div></div>' +
+      '<div class="d-top"><div class="d-name"><p class="eyebrow on-ink">' + esc(w.region) + ' · ' + kindLabel(w) + '</p><h1 class="d-title" data-split tabindex="-1" id="d-title">' + esc(w.name) + '</h1><p class="d-reach">' + esc(w.reach) + '</p></div>' +
       '<div class="d-score">' + scoreBlock + '</div></div>' +
-      '<dl class="facts">' + facts.map(([l, v]) => '<div><dt>' + l + '</dt><dd>' + esc(v) + '</dd></div>').join('') + '</dl></div></header>' +
+      quick + '<div class="d-follow" data-follow="' + esc(w.id) + '"></div></div></header>' +
       '<div class="d-body"><div class="inner"><div class="d-main">' + report + notices + river + fish + stock + season + breakdown + '</div>' +
       '<aside class="aside" aria-label="Access, weather and sources">' + access + weatherBlock(w) + sources + '</aside></div></div>' +
       '<nav class="next" aria-label="More waters"><a href="#/water/' + esc(prev.id) + '"><small>Previous water</small><strong>' + esc(prev.name) + '</strong></a><a href="#/water/' + esc(next.id) + '"><small>Next water</small><strong>' + esc(next.name) + '</strong></a></nav></article>';
@@ -505,7 +571,7 @@
         const tl = gsap.timeline({defaults: {ease: 'expo.out'}});
         tl.from(hero.querySelectorAll('.hero-title .wi, .d-title .wi'), {yPercent: 140, duration: 1.1, stagger: 0.06}, 0.05)
           .from(hero.querySelectorAll('.eyebrow, .d-reach, .crumb'), {y: 14, duration: .8}, 0.1)
-          .from(hero.querySelectorAll('.hero-search, .hero-eddy, .facts, .d-score'), {y: 26, duration: 1, stagger: .08}, 0.25);
+          .from(hero.querySelectorAll('.hero-search, .hero-jump, .hero-eddy, .quick, .d-score'), {y: 26, duration: 1, stagger: .08}, 0.25);
         const plate = hero.querySelector('.plate-frame');
         if (plate) tl.from(plate, {yPercent: 6, duration: 1.4, ease: 'expo.out'}, 0.15);
         const ring = hero.querySelector('.ring .val');
@@ -576,11 +642,21 @@
     if (ROUTES[parts[0]]) return {view: ROUTES[parts[0]], q: parts[0] === 'waters' ? new URLSearchParams(query).get('q') || '' : null};
     return {view: 'home', section: parts[0] === 'shortlist' ? 'shortlist' : null};
   }
-  function scrollToEl(el, immediate) {
-    const y = el ? el.getBoundingClientRect().top + scrollY : 0;
+  function scrollToEl(el, immediate, gap = 0) {
+    const y = el ? Math.max(0, el.getBoundingClientRect().top + scrollY - gap) : 0;
     if (lenis) { lenis.resize(); lenis.scrollTo(y, {immediate, force: true, duration: 1.4}); }
     else window.scrollTo({top: y, behavior: 'auto'});
   }
+  // Buttons that jump within a page (the water page's "2 more notices", "Medium confidence"). Hash links would
+  // change the route, so these scroll instead, clear of the navigation bar, and move focus to the heading.
+  view.addEventListener('click', e => {
+    const b = e.target.closest('[data-jump]');
+    const el = b && document.getElementById(b.dataset.jump);
+    if (!el) return;
+    e.preventDefault();
+    scrollToEl(el, !motionOK(), 96);
+    el.focus({preventScroll: true});
+  });
   function setNav(route) {
     document.querySelectorAll('#nav-links a').forEach(a => {
       if (a.getAttribute('href') === '#/' + route.view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
@@ -597,6 +673,7 @@
   }
   function render(route) {
     teardown();
+    view.classList.remove('booting');
     const page = PAGES[route.view];
     if (route.view === 'home') {
       view.innerHTML = homeHTML();
