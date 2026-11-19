@@ -2,7 +2,7 @@
 
 ## Site layout
 
-- **Homepage (`index.html`):** the version-two design: motion-led, with a river shader on the supplied artwork. Its code is in `v2/`; see [v2/README.md](v2/README.md).
+- **Homepage (`index.html`):** the version-two design, kept short: "Where are you fishing?" with a search box, the live ticker and this week's short list, with a river shader on the supplied artwork. The directory, fish counts, stocking, angler reports and the score method each have their own page (`#/waters`, `#/counts`, `#/stocking`, `#/reports`, `#/method`). Its code is in `v2/`; see [v2/README.md](v2/README.md).
 - **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule and approach page. The homepage links to it for those pages.
 - **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
 - The old `/v2/` address forwards to the homepage.

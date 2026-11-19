@@ -141,26 +141,45 @@
     return '<div class="wire" id="wire" role="region" aria-label="Latest readings"><div class="wire-track"><ul>' + list + '</ul><ul aria-hidden="true">' + list + '</ul></div></div>';
   }
 
+  // The one input that says most about a short-listed water today, in the score formula's own words.
+  // News comes first (a field check, catch posts, stocking, the run), then conditions and the report.
+  function whyNow(w, s) {
+    const strong = k => s.factors.find(f => f.key === k && f.value >= 70);
+    const pick = ['field', 'angler', 'stock', 'run', 'cond', 'tone'].map(strong).find(Boolean) || [...s.factors].sort((x, y) => y.value - x.value)[0];
+    if (!pick) return '';
+    const r = latest(w);
+    return pick.key === 'field' ? 'Field check: ' + pick.display
+      : pick.key === 'stock' ? (/^Week of/.test(pick.display) ? 'ODFW stocking, ' + pick.display.replace(/^W/, 'w') : pick.display + ' (ODFW)')
+      : pick.key === 'run' ? 'Run at ' + pick.display
+      : pick.key === 'tone' ? pick.display + ' report' + (r?.reported_on ? ', ' + fmtDate(r.reported_on) : '')
+      : pick.key === 'fresh' ? 'Report ' + pick.display
+      : pick.display;
+  }
   function shortlist() {
     const scored = waters.map(w => ({w, s: score(w), f: freshness(w)})).filter(x => x.s.status === 'scored')
-      .sort((a, b) => b.s.value - a.s.value || a.f.age - b.f.age).slice(0, 4);
+      .sort((a, b) => b.s.value - a.s.value || a.f.age - b.f.age).slice(0, 5);
     if (!scored.length) return '';
-    return '<section class="section" id="shortlist" aria-labelledby="sl-h"><div class="inner">' +
-      '<div class="section-head"><div><p class="eyebrow">This week’s short list</p><h2 id="sl-h" class="display h-section" data-split tabindex="-1">Worth the <em>drive</em> this week.</h2></div>' +
-      '<p class="lede" data-reveal>The four waters scoring highest today, from dated reports, gauges, dam counts and stocking. Open one to see every input.</p></div>' +
-      '<div class="shortlist">' + scored.map(({w, s, f}) =>
-        '<a class="pick" href="#/water/' + esc(w.id) + '" data-reveal>' +
-        '<div class="ring-row">' + ring(s.value) + '<div><small>Fishing score</small><strong>' + esc(s.label) + '</strong><small>' + esc(s.confidence) + ' confidence</small></div></div>' +
-        '<div><h3>' + esc(w.name) + '</h3><p class="reach">' + esc(w.reach) + '</p>' + (s.notes?.length ? '<p class="pick-note">' + icon('danger-triangle-linear') + esc(s.notes[0]) + '</p>' : '') + '</div>' +
-        '<blockquote>' + esc(latest(w).summary.length > 140 ? latest(w).summary.slice(0, 137).trim() + '…' : latest(w).summary) + '</blockquote>' +
-        '<div class="foot"><span>' + esc(w.region) + ' · ' + esc(f.text) + '</span><span class="go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></div></a>').join('') +
-      '</div><p class="score-note">Every score shows its inputs and rules notices on the water page.</p></div></section>';
+    return '<section class="section home-list" id="shortlist" aria-labelledby="sl-h"><div class="inner">' +
+      '<div class="list-head"><h2 id="sl-h" class="display h-list" tabindex="-1">This week’s <em>short list</em></h2>' +
+      '<p class="list-sub">Top scores today</p>' +
+      '<a class="list-all" href="#/waters">Explore all waters ' + icon('arrow-right-linear') + '</a></div>' +
+      '<ul class="picks">' + scored.map(({w, s}) => {
+        // The first sentence of a rules or score note, so a held or limited score is never shown bare.
+        const note = s.notes?.length ? (s.notes[0].match(/^.*?\.(?=\s|$)/)?.[0] || s.notes[0]) : '';
+        return '<li class="pick-row"><a href="#/water/' + esc(w.id) + '">' +
+          '<span class="p-name">' + esc(w.name) + '</span>' +
+          '<span class="p-reach">' + esc(w.reach) + '</span>' +
+          '<span class="p-why">' + esc(whyNow(w, s)) + (note ? '<small>' + icon('danger-triangle-linear') + esc(note) + '</small>' : '') + '</span>' +
+          '<span class="p-score num"><span class="sr-only">Fishing score </span>' + s.value + '<i>/100</i></span>' +
+          '<span class="p-go" aria-hidden="true">' + icon('arrow-right-linear') + '</span></a></li>';
+      }).join('') + '</ul>' +
+      '<p class="score-note">Scores come from dated reports, river gauges, dam counts and ODFW stocking. Each water page shows every input and any rules notice. <a class="link" href="#/method">How scores work</a></p></div></section>';
   }
 
   function counts() {
     const data = window.ORFF_COUNTS?.stations || {}, meta = window.ORFF_COUNT_STATIONS?.stations || {};
     const codes = ['BON', 'TDA', 'WFF'].filter(c => data[c]);
-    const head = '<div class="section-head"><div><p class="eyebrow">Fish counts · Columbia River DART</p><h2 id="ct-h" class="display h-section" data-split tabindex="-1">Are the fish <em>in the river</em> yet?</h2></div>' +
+    const head = '<div class="section-head"><div><p class="eyebrow">Fish counts · Columbia River DART</p><h1 id="ct-h" class="display h-section" data-split tabindex="-1">Are the fish <em>in the river</em> yet?</h1></div>' +
       '<p class="lede" data-reveal>Adult salmon and steelhead counted climbing the ladders, updated every morning. Counts show run timing, not how many fish are being caught.</p></div>';
     let body;
     if (!codes.length) {
@@ -170,7 +189,7 @@
         const s = data[code], m = meta[code] || {name: code};
         const keys = ['chinook', 'coho', 'steelhead'].filter(k => s.species[k]);
         const week = keys.reduce((t, k) => t + s.species[k].last7, 0);
-        return '<article class="station" data-reveal><h3>' + esc(m.name) + '</h3><p class="meta">' + esc(m.river || '') + ' · through ' + time(s.through) + '</p>' +
+        return '<article class="station" data-reveal><h2>' + esc(m.name) + '</h2><p class="meta">' + esc(m.river || '') + ' · through ' + time(s.through) + '</p>' +
           '<p class="big-count num" data-count="' + week + '">' + num(week) + '</p><p class="big-label">adult Chinook, coho and steelhead in the 7 days to ' + fmtDate(s.through) + '</p>' +
           '<ul class="runs">' + keys.map(k => {
             const v = s.species[k], max = Math.max(v.ytd, v.last_year_ytd || 0) || 1;
@@ -190,7 +209,7 @@
   function directory() {
     const regions = [...new Set(waters.map(w => w.region))].sort();
     return '<section class="section" id="waters" aria-labelledby="dir-h"><div class="inner">' +
-      '<div class="section-head"><div><p class="eyebrow">' + waters.length + ' reaches · ' + regions.length + ' regions</p><h2 id="dir-h" class="display h-section" data-split tabindex="-1">Every water, <em>one reach</em> at a time.</h2></div>' +
+      '<div class="section-head"><div><p class="eyebrow">' + waters.length + ' reaches · ' + regions.length + ' regions</p><h1 id="dir-h" class="display h-section" data-split tabindex="-1">Every water, <em>one reach</em> at a time.</h1></div>' +
       '<p class="lede" data-reveal>Each row names the exact reach the report covers. Open one for access, notices, gauge readings, counts and sources.</p></div>' +
       '<div class="controls" role="search">' +
       '<label class="search"><span class="sr-only">Search waters</span>' + icon('magnifer-linear') + '<input id="q" type="search" placeholder="Search a river, lake, region or species" autocomplete="off" value="' + esc(dir.q) + '"></label>' +
@@ -242,7 +261,7 @@
     week.sort((a, b) => b.total - a.total);
     const total = week.reduce((s, r) => s + r.total, 0);
     return '<section class="section paper-2" id="stocking" aria-labelledby="st-h"><div class="inner">' +
-      '<div class="section-head"><div><p class="eyebrow">ODFW trout stocking</p><h2 id="st-h" class="display h-section" data-split tabindex="-1">Fresh trout, <em>' + esc(label) + '.</em></h2></div>' +
+      '<div class="section-head"><div><p class="eyebrow">ODFW trout stocking</p><h1 id="st-h" class="display h-section" data-split tabindex="-1">Fresh trout, <em>' + esc(label) + '.</em></h1></div>' +
       '<p class="lede" data-reveal>ODFW’s planned releases, read every morning. These are plans, not confirmed releases, and the agency can change them.</p></div>' +
       (week.length ? '<div class="stock-grid"><div data-reveal><p class="stock-total num" data-count="' + total + '">' + num(total) + '</p><p class="lede" style="margin-top:14px">trout planned across ' + week.length + (week.length === 1 ? ' water' : ' waters') + ' for ' + esc(week[0].week_label) + '.</p>' +
         '<p style="margin-top:28px"><a class="btn btn-ink" href="classic/#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
@@ -258,7 +277,7 @@
   function method() {
     const f = [['tone', 30, 'Report tone', 'What the latest dated report says, word for word.'], ['run', 25, 'Run strength', 'This year’s dam counts against the same date last year.'], ['cond', 20, 'River conditions', 'Gauge flow against its 7-day median, and water temperature for cold-water fish.'], ['fresh', 15, 'Report freshness', 'A week-old report counts for more than a month-old one.'], ['stock', 10, 'Recent stocking', 'An ODFW trout release in the last few weeks.']];
     return '<section class="section" id="method" aria-labelledby="m-h"><div class="inner method-pin">' +
-      '<div><p class="eyebrow">How a river score is built</p><h2 id="m-h" class="display h-section" data-split tabindex="-1">Five inputs, <em>weighed</em> in the open.</h2>' +
+      '<div><p class="eyebrow">How a river score is built</p><h1 id="m-h" class="display h-section" data-split tabindex="-1">Five inputs, <em>weighed</em> in the open.</h1>' +
       '<p class="lede" data-reveal>Every input has a source and a date. A missing input is skipped and lowers confidence; it is never filled in. A rules notice holds the score, or limits it to the species still open. A river needs a live flow reading, and any water needs three inputs, to reach Excellent. Lakes use stocking 40%, report tone 35% and freshness 25%. Recent angler posts can nudge a score up, never down; our own field checks can move it either way.</p>' +
       '</div>' +
       '<div class="stack"><div class="stack-bar" role="img" aria-label="River score weights: report tone 30%, run strength 25%, river conditions 20%, report freshness 15%, recent stocking 10%">' +
@@ -282,23 +301,31 @@
   }
   function anglers() {
     const a = window.ORFF_ANGLER;
-    if (!a) return '';
+    if (!a) return '<section class="section paper-2" id="anglers" aria-labelledby="an-h"><div class="inner"><h1 id="an-h" class="display h-section" tabindex="-1">What anglers are <em>posting.</em></h1><p class="lede">Angler posts did not load. Reload the page to try again.</p></div></section>';
     // Waters with posts from their own reach come first; each shows its most useful post and where it was.
     const lead = posts => posts.find(p => p.scoring) || posts.find(p => p.kind === 'catch') || posts[0];
     const inGuide = waters.map(w => ({w, posts: anglerFor(w.id)})).filter(x => x.posts.length)
       .sort((x, y) => (y.posts.some(p => p.scoring) - x.posts.some(p => p.scoring)) || y.posts[0].date.localeCompare(x.posts[0].date));
     const r = a.reviewed || {};
     return '<section class="section paper-2" id="anglers" aria-labelledby="an-h"><div class="inner">' +
-      '<div class="section-head"><div><p class="eyebrow">Word on the water · ' + fmtDate(a.window_start) + ' to ' + fmtDate(a.checked_on) + '</p><h2 id="an-h" class="display h-section" data-split tabindex="-1">What anglers are <em>posting.</em></h2></div>' +
+      '<div class="section-head"><div><p class="eyebrow">Word on the water · ' + fmtDate(a.window_start) + ' to ' + fmtDate(a.checked_on) + '</p><h1 id="an-h" class="display h-section" data-split tabindex="-1">What anglers are <em>posting.</em></h1></div>' +
       '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos from the last 30 days. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
-      '<div class="word-grid"><div><h3 class="word-h">In the guide</h3><ul class="word-list">' + inGuide.map(({w, posts}) =>
+      '<div class="word-grid"><div><h2 class="word-h">In the guide</h2><ul class="word-list">' + inGuide.map(({w, posts}) =>
         '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + fmtDate(lead(posts).date) + '</span></li>').join('') + '</ul></div>' +
-      '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).filter(e => !guideLakeFor(e.water)).sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
+      '<div><h2 class="word-h">Also busy this month</h2><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).filter(e => !guideLakeFor(e.water)).sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
         '<li data-reveal><strong>' + esc(e.water) + '</strong><p>' + esc(e.note) + '</p><span class="a-meta">' + fmtDate(e.latest) + '</span></li>').join('') + '</ol></div></div>' +
       '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
   }
 
-  function homeHTML() { return heroHTML + wire() + shortlist() + anglers() + counts() + directory() + stocking() + method() + principles(); }
+  // The homepage: search, the live wire and this week's short list. Each other section is its own page.
+  function homeHTML() { return heroHTML + wire() + shortlist(); }
+  const PAGES = {
+    waters: {html: directory, title: 'Explore waters', top: 'paper'},
+    counts: {html: counts, title: 'Fish counts', top: 'ink'},
+    stocking: {html: stocking, title: 'Trout stocking', top: 'paper'},
+    reports: {html: anglers, title: 'Angler reports', top: 'paper'},
+    method: {html: () => method() + principles(), title: 'How scores work', top: 'paper'}
+  };
 
   /* ---------- Water page ---------- */
   // NWS forecast from data/weather.js. Hidden when missing, over 48 hours old or every period has passed.
@@ -438,7 +465,7 @@
   }
 
   /* ---------- Motion ---------- */
-  let lenis = null, ctx = null, mm = null, stopRiver = null, wireObserver = null;
+  let lenis = null, ctx = null, stopRiver = null, wireObserver = null;
   function startLenis() {
     if (lenis || !motionOK() || !window.Lenis) return;
     lenis = new window.Lenis({lerp: 0.1, smoothWheel: true});
@@ -454,7 +481,6 @@
   }
   function teardown() {
     ctx?.revert(); ctx = null;
-    mm?.revert(); mm = null;
     stopRiver?.(); stopRiver = null;
     wireObserver?.disconnect(); wireObserver = null;
   }
@@ -479,14 +505,9 @@
         const tl = gsap.timeline({defaults: {ease: 'expo.out'}});
         tl.from(hero.querySelectorAll('.hero-title .wi, .d-title .wi'), {yPercent: 140, duration: 1.1, stagger: 0.06}, 0.05)
           .from(hero.querySelectorAll('.eyebrow, .d-reach, .crumb'), {y: 14, duration: .8}, 0.1)
-          .from(hero.querySelectorAll('.hero-lede, .hero-actions, .facts, .d-score'), {y: 26, duration: 1, stagger: .08}, 0.25);
+          .from(hero.querySelectorAll('.hero-search, .hero-eddy, .facts, .d-score'), {y: 26, duration: 1, stagger: .08}, 0.25);
         const plate = hero.querySelector('.plate-frame');
-        if (plate) {
-          tl.from(plate, {yPercent: 14, duration: 1.4, ease: 'expo.out'}, 0.15);
-          const g = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gutter')) || 0;
-          const inset = Math.min(innerWidth * 0.04, 56) || g;
-          gsap.fromTo(plate, {'--plate-inset': inset + 'px'}, {'--plate-inset': '0px', ease: 'none', scrollTrigger: {trigger: plate, start: 'top 85%', end: 'bottom 60%', scrub: true}});
-        }
+        if (plate) tl.from(plate, {yPercent: 6, duration: 1.4, ease: 'expo.out'}, 0.15);
         const ring = hero.querySelector('.ring .val');
         if (ring) gsap.from(ring, {strokeDashoffset: ring.dataset.ring, duration: 1.6, ease: 'expo.out', delay: .3});
       }
@@ -494,10 +515,13 @@
       [...root.querySelectorAll('.section [data-split]'), ...(footFresh ? [footWord] : [])].forEach(h => {
         gsap.from(h.querySelectorAll('.wi'), {yPercent: 140, duration: 1, stagger: .05, ease: 'expo.out', scrollTrigger: {trigger: h, start: 'top 85%', once: true}});
       });
+      // The short list arrives as one group as soon as any of it is on screen, so no row waits hidden at the fold.
+      const picks = root.querySelector('.picks');
+      if (picks) gsap.from(picks.children, {y: 22, opacity: 0, duration: .9, stagger: .06, ease: 'expo.out', scrollTrigger: {trigger: picks, start: 'top bottom', once: true}});
       root.querySelectorAll('[data-reveal]').forEach(el => {
         gsap.from(el, {y: 36, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: {trigger: el, start: 'top 90%', once: true}});
       });
-      root.querySelectorAll('.station, .pick, .factors li').forEach(card => {
+      root.querySelectorAll('.station, .factors li').forEach(card => {
         const n = card.querySelector('[data-count]');
         const bars = card.querySelectorAll('[data-bar]'), rings = card.querySelectorAll('.ring .val');
         const trig = {trigger: card, start: 'top 85%', once: true};
@@ -505,22 +529,20 @@
         bars.forEach(b => gsap.from(b, {scaleX: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: trig}));
         rings.forEach(r => gsap.from(r, {strokeDashoffset: r.dataset.ring, duration: 1.6, ease: 'expo.out', scrollTrigger: trig}));
       });
+      // On the method page the score weights assemble once, in order, as the page opens.
+      const weights = root.querySelector('.method-pin');
+      if (weights) {
+        const tl = gsap.timeline({delay: .4, defaults: {ease: 'expo.out'}});
+        const factors = weights.querySelectorAll('[data-factor]');
+        weights.querySelectorAll('[data-stack]').forEach((bar, i) => {
+          tl.from(bar, {scaleX: 0, duration: .9}, i * .28);
+          if (factors[i]) tl.from(factors[i], {opacity: .25, duration: .6}, i * .28);
+        });
+      }
       const stockTotal = root.querySelector('.stock-total');
       if (stockTotal) { const end = +stockTotal.dataset.count, o = {v: 0}; gsap.to(o, {v: end, duration: 1.8, ease: 'expo.out', scrollTrigger: {trigger: stockTotal, start: 'top 85%', once: true}, onUpdate: () => { stockTotal.textContent = num(o.v); }}); }
     }, root);
 
-    // One pinned, scrubbed moment: the score weights assemble as you read the method.
-    const pin = root.querySelector('.method-pin');
-    if (pin) {
-      mm = gsap.matchMedia();
-      mm.add('(min-width: 901px)', () => {
-        const tl = gsap.timeline({scrollTrigger: {trigger: pin, start: 'center center', end: '+=110%', scrub: 0.6, pin: true}});
-        pin.querySelectorAll('[data-stack]').forEach((s, i) => {
-          tl.from(s, {scaleX: 0, duration: 1, ease: 'none'}, i);
-          tl.from(pin.querySelectorAll('[data-factor]')[i], {opacity: .2, duration: .6}, i);
-        });
-      });
-    }
   }
 
   function mountShader(root) {
@@ -536,7 +558,9 @@
   }
 
   /* ---------- Router ---------- */
-  const SECTIONS = {waters: 'waters', counts: 'counts', stocking: 'stocking', method: 'method', shortlist: 'shortlist', anglers: 'anglers'};
+  // #/ is the homepage. #/waters, #/counts, #/stocking, #/reports and #/method are pages; #/water/<id> is a water.
+  // #/anglers is the old address of #/reports, and #/shortlist still scrolls to the short list on the homepage.
+  const ROUTES = {waters: 'waters', counts: 'counts', stocking: 'stocking', reports: 'reports', anglers: 'reports', method: 'method'};
   let current = null, firstRender = true;
   const curtain = document.createElement('div');
   curtain.className = 'curtain'; curtain.setAttribute('aria-hidden', 'true');
@@ -544,37 +568,55 @@
 
   function parse() {
     const h = location.hash.replace(/^#\/?/, '');
-    const [path] = h.split('?');
+    const [path, query = ''] = h.split('?');
     const parts = path.split('/');
     if (parts[0] === 'water' && byId.has(parts[1])) return {view: 'water:' + parts[1], water: byId.get(parts[1])};
-    return {view: 'home', section: SECTIONS[parts[0]] || null};
+    // #/waters?q=<words> opens the directory already searched (the homepage search sends visitors here);
+    // plain #/waters lists every water. The address holds the search words, so Back returns to the same list.
+    if (ROUTES[parts[0]]) return {view: ROUTES[parts[0]], q: parts[0] === 'waters' ? new URLSearchParams(query).get('q') || '' : null};
+    return {view: 'home', section: parts[0] === 'shortlist' ? 'shortlist' : null};
   }
   function scrollToEl(el, immediate) {
-    const y = el ? el.getBoundingClientRect().top + scrollY - (el.id === 'waters' ? 40 : 0) : 0;
+    const y = el ? el.getBoundingClientRect().top + scrollY : 0;
     if (lenis) { lenis.resize(); lenis.scrollTo(y, {immediate, force: true, duration: 1.4}); }
     else window.scrollTo({top: y, behavior: 'auto'});
   }
   function setNav(route) {
     document.querySelectorAll('#nav-links a').forEach(a => {
-      const match = route.section && a.getAttribute('href') === '#/' + route.section;
-      if (match) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+      if (a.getAttribute('href') === '#/' + route.view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
+  }
+  function searchDirectory(q) {
+    dir.q = q;
+    const box = document.getElementById('q');
+    if (box) box.value = q;
+  }
+  // Keeps the address in step with the directory's search box without adding a history entry per keystroke.
+  function noteSearch() {
+    try { history.replaceState(history.state, '', '#/waters' + (dir.q.trim() ? '?q=' + encodeURIComponent(dir.q.trim()) : '')); } catch {}
   }
   function render(route) {
     teardown();
+    const page = PAGES[route.view];
     if (route.view === 'home') {
       view.innerHTML = homeHTML();
       document.title = 'Oregon Fish Forecast · Read the river';
-      renderRows(false);
-      bindDirectory();
+      bindHeroSearch();
+    } else if (page) {
+      if (route.q != null) dir.q = route.q;
+      view.innerHTML = page.html();
+      document.title = page.title + ' · Oregon Fish Forecast';
+      if (route.view === 'waters') { renderRows(false); bindDirectory(); }
     } else {
       view.innerHTML = waterHTML(route.water);
       document.title = route.water.name + ', ' + route.water.reach + ' · Oregon Fish Forecast';
       bindOrigin();
     }
     current = route.view;
+    // The navigation sits on paper or on forest ink, whichever the page opens with.
+    nav.classList.toggle('on-paper', route.view === 'home' || page?.top === 'paper');
     animateIn(view, route.view === 'home');
-    // Lets the Eddy panel (ask.js) fill the page's "Follow this water" slot.
+    // Lets the Eddy panel (ask.js) fill the homepage's "Ask Eddy" card and a water page's "Follow this water" slot.
     document.dispatchEvent(new CustomEvent('orff:render', {detail: {water: route.water?.id || null}}));
   }
   function afterRender(route, immediate) {
@@ -586,7 +628,7 @@
       el?.querySelector('h2')?.focus({preventScroll: true});
     } else {
       scrollToEl(null, true);
-      if (!firstRender) (document.getElementById('d-title') || document.getElementById('main')).focus({preventScroll: true});
+      if (!firstRender) (view.querySelector('h1[tabindex]') || document.getElementById('main')).focus({preventScroll: true});
     }
     if (ST) document.fonts?.ready.then(() => {
       ST.refresh();
@@ -598,7 +640,11 @@
   function go() {
     closeMenu();
     const route = parse();
-    if (route.view === current && !firstRender) { afterRender(route, false); return; }
+    if (route.view === current && !firstRender) {
+      if (route.q != null && route.q !== dir.q) { searchDirectory(route.q); renderRows(true); }
+      afterRender(route, false);
+      return;
+    }
     if (firstRender || !motionOK()) { render(route); afterRender(route, true); return; }
     gsap.timeline()
       .set(curtain, {transformOrigin: 'bottom'})
@@ -609,9 +655,71 @@
   }
 
   /* ---------- Controls ---------- */
+  // Waters matching the words typed, best first: names that start with them, then names, then reach, region and species.
+  function findWaters(q) {
+    q = q.trim().toLowerCase();
+    if (!q) return [];
+    const rank = w => { const n = w.name.toLowerCase(); return n.startsWith(q) ? 0 : n.includes(q) ? 1 : w.reach.toLowerCase().includes(q) ? 2 : 3; };
+    return waters.filter(w => [w.name, w.reach, w.region, ...w.planning.target_species].join(' ').toLowerCase().includes(q))
+      .map((w, i) => ({w, r: rank(w), i})).sort((a, b) => a.r - b.r || a.i - b.i).map(x => x.w);
+  }
+  function bindHeroSearch() {
+    const form = document.getElementById('hero-search');
+    if (!form) return;
+    const input = form.querySelector('input'), list = form.querySelector('.hero-suggest'), status = form.querySelector('[role="status"]');
+    const SHOW = 6;
+    let found = [], active = -1;
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', 'hero-suggest');
+    input.setAttribute('aria-expanded', 'false');
+    const options = () => [...list.querySelectorAll('[role="option"]')];
+    const close = () => { list.hidden = true; active = -1; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); };
+    const mark = i => {
+      const opts = options();
+      active = opts.length ? (i + opts.length) % opts.length : -1;
+      opts.forEach((o, n) => o.setAttribute('aria-selected', String(n === active)));
+      if (active >= 0) input.setAttribute('aria-activedescendant', opts[active].id); else input.removeAttribute('aria-activedescendant');
+    };
+    const all = q => '#/waters' + (q ? '?q=' + encodeURIComponent(q) : '');
+    const paint = () => {
+      const q = input.value.trim();
+      found = findWaters(q);
+      if (!q) { close(); status.textContent = ''; return; }
+      list.innerHTML = found.length
+        ? found.slice(0, SHOW).map((w, i) => {
+            const s = score(w);
+            return '<li role="option" id="hero-opt-' + i + '" aria-selected="false" data-go="#/water/' + esc(w.id) + '"><span class="hs-name">' + esc(w.name) + '<small>' + esc(w.reach) + '</small></span>' +
+              '<span class="hs-meta">' + esc(w.region) + '</span>' + (s.status === 'scored' ? '<span class="hs-score num"><span class="sr-only">Score </span>' + s.value + '</span>' : '<span class="hs-score off">Not scored</span>') + '</li>';
+          }).join('') + (found.length > SHOW ? '<li role="option" class="hs-more" id="hero-opt-all" aria-selected="false" data-go="' + esc(all(q)) + '">See all ' + found.length + ' matching waters</li>' : '')
+        : '<li class="hs-none" role="presentation">No water matches that. Try a river, lake, region or species.</li>';
+      list.hidden = false; active = -1;
+      input.setAttribute('aria-expanded', 'true'); input.removeAttribute('aria-activedescendant');
+      status.textContent = found.length ? found.length + (found.length === 1 ? ' water matches.' : ' waters match.') + ' Use the arrow keys to choose one.' : 'No water matches that.';
+    };
+    input.addEventListener('input', paint);
+    input.addEventListener('focus', () => { if (input.value.trim() && list.hidden) paint(); });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (list.hidden) { paint(); if (list.hidden) return; }
+        mark(active < 0 ? (e.key === 'ArrowDown' ? 0 : -1) : active + (e.key === 'ArrowDown' ? 1 : -1));
+      } else if (e.key === 'Escape' && !list.hidden) { e.preventDefault(); close(); }
+    });
+    // Choosing with the pointer must not take focus from the box before the click lands.
+    list.addEventListener('mousedown', e => e.preventDefault());
+    list.addEventListener('click', e => { const o = e.target.closest('[data-go]'); if (o) location.hash = o.dataset.go; });
+    form.addEventListener('focusout', e => { if (!form.contains(e.relatedTarget)) close(); });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value.trim(), chosen = options()[active];
+      // Enter opens the highlighted water, the only match, or the directory searched for these words.
+      location.hash = chosen ? chosen.dataset.go : found.length === 1 && q ? '#/water/' + found[0].id : all(q);
+    });
+  }
   function bindDirectory() {
     const q = document.getElementById('q');
-    q?.addEventListener('input', () => { dir.q = q.value; renderRows(true); });
+    q?.addEventListener('input', () => { dir.q = q.value; noteSearch(); renderRows(true); });
     document.querySelectorAll('[data-kind]').forEach(b => b.addEventListener('click', () => {
       dir.kind = b.dataset.kind;
       document.querySelectorAll('[data-kind]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
@@ -622,7 +730,7 @@
     document.getElementById('rows')?.addEventListener('click', e => {
       if (!e.target.closest('#reset')) return;
       Object.assign(dir, {q: '', kind: 'all', region: 'all'});
-      q.value = ''; document.getElementById('region').value = 'all';
+      q.value = ''; noteSearch(); document.getElementById('region').value = 'all';
       document.querySelectorAll('[data-kind]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.kind === 'all')));
       renderRows(true); q.focus();
     });

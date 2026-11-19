@@ -13,6 +13,9 @@
      once with ?eddy_shop=1 (a test shopper, who also sees test mode).
    Without any of these the page never contacts Eddy. ?eddy=off forgets the code, the pass and the test flag.
 
+   On the homepage the hero carries an "Ask Eddy" card (the #hero-eddy slot app.js leaves on the artwork). It is filled
+   only when Eddy is shown to this visitor, and the floating button steps aside while the card is on screen.
+
    Water alerts (server/alerts.mjs): the owner and pass holders follow waters, from the Alerts view in the panel or the
    "Follow this water" button on a water page (the .d-follow slot app.js leaves in the page header), and get one email a
    morning when something new happens on them. */
@@ -338,6 +341,35 @@
     } else slot.innerHTML = '';
   }
   document.addEventListener('orff:render', paintFollow);
+
+  /* ---------- "Ask Eddy" card in the homepage hero ---------- */
+  let heroWatch = null;
+  function paintHero() {
+    heroWatch?.disconnect(); heroWatch = null;
+    launch.classList.remove('tucked');
+    const slot = document.getElementById('hero-eddy');
+    if (!slot || !shown) { if (slot) slot.innerHTML = ''; return; }
+    if (!slot.firstChild) slot.innerHTML =
+      '<div class="eddy-card"><div class="eddy-card-head">' + icon('compass-linear') + '<div><h2>Ask Eddy</h2><p>AI fishing assistant</p></div></div>' +
+      '<form novalidate><label class="sr-only" for="hero-eddy-q">Ask Eddy a question</label>' +
+      '<input id="hero-eddy-q" type="text" maxlength="' + MAX + '" placeholder="Where should I fish this weekend?" autocomplete="off" enterkeyhint="send">' +
+      '<button type="submit" aria-label="Ask Eddy">' + icon('arrow-right-linear') + '</button></form></div>';
+    // One way to reach Eddy at a time: the floating button waits until the card has scrolled away.
+    if ('IntersectionObserver' in window) {
+      heroWatch = new IntersectionObserver(([e]) => launch.classList.toggle('tucked', e.isIntersecting));
+      heroWatch.observe(slot);
+    }
+  }
+  document.addEventListener('orff:render', paintHero);
+  document.addEventListener('submit', e => {
+    const card = e.target.closest('#hero-eddy form');
+    if (!card) return;
+    e.preventDefault();
+    const box = card.querySelector('input'), question = box.value.trim();
+    box.value = '';
+    open();
+    if (question) ask(question);
+  });
   document.addEventListener('click', async e => {
     const btn = e.target.closest('.follow-btn');
     if (!btn) return;
@@ -496,10 +528,11 @@
     panel.hidden = true;
     launch.setAttribute('aria-expanded', 'false');
     document.documentElement.classList.remove('ask-open');
-    if (returnFocus) launch.focus({preventScroll: true});
+    // Focus goes back to whichever way in is on screen: the homepage card, or the floating button.
+    if (returnFocus) (launch.classList.contains('tucked') ? document.getElementById('hero-eddy-q') : launch)?.focus({preventScroll: true});
   }
   function grow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 132) + 'px'; }
-  function show() { if (!shown) { shown = true; document.body.append(launch, panel); } }
+  function show() { if (!shown) { shown = true; document.body.append(launch, panel); paintHero(); } }
 
   launch.addEventListener('click', open);
   panel.querySelector('.ask-close').addEventListener('click', () => close());

@@ -11,7 +11,7 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
   - The browser can send only its conversation (alternating turns, questions up to 800 characters, the last 12 turns kept) and the guide water it is viewing. It cannot add instructions or data.
   - Limits: 20 questions per visitor per 10 minutes and 600 an hour overall, per server instance. Requests from other websites are refused unless listed.
   - A refusal or an API error becomes a short message in the chat; nothing is retried automatically except once by the SDK.
-- **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only.
+- **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only. On the homepage the same check also fills the "Ask Eddy" card on the hero artwork; a question typed there opens the panel and asks it.
 
 ## Eddy passes (paid access)
 
