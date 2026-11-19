@@ -234,9 +234,9 @@ function stockingDirectoryBlock(g, today, byId) {
 function odfwReportsBlock(g, today) {
   const zones = Object.values(g.ORFF_ODFW_REPORTS?.zones || {});
   if (!zones.length) return '';
-  const out = ['## ODFW weekly fishing reports by zone (ODFW\'s own words; most pages carry no date, so each shows when its text first appeared here)'];
+  const out = ['## ODFW weekly fishing reports by zone (ODFW\'s own words. Most pages carry no date; for those, "first seen here" is the day this site first read the text, not a report date)'];
   for (const z of zones) {
-    out.push('### ' + z.name + ' report' + (z.dated ? ', dated ' + z.dated : '') + ' (text unchanged since ' + z.changed_on + ', ' + ago(z.changed_on, today) + '; last read ' + z.read_on + '). Source: ' + z.url);
+    out.push('### ' + z.name + ' report (' + (z.dated ? 'dated ' + z.dated + ' on the page' : 'undated on the page') + '; this text first seen here ' + z.changed_on + ', ' + ago(z.changed_on, today) + '; last read ' + z.read_on + '). Source: ' + z.url);
     out.push(z.text);
   }
   return out.join('\n');

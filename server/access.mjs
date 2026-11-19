@@ -4,6 +4,7 @@
 //   paid   a guest's Eddy pass (x-eddy-pass), bought through Stripe: PLAN.paidPerDay questions a day.
 //   free   anyone else, once selling is on: PLAN.freePerDay questions a day per connection, and
 //          PLAN.freeSiteWidePerDay for the whole site, so free questions can never run up a bill.
+//          freePerDay can be set to 0 (before launch): then anyone without a pass is offered one at once.
 //   none   selling is off and there is no owner code: Eddy stays private.
 //
 // A pass is a signed token ("ep1.<payload>.<signature>") naming the guest's Stripe subscription and when it
@@ -122,7 +123,8 @@ export function stripeClient(secretKey, {fetchImpl = (...a) => fetch(...a), plan
 const periodEnd = sub => sub?.current_period_end ?? sub?.items?.data?.[0]?.current_period_end ?? null;
 
 /* ---------- Access ---------- */
-export function createAccess({ownerHash = null, stripe = null, passSecret = null, usage = null, plan = PLAN, salt = '', now = () => Date.now(), selling = true}) {
+export function createAccess({ownerHash = null, stripe = null, passSecret = null, usage = null, plan: basePlan = PLAN, freePerDay = basePlan.freePerDay, salt = '', now = () => Date.now(), selling = true}) {
+  const plan = {...basePlan, freePerDay: Math.max(0, Math.floor(Number(freePerDay) || 0))};
   const billing = !!(selling && stripe && passSecret && usage);
   const day = () => pacificDay(now());
   const key = (kind, id) => day() + '/' + kind + '/' + id;
@@ -148,6 +150,7 @@ export function createAccess({ownerHash = null, stripe = null, passSecret = null
       }
       expired = true;
     }
+    if (plan.freePerDay === 0) return {kind: 'free', billing, id: null, limit: 0, used: 0, remaining: 0, expired};
     const id = sha256(salt + clientIp(request)).slice(0, 20);
     const [used, site] = await Promise.all([usage.get(key('free', id)), usage.get(key('free', 'all'))]);
     const remaining = site >= plan.freeSiteWidePerDay ? 0 : Math.max(0, plan.freePerDay - used);
@@ -156,7 +159,7 @@ export function createAccess({ownerHash = null, stripe = null, passSecret = null
 
   async function spend(grant) {
     if (grant.kind === 'paid') await usage.add(key('paid', grant.id));
-    else if (grant.kind === 'free') await Promise.all([usage.add(key('free', grant.id)), usage.add(key('free', 'all'))]);
+    else if (grant.kind === 'free' && grant.id) await Promise.all([usage.add(key('free', grant.id)), usage.add(key('free', 'all'))]);
   }
 
   return {billing, plan, check, spend, passFor, testMode: !!stripe?.testMode};

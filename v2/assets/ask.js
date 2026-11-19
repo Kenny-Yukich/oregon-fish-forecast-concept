@@ -141,6 +141,7 @@
     const left = plan.remaining;
     planLine.innerHTML = plan.access === 'paid'
       ? 'Eddy pass · ' + left + ' of ' + plan.limit + ' questions left today · <button type="button" class="ask-textbtn ask-manage">Manage subscription</button>'
+      : plan.limit === 0 ? 'Eddy pass · ' + esc(plan.price) + ', up to ' + (plan.paid_per_day || 50) + ' questions a day · <button type="button" class="ask-textbtn ask-buy">Get Eddy</button>'
       : left + ' of ' + plan.limit + ' free questions left today · <button type="button" class="ask-textbtn ask-buy">Get Eddy, ' + esc(plan.price) + '</button>';
     if (plan.test_mode) planLine.insertAdjacentHTML('beforeend', '<span class="ask-test">Stripe test mode: pay with card 4242 4242 4242 4242, any future date and CVC.</span>');
     planLine.hidden = false;
@@ -314,7 +315,14 @@
     document.documentElement.classList.add('ask-open');
     requestAnimationFrame(() => panel.classList.add('in'));
     input.focus({preventScroll: true});
-    if (Date.now() - planAt > 60000) fetchStatus();
+    if (Date.now() - planAt > 60000) fetchStatus().then(offer); else offer();
+  }
+  // A visitor with no questions left (or none before launch) sees the offer as soon as Eddy opens, not after typing.
+  function offer() {
+    if (!plan || plan.access !== 'free' || plan.remaining !== 0 || busy || log.querySelector('.ask-paywall')) return;
+    const card = bubble('guide', paywallHTML({price: plan.price, paid_per_day: plan.paid_per_day,
+      message: plan.expired ? 'Your Eddy pass has ended.' : plan.limit === 0 ? 'Eddy is for Eddy pass holders.' : 'You’ve used today’s free questions.'}));
+    card.classList.add('ask-paywall');
   }
   function close(returnFocus = true) {
     if (panel.hidden) return;
