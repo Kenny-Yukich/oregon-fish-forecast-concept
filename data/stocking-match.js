@@ -15,5 +15,10 @@ window.ORFF_STOCKING_MATCH = {
   // ODFW lists Big Lava Lake as "LAVA LK, B", shown as "Lava Lake (B)"; "Lava Lake (L)" is Little Lava Lake.
   "lava-lake-campground": ["Lava Lake (B"],
   "howard-prairie-reservoir": ["Howard Prairie"],
-  "fourmile-lake-campground": ["Fourmile Lake"]
+  "fourmile-lake-campground": ["Fourmile Lake"],
+  "phillips-reservoir": ["Phillips Reservoir"],
+  // ODFW's schedule names "Upper Empire Lake" and "Lower Empire Lake"; both are in John Topits Park.
+  "empire-lakes": ["Empire Lake"],
+  "walter-wirth-lake": ["Walter Wirth"],
+  "hebo-lake": ["Hebo Lake"]
 };

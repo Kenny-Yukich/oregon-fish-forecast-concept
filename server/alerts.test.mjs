@@ -12,6 +12,9 @@ const SECRET = 'test-secret', OWNER = 'owner-code', SITE = 'https://oregonfishfo
 const POND = 's:Junction City Pond';          // 1,000 trout planned for the week of Nov 23 in the checked-in data
 const DESCHUTES = 'lower-deschutes-moody';     // scored Good (70) in the checked-in data
 const withRow = (site, row) => ({...site, ORFF_STOCKING: {...site.ORFF_STOCKING, rows: [...site.ORFF_STOCKING.rows, row]}});
+// The same site without ODFW's zone reports, for tests about stocking news only: the reports change every week,
+// and a week that mentions the pond would add a second update.
+const stockOnly = {...g, ORFF_ODFW_REPORTS: {...g.ORFF_ODFW_REPORTS, zones: {}}};
 
 function fakeStripe({status = 'active', email = 'guest@example.com'} = {}) {
   const calls = [];
@@ -84,7 +87,7 @@ test('turned-off kinds are not sent, and turning them on later does not send old
 });
 
 test('the email names the waters, links the page and carries a stop link', () => {
-  const {groups} = digest({waters: [POND], seen: {}}, factsFor(g, [POND], {today: TODAY, now: NOW}), TODAY);
+  const {groups} = digest({waters: [POND], seen: {}}, factsFor(stockOnly, [POND], {today: TODAY, now: NOW}), TODAY);
   const m = renderEmail({groups, siteUrl: SITE + '/', stopUrl: STOP + '?t=x', today: TODAY});
   assert.equal(m.subject, 'Junction City Pond: 1,000 trout planned next week');
   assert.match(m.html, /Stop these emails/);
@@ -164,7 +167,7 @@ test('the morning run emails what is new, once a day, and checks ended passes wi
   await store.put('owner-quiet', {id: 'owner-quiet', kind: 'owner', email: 'q@example.com', waters: [POND], seen: {[POND]: {'stock:Junction City Pond:2026-11-23': TODAY}}});
   await store.put('stopped', {id: 'stopped', kind: 'owner', email: 's@example.com', waters: [POND], seen: {}, stopped: true});
   await store.put('sub_old', {id: 'sub_old', kind: 'paid', email: 'old@example.com', waters: [POND], seen: {}, paid_through: NOW / 1000 - 10});
-  const run = stripe => runAlerts({loadSite: async () => g, store, mailer, stripe, secret: SECRET, siteUrl: SITE + '/', stopBase: STOP, now: () => NOW, log: () => {}});
+  const run = stripe => runAlerts({loadSite: async () => stockOnly, store, mailer, stripe, secret: SECRET, siteUrl: SITE + '/', stopBase: STOP, now: () => NOW, log: () => {}});
   const out = await run(fakeStripe({status: 'canceled'}));
   assert.deepEqual(mailer.sent.map(m => m.to), ['me@example.com']);
   assert.equal(out.emailed, 1);
@@ -178,7 +181,7 @@ test('the morning run emails what is new, once a day, and checks ended passes wi
 test('a failed send is tried again on the next run', async () => {
   const store = memoryAlertStore();
   await store.put('owner', {id: 'owner', kind: 'owner', email: 'me@example.com', waters: [POND], seen: {}});
-  const args = mailer => ({loadSite: async () => g, store, mailer, secret: SECRET, siteUrl: SITE + '/', stopBase: STOP, now: () => NOW, log: () => {}});
+  const args = mailer => ({loadSite: async () => stockOnly, store, mailer, secret: SECRET, siteUrl: SITE + '/', stopBase: STOP, now: () => NOW, log: () => {}});
   await assert.rejects(runAlerts(args(fakeMailer({fail: true}))));
   assert.equal((await store.get('owner')).checked_on, undefined);
   const ok = fakeMailer();

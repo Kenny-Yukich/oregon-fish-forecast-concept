@@ -33,6 +33,9 @@ window.ORFF_COUNT_STATIONS = {
       {station: "LEABURG", relation: "At this reach. Leaburg Dam is the count site for the McKenzie above Leaburg."},
       {station: "WFF", relation: "McKenzie spring Chinook and steelhead pass Willamette Falls first, along with fish for every other upper-Willamette river."}
     ],
+    "north-santiam-greens-bridge": [
+      {station: "WFF", relation: "Downstream, at Oregon City. North Santiam coho, steelhead and spring Chinook pass Willamette Falls first, along with fish for every other upper-Willamette river."}
+    ],
     "umpqua-river-elkton": [
       {station: "WINCHESTER", relation: "On the North Umpqua, upstream of Elkton. Counts cover only fish entering the North Umpqua."}
     ]

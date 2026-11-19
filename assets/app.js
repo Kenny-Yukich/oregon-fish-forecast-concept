@@ -55,7 +55,7 @@
     return '<form class="origin-form" data-od-id="driving-origin"><label for="origin">Driving from</label><div class="origin-field"><input id="origin" name="origin" autocomplete="off" maxlength="180" required value="'+esc(origin)+'" placeholder="Your town or address" aria-describedby="origin-feedback"><button type="submit" aria-label="Apply driving origin" title="Apply driving origin">'+icon('check')+'</button></div><span id="origin-feedback" class="origin-status" role="status"></span></form>';
   }
   function age(report) {
-    if (!report.reported_on) return 'No dated local report';
+    if (!report.reported_on) return report.seen_on ? 'Undated report' : 'No dated local report';
     const days=(Date.parse(report.checked_on)-Date.parse(report.reported_on))/86400000;
     return days > 30 ? 'Older report' : 'Dated report';
   }
@@ -68,8 +68,8 @@
   }
   function reportHTML(w, compact=false) {
     const r=w.planning.report;
-    if (compact) return '<details class="report-toggle" data-od-id="report-'+w.id+'"><summary>'+age(r)+' · '+(r.reported_on?date(r.reported_on):'undated')+'</summary><div class="report-copy"><p>'+esc(r.summary)+'</p><p class="muted"><strong>Coverage:</strong> '+esc(r.coverage)+'</p><p class="meta">Source reviewed '+date(r.checked_on)+'</p>'+external(r.url,'Original report','cell-link')+'</div></details>';
-    return '<div class="report-panel"><div class="report-meta"><span class="report-age">'+age(r)+'</span><span>Reported '+time(r.reported_on)+'</span></div><h3>'+esc(r.summary)+'</h3><div class="coverage"><strong>Where this report applies</strong>'+esc(r.coverage)+'</div>'+(r.coverage.includes('live')?'<p class="meta">The source wording is preserved; live readings are not included in this editorial packet.</p>':'')+'<div class="report-meta"><span>Source reviewed '+time(r.checked_on)+'</span>'+external(r.url,'Original report','cell-link')+'</div></div>';
+    if (compact) return '<details class="report-toggle" data-od-id="report-'+w.id+'"><summary>'+age(r)+' · '+(r.reported_on?date(r.reported_on):r.seen_on?'first seen '+date(r.seen_on):'undated')+'</summary><div class="report-copy"><p>'+esc(r.summary)+'</p><p class="muted"><strong>Coverage:</strong> '+esc(r.coverage)+'</p><p class="meta">Source reviewed '+date(r.checked_on)+'</p>'+external(r.url,'Original report','cell-link')+'</div></details>';
+    return '<div class="report-panel"><div class="report-meta"><span class="report-age">'+age(r)+'</span><span>'+(!r.reported_on&&r.seen_on?'Undated page · text first seen '+time(r.seen_on):'Reported '+time(r.reported_on))+'</span></div><h3>'+esc(r.summary)+'</h3><div class="coverage"><strong>Where this report applies</strong>'+esc(r.coverage)+'</div>'+(r.coverage.includes('live')?'<p class="meta">The source wording is preserved; live readings are not included in this editorial packet.</p>':'')+'<div class="report-meta"><span>Source reviewed '+time(r.checked_on)+'</span>'+external(r.url,'Original report','cell-link')+'</div></div>';
   }
   function monitoring(w, compact=false) {
     if (window.ORFFMonitoring) return window.ORFFMonitoring.render(w, compact);

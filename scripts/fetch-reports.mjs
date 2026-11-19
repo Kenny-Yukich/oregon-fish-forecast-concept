@@ -212,19 +212,20 @@ export async function main() {
     console.log('WDFW failed: ' + (e instanceof Anthropic.APIError ? `API ${e.status} ${e.message}` : e.message) + '. Keeping its previous data.');
   }
 
-  // B. ODFW regulation updates. The page's main text is hashed; Claude reads it when the hash changes, and again
-  // every 14 days so rules that start later than the 14-day look-ahead are picked up.
+  // B. ODFW regulation updates. The page's main text is hashed; Claude reads it when the hash changes, when guide
+  // waters are added or removed, and again every 14 days so rules that start later than the 14-day look-ahead are picked up.
   const stale = r => !r?.read_on || (Date.parse(today) - Date.parse(r.read_on)) / 864e5 >= 14;
+  const guideKey = createHash('sha256').update(waters.map(w => w.id).sort().join(',')).digest('hex').slice(0, 16);
   try {
     const text = mainText(await get(REGS_URL));
     if (text.length < 500) throw new Error('the ODFW page has almost no text');
     const hash = createHash('sha256').update(text).digest('hex'), old = current.sources.odfw_regs || {};
-    if (hash !== old.hash || stale(old)) {
+    if (hash !== old.hash || old.waters !== guideKey || stale(old)) {
       const oregon = waters.filter(w => w.region !== 'Southwest Washington');
       calls++;
       const res = await ask(rulesPrompt(oregon, today), 'ODFW regulation updates page (' + REGS_URL + '), as text:\n\n' + text.slice(0, 120000), RULES_SCHEMA(oregon.map(w => w.id)));
       next.rules = cleanRules(res.rules, new Set(oregon.map(w => w.id)), today);
-      next.sources.odfw_regs = {url: REGS_URL, hash, read_on: today};
+      next.sources.odfw_regs = {url: REGS_URL, hash, waters: guideKey, read_on: today};
       const all = Object.values(next.rules).flat();
       console.log(`ODFW: page changed, ${all.length} rules for ${Object.keys(next.rules).length} guide waters`);
       for (const r of all) console.log(`  ${r.water_id} (${r.kind}, ${r.effective_from} to ${r.effective_to || 'open'}): ${r.summary}`);

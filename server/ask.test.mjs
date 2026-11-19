@@ -47,6 +47,14 @@ test('context covers every guide water with scores and keeps field-check wording
   assert.ok(context.text.length < 200000, 'context stays well under the 100K-token pricing threshold');
 });
 
+test('an undated ODFW report is labeled undated with the day it was first seen, never as its date', () => {
+  const ctx = buildContext(site, '2026-11-19'), block = ctx.text.split('### Malheur Reservoir,')[1].split('\n### ')[0];
+  assert.match(block, /Latest report \(undated on the page; this text first seen 2026-11-18, 1 day ago; never call that day the report's date\): "ODFW calls Malheur Reservoir great/);
+  assert.match(block, /Score: \d+\/100/);
+  // A report shown for context only (no date, no first-seen day) stays unscored.
+  assert.match(ctx.text.split('### North Santiam River,')[1].split('\n### ')[0], /Latest report: no dated fishing report\. Note: /);
+});
+
 test('context cache reuses the build and keeps the last copy when a rebuild fails', async () => {
   let reads = 0, fail = false, clock = Date.parse('2026-11-18T20:00:00Z');
   const read = async path => { reads++; if (fail) throw new Error('offline'); return localSource()(path); };

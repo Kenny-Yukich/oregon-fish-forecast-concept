@@ -152,6 +152,8 @@ function waterBlock(g, w, today) {
   const a = g.ORFFPreview.autoReport?.(w), r = a || p.report;
   if (r?.reported_on) {
     out.push('Latest report (' + r.reported_on + ', ' + ago(r.reported_on, today) + (a ? ', WDFW creel report for ' + a.period : '') + '): "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : ''));
+  } else if (r?.seen_on) {
+    out.push('Latest report (undated on the page; this text first seen ' + r.seen_on + ', ' + ago(r.seen_on, today) + '; never call that day the report\'s date): "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : ''));
   } else out.push('Latest report: no dated fishing report.' + (r?.summary ? ' Note: "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : '') : ''));
   for (const n of p.alerts || []) out.push('Notice (' + n.status + '): ' + clean(n.summary) + (n.url ? ' Source: ' + n.url : ''));
   for (const rule of (g.ORFF_AUTO?.rules?.[w.id] || []).filter(x => !x.effective_to || x.effective_to >= today)) {

@@ -47,6 +47,11 @@
   // Reports: freshness from today, so the page ages honestly.
   function freshness(w) {
     const r = latest(w);
+    if (!r?.reported_on && r?.seen_on) {
+      // An undated page: its age is unknown, so it is never shown as fresh.
+      const age = daysBetween(r.seen_on, today());
+      return {cls: age > 30 ? 'stale' : '', text: 'Undated, seen ' + fmtDate(r.seen_on), age};
+    }
     if (!r?.reported_on) return {cls: 'none', text: 'No dated report', age: Infinity};
     const age = daysBetween(r.reported_on, today());
     return {cls: age <= 10 ? 'fresh' : age > 30 ? 'stale' : '', text: 'Reported ' + fmtDate(r.reported_on), age};
@@ -151,7 +156,7 @@
     return pick.key === 'field' ? 'Field check: ' + pick.display
       : pick.key === 'stock' ? (/^Week of/.test(pick.display) ? 'ODFW stocking, ' + pick.display.replace(/^W/, 'w') : pick.display + ' (ODFW)')
       : pick.key === 'run' ? 'Run at ' + pick.display
-      : pick.key === 'tone' ? pick.display + ' report' + (r?.reported_on ? ', ' + fmtDate(r.reported_on) : '')
+      : pick.key === 'tone' ? pick.display + ' report' + (r?.reported_on ? ', ' + fmtDate(r.reported_on) : r?.seen_on ? ' (undated, first seen ' + fmtDate(r.seen_on) + ')' : '')
       : pick.key === 'fresh' ? 'Report ' + pick.display
       : pick.display;
   }

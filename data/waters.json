@@ -2092,6 +2092,667 @@
         ]
       },
       "readings": null
+    },
+    {
+      "id": "malheur-reservoir",
+      "name": "Malheur Reservoir",
+      "reach": "North-shore boat ramp, between Ironside and Brogan",
+      "kind": "reservoir",
+      "region": "Southeast Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "malheur-reservoir",
+        "target_species": [
+          "Rainbow trout"
+        ],
+        "access_summary": "Remote reservoir: boat ramp and bank, gravel roads in",
+        "access_detail": "Malheur Reservoir sits north of U.S. 26 between Ironside and Brogan in Malheur County, reached on gravel and dirt roads. ODFW's current report says boats can launch from the boat ramp and that anglers are catching trout trolling and from the bank. There is no town or store at the lake.",
+        "access_point": {
+          "label": "Malheur Reservoir boat ramp",
+          "map_query": "Malheur Reservoir boat ramp Oregon"
+        },
+        "seasonal_summary": "Open all year; trout grow fast here",
+        "seasonal_detail": "Southeast Zone lake rules in the 2026 regulations keep the reservoir open all year: 5 trout a day, 8-inch minimum, only one over 20 inches. ODFW stocks fingerling rainbows that reach 8 to 11 inches by their first fall and 14 to 16 inches by their second. In drought years low water and winter ice have killed fish here, and ODFW lifted all limits in fall 2021 and summer 2022 for that reason.",
+        "methods": "ODFW's crew fly-fished mornings and evenings and caught 10 or more trout an hour; other anglers are doing well trolling and bank fishing with bait.",
+        "report": {
+          "summary": "ODFW calls Malheur Reservoir great for rainbow trout from 10 to 22 inches, most of them 12 to 16. Its crew caught 10 or more trout an hour fly fishing mornings and evenings and saw anglers having success trolling and bank fishing with bait. Water was in the mid 50s.",
+          "reported_on": null,
+          "seen_on": "2026-11-18",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Southeast Zone report, which carries no date; first seen here Nov 18 and still on the page Nov 19. ODFW says it sampled the reservoir \"this week.\" Reservoir-wide, not a ramp-area count.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Water level decides whether the ramp works and whether fish survive the winter. In drought years ODFW has seen winter fish kills here and lifted all limits (fall 2021, summer 2022). ODFW says the water is up this fall.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.dfw.state.or.us/news/2021/10_Oct/101121b.asp"
+          },
+          {
+            "summary": "Remote gravel and dirt roads with no services. Mud, snow, ice and the ramp need a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Southeast Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+          },
+          {
+            "label": "ODFW news, Oct. 11, 2021: limits lifted at Malheur Reservoir",
+            "url": "https://www.dfw.state.or.us/news/2021/10_Oct/101121b.asp"
+          },
+          {
+            "label": "ODFW news, June 22, 2022: limits lifted at Malheur and Warm Springs reservoirs",
+            "url": "https://www.dfw.state.or.us/news/2022/06_June/062222.asp"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "phillips-reservoir",
+      "name": "Phillips Reservoir",
+      "reach": "Mason Dam and Union Creek launches",
+      "kind": "reservoir",
+      "region": "Northeast Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "phillips-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Yellow perch",
+          "Tiger muskie"
+        ],
+        "access_summary": "Forest Service launches off Highway 7; Mason Dam open all year",
+        "access_detail": "The Wallowa-Whitman National Forest runs two launches off Highway 7, about 17 to 18 miles south of Baker City. ODFW calls the Mason Dam ramp, at the east end, the only year-round ramp; it was rebuilt in concrete in 2019 to work at lower water and also serves ice anglers. Union Creek, on the north shore by the campground, has a 2-lane ramp, but the Forest Service says its gate is locked when the concessionaire is not operating.",
+        "access_point": {
+          "label": "Mason Dam Boat Launch",
+          "map_query": "Mason Dam Boat Launch Phillips Lake Baker City Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Mason Dam Boat Launch",
+            "type": "Boat ramp",
+            "note": "Year-round concrete ramp with trailer parking and an accessible vault toilet; the winter access for ice fishing. Forest Road 200, 0.3 miles off Highway 7.",
+            "map_query": "Mason Dam Boat Launch Phillips Lake Baker City Oregon",
+            "source": "https://www.fs.usda.gov/r06/wallowa-whitman/recreation/mason-dam-boat-launch"
+          },
+          {
+            "label": "Union Creek Boat Launch",
+            "type": "Boat ramp (seasonal)",
+            "note": "2-lane ramp beside Union Creek Campground on the north shore. The Forest Service lists its season as late May; the gate is locked when the concessionaire is not operating.",
+            "map_query": "Union Creek Boat Launch Phillips Lake Oregon",
+            "source": "https://www.fs.usda.gov/r06/wallowa-whitman/recreation/union-creek-boat-launch"
+          }
+        ],
+        "seasonal_summary": "Open all year; ice fishing mid-December to March",
+        "seasonal_detail": "The 2026 regulations list Phillips Reservoir in the Southeast Zone, so lake rules apply all year (5 trout a day, 8-inch minimum, only one over 20 inches) and tiger muskie are catch-and-release. ODFW says trout and perch fishing is good from mid-April through July and again in fall as the water cools, and the lake is usually iced over from mid-December through March. ODFW's schedule plans 9,500 trout for the week of May 3, 2027.",
+        "methods": "ODFW says tiger muskie are biting while the water stays above about 45°F, and low water concentrates fish. In winter ODFW rates the ice fishing for trout and perch as good, with the Mason Dam ramp as the way onto the ice.",
+        "report": {
+          "summary": "ODFW says tiger muskies at Phillips are hungry and aggressive, with water in the low 50s°F, and fishing should stay hot until the water drops below 45°F. Low water levels should concentrate fish.",
+          "reported_on": null,
+          "seen_on": "2026-11-18",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Northeast Zone report, which carries no date; first seen here Nov 18 and still on the page Nov 19. About tiger muskie only, not trout or perch.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northeast-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Tiger muskie are catch-and-release only under the 2026 regulations. ODFW stocks them to thin out stunted yellow perch.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.dfw.state.or.us/news/2024/04_Apr/042924b.asp"
+          },
+          {
+            "summary": "Oregon Health Authority mercury advice for yellow perch from Phillips Reservoir: up to 2 meals a month for children under 6 and anyone pregnant, nursing or who may become pregnant; up to 5 for other adults.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "ODFW says the reservoir is low. Union Creek's ramp can be out of the water or gated, and ice usually forms by mid-December. Check the ramp, Highway 7 and ice before you go.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/northeast-zone"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Northeast Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northeast-zone"
+          },
+          {
+            "label": "Forest Service: Mason Dam Boat Launch",
+            "url": "https://www.fs.usda.gov/r06/wallowa-whitman/recreation/mason-dam-boat-launch"
+          },
+          {
+            "label": "Forest Service: Union Creek Boat Launch",
+            "url": "https://www.fs.usda.gov/r06/wallowa-whitman/recreation/union-creek-boat-launch"
+          },
+          {
+            "label": "ODFW news, Feb. 5, 2019: new Mason Dam boat ramp",
+            "url": "https://www.dfw.state.or.us/news/2019/02_Feb/020519.asp"
+          },
+          {
+            "label": "ODFW news, April 29, 2024: tiger muskie stocked in Phillips Reservoir",
+            "url": "https://www.dfw.state.or.us/news/2024/04_Apr/042924b.asp"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "empire-lakes",
+      "name": "Empire Lakes",
+      "reach": "John Topits Park, Coos Bay",
+      "kind": "lake",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "empire-lakes",
+        "target_species": [
+          "Rainbow trout",
+          "Largemouth bass",
+          "Bluegill",
+          "Yellow perch",
+          "Crappie"
+        ],
+        "access_summary": "City park in Coos Bay: bank, trails and small-boat launches",
+        "access_detail": "The lakes sit inside the City of Coos Bay's John Topits Park, with two entrances off Newmark Avenue near Southwestern Oregon Community College. ODFW lists primitive gravel launches for canoes, kayaks and other small boats, restrooms, picnic areas and a paved trail around the lakes. Motorboats are not allowed.",
+        "access_point": {
+          "label": "John Topits Park, Empire Lakes",
+          "map_query": "John Topits Park Newmark Avenue Coos Bay Oregon"
+        },
+        "access_points": [
+          {
+            "label": "John Topits Park, middle lake entrance",
+            "type": "Bank and small-boat launch",
+            "note": "A few blocks past the Southwestern Oregon Community College entrance on Newmark Avenue.",
+            "map_query": "John Topits Park Empire Lakes Newmark Avenue Coos Bay Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "John Topits Park, lower lake entrance",
+            "type": "Bank and small-boat launch",
+            "note": "About a quarter mile farther west on Newmark Avenue.",
+            "map_query": "Lower Empire Lake John Topits Park Coos Bay Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year; spring stocking plus a fall trophy release",
+        "seasonal_detail": "Southwest Zone lake rules apply all year in the 2026 regulations: 5 trout a day, 8-inch minimum, only one over 20 inches. ODFW stocks rainbows from March to early June; its schedule had 3,000 trophy trout for Upper Empire Lake the week of Oct. 12, and the next planned releases are in mid-March 2027.",
+        "methods": "ODFW suggests trolling spinners or spoons or fly casting to rising trout from a small boat. For bluegill and perch, a tiny crappie jig tipped with nightcrawler under a small bobber.",
+        "report": {
+          "summary": "ODFW's Southwest Zone report says Empire, Saunders and Butterfield lakes were stocked recently with legal trout.",
+          "reported_on": null,
+          "seen_on": "2026-11-18",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Southwest Zone report, which carries no date; first seen here Nov 18 and still on the page Nov 19. A stocking note, not a catch report. ODFW's schedule names Upper and Lower Empire Lake; its guides describe fishing in the middle and lower lakes.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "No motorboats. ODFW's guides list launches for canoes, kayaks and other small boats (one allows electric motors). Follow the park's posted rules.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW: Easy angling in the Southwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          },
+          {
+            "label": "OHA: current cyanobacteria advisories",
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "sixes-river-cape-blanco",
+      "name": "Sixes River",
+      "reach": "Lower river at Cape Blanco State Park",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": {
+        "station_id": "USGS-14327150",
+        "label": "Sixes River at Sixes",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14327150/"
+      },
+      "planning": {
+        "water_id": "sixes-river-cape-blanco",
+        "target_species": [
+          "Chinook salmon",
+          "Steelhead",
+          "Cutthroat trout"
+        ],
+        "access_summary": "State park and BLM recreation area: drift boats and bank",
+        "access_detail": "ODFW says the lower Sixes has good access for drift boats and bank anglers at Cape Blanco State Park and the BLM's Sixes River Recreation Area, about 6 miles north of Port Orford off U.S. 101. Oregon State Parks lists trails to fishing spots along the river and requires a day-use parking permit; the 2026 regulations name the Hughes House boat ramp in the park.",
+        "access_point": {
+          "label": "Cape Blanco State Park, Sixes River",
+          "map_query": "Hughes House Cape Blanco State Park Port Orford Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Cape Blanco State Park (Hughes House boat ramp)",
+            "type": "Boat ramp and bank",
+            "note": "Park trails reach fishing spots along the river. Day-use parking permit required.",
+            "map_query": "Hughes House Cape Blanco State Park Port Orford Oregon",
+            "source": "https://stateparks.oregon.gov/index.cfm?do=park.profile&parkId=44"
+          },
+          {
+            "label": "BLM Sixes River Recreation Area",
+            "type": "Bank access and camping",
+            "note": "ODFW lists camping, picnicking, ADA restrooms and river access.",
+            "map_query": "Sixes River Recreation Site Sixes Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Fall Chinook through Dec. 31; winter steelhead from Dec. 1",
+        "seasonal_detail": "From the mouth to Edson Creek the 2026 regulations open Chinook May 22 to Dec. 31 and steelhead Jan. 1 to Mar. 31 and again from Dec. 1, with wild steelhead harvest allowed at 1 a day and 3 a season. ODFW's in-season rule limits wild adult Chinook to 1 a day and 10 for July 1 to Dec. 31. Above Edson Creek the river is closed Oct. 1 to Dec. 31.",
+        "methods": "ODFW says to watch the weather and fish as flows drop after a rain. The lower river has room for drift boats and bank anglers.",
+        "report": {
+          "summary": "ODFW says recent rains have kick-started fall Chinook fishing on the Elk and Sixes rivers, and anglers should fish as flows drop after each rain.",
+          "reported_on": null,
+          "seen_on": "2026-11-19",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Southwest Zone report, which carries no date; first seen here Nov 19. Covers the Elk and Sixes together, not a Cape Blanco catch survey.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW in-season rule, July 1 to Dec. 31, 2026, mouth to Edson Creek: 1 wild adult Chinook a day and 10 for the period.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "Steelhead opens Dec. 1 below Edson Creek. ODFW reminds anglers that winter steelhead in the Rogue Basin and on the South Coast need the 2027 validation and harvest tag, good Dec. 1, 2026 to April 30, 2027.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "summary": "River level, wading safety and current park notices need a trip-day check. Oregon State Parks reports the park's southern beach access closed for ocean debris; that notice is about the beach, not the river.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://stateparks.oregon.gov/index.cfm?do=park.profile&parkId=44"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Oregon State Parks: Cape Blanco State Park",
+            "url": "https://stateparks.oregon.gov/index.cfm?do=park.profile&parkId=44"
+          },
+          {
+            "label": "ODFW in-season regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "walter-wirth-lake",
+      "name": "Walter Wirth Lake",
+      "reach": "Cascades Gateway Park, Salem",
+      "kind": "lake",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "walter-wirth-lake",
+        "target_species": [
+          "Rainbow trout"
+        ],
+        "access_summary": "City park in Salem: bank, fishing pier and a small boat slide",
+        "access_detail": "Walter Wirth Lake is inside Salem's Cascades Gateway Park near the airport, off Turner Road SE just south of Highway 22 and west of I-5. ODFW lists excellent bank fishing, a fishing pier, restrooms, picnic areas, some access for anglers with disabilities, and a small boat slide for rafts, canoes, kayaks and other non-motorized boats.",
+        "access_point": {
+          "label": "Cascades Gateway Park",
+          "map_query": "Cascades Gateway Park Turner Road SE Salem Oregon"
+        },
+        "seasonal_summary": "Open all year; stocked in fall, winter and spring",
+        "seasonal_detail": "Willamette Zone lake rules apply all year in the 2026 regulations: 5 trout a day, 8-inch minimum, only one over 20 inches. ODFW's schedule had 1,000 trout the week of Nov. 2 and plans 1,500 for the week of Nov. 23 and 1,500 more the week of Dec. 21, then regular releases from late January through May. ODFW also says warmwater fish live here.",
+        "methods": "Standard lake techniques for trout from the bank or the pier; ODFW rates the bank fishing as excellent.",
+        "report": {
+          "summary": "ODFW says Timber Linn in Albany and Walter Wirth and Turner lakes in Salem are in good shape and have been stocked recently. Its stocking table adds 90 trophy trout for Walter Wirth the week of Nov. 9.",
+          "reported_on": null,
+          "seen_on": "2026-11-19",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Willamette Zone report, which carries no date; first seen here Nov 19. A condition and stocking note, not a catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW: Easy angling in the Willamette Zone",
+            "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          },
+          {
+            "label": "OHA: current cyanobacteria advisories",
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "north-santiam-greens-bridge",
+      "name": "North Santiam River",
+      "reach": "Greens Bridge to Jefferson",
+      "kind": "river",
+      "region": "Willamette Valley",
+      "gauge": {
+        "station_id": "USGS-14184100",
+        "label": "North Santiam River at Greens Bridge",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14184100/"
+      },
+      "planning": {
+        "water_id": "north-santiam-greens-bridge",
+        "target_species": [
+          "Coho salmon",
+          "Steelhead",
+          "Chinook salmon"
+        ],
+        "access_summary": "ODFW's Greens Bridge boat launch near Jefferson",
+        "access_detail": "ODFW owns the Greens Bridge property and the road to its North Santiam boat launch, from the junction of Jefferson-Scio Drive and Densmore Road near Jefferson. In recent summers ODFW has locked the gate from June 1 until later in September, letting only licensed anglers with a key and a boat trailer drive in; others park outside the gate and walk in. ODFW warns of river obstructions downstream of Greens Bridge.",
+        "access_point": {
+          "label": "Greens Bridge boat launch (ODFW)",
+          "map_query": "Greens Bridge North Santiam River boat launch Jefferson Oregon"
+        },
+        "seasonal_summary": "Coho and hatchery steelhead open all year here",
+        "seasonal_detail": "From the mouth to the Stayton-Scio Bridge, which takes in this reach, the 2026 regulations open coho all year, hatchery steelhead all year, hatchery Chinook Jan. 1 to Aug. 31 and from Oct. 15, and wild steelhead only July 1 to Aug. 31. Hatchery trout are open May 22 to Oct. 31. Bait is allowed Apr. 22 to Oct. 31; the rest of the year Willamette Zone streams are artificial flies and lures only.",
+        "methods": "ODFW names spinners such as Blue Fox for coho. From Nov. 1 to Apr. 21 the rules here allow only artificial flies and lures.",
+        "report": {
+          "summary": "ODFW's Willamette Zone report, as read here on Nov. 18, said coho could be found throughout the North Santiam as far up as Packsaddle Park, with the best fishing from Greens Bridge down to Jefferson and into the mainstem Santiam. ODFW's Nov. 19 update no longer mentions the river.",
+          "reported_on": null,
+          "checked_on": "2026-11-19",
+          "coverage": "The report carried no date and also suggested fishing eggs, which the 2026 rules allow here only through Oct. 31, so it may be older than it looked. It is shown for context and does not count toward the score.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Bait: from the mouth to the Stayton-Scio Bridge the 2026 regulations allow bait only Apr. 22 to Oct. 31. ODFW's recent report mentioned bobbers and eggs; in November use artificial flies and lures unless ODFW posts a change.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "ODFW warns that river obstructions downstream of Greens Bridge are a hazard, especially for tubes and less maneuverable boats. Check the Marine Board's reported obstructions before floating.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.oregon.gov/osmb/Pages/Reported-Obstructions-Alerts.aspx"
+          },
+          {
+            "summary": "ODFW locks the Greens Bridge gate in summer (June 1 to later September in 2023) and can lock or unlock it at any time. The gate's current status needs a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.dfw.state.or.us/news/2023/05_May/052623b.asp"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW news, May 26, 2023: Greens Bridge gate",
+            "url": "https://www.dfw.state.or.us/news/2023/05_May/052623b.asp"
+          },
+          {
+            "label": "ODFW news, June 2, 2021: Greens Bridge key access and river obstructions",
+            "url": "https://www.dfw.state.or.us/news/2021/06_June/060221b.asp"
+          },
+          {
+            "label": "Oregon State Marine Board: reported obstructions",
+            "url": "https://www.oregon.gov/osmb/Pages/Reported-Obstructions-Alerts.aspx"
+          },
+          {
+            "label": "ODFW: Willamette Falls fish counts",
+            "url": "https://myodfw.com/willamette-falls-fish-counts"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "trask-river-lorens-drift",
+      "name": "Trask River",
+      "reach": "Loren's Drift and the lower river",
+      "kind": "river",
+      "region": "North coast",
+      "gauge": {
+        "station_id": "USGS-14302480",
+        "label": "Trask River above Cedar Creek",
+        "url": "https://waterdata.usgs.gov/monitoring-location/USGS-14302480/"
+      },
+      "planning": {
+        "water_id": "trask-river-lorens-drift",
+        "target_species": [
+          "Chinook salmon",
+          "Coho salmon",
+          "Steelhead"
+        ],
+        "access_summary": "ODFW's Loren's Drift access site off Chance Road",
+        "access_detail": "ODFW manages the Loren's Drift access site on the south side of the river, mainly for fishing, under an easement. ODFW's directions: from Highway 6 take Olson Road, which becomes Trask River Road; cross the Trask onto Long Prairie Road, turn left on Chance Road and go 2.7 miles east to the Loren's Drift access road, which reaches both the river and Loren's Pond. The site is closed 10 p.m. to 3 a.m., with no overnight parking, camping or fires.",
+        "access_point": {
+          "label": "Loren's Drift access site (ODFW)",
+          "map_query": "Lorens Drift Trask River Chance Road Tillamook Oregon"
+        },
+        "seasonal_summary": "Fall Chinook through Nov. 30; hatchery steelhead all year",
+        "seasonal_detail": "From the Highway 101 bridge to the forks, the 2026 regulations open hatchery steelhead all year and fall Chinook Aug. 1 to Dec. 31, with bait allowed. ODFW's in-season rule for the Tillamook Bay rivers limits wild adult Chinook to 1 a day and 5 for Aug. 1 to Nov. 30, then closes all Chinook angling Dec. 1 to 31. The river is closed from the Dam Hole marker (milepost 7 on Trask River Road) up to Blue Ridge Creek Sept. 1 to Nov. 30.",
+        "methods": "Bait is allowed on the mainstem. For Chinook, ODFW names bobber and bait (salmon roe or sand shrimp) and spinners as the usual bank methods in upper Tillamook Bay and the Trask's tidewater.",
+        "report": {
+          "summary": "ODFW says fall Chinook fishing has been slow to fair in North Coast rivers, with the Trask and Wilson the biggest producers. The Trask has a hatchery coho run and a few fish are being caught, but overall fishing has been slow.",
+          "reported_on": null,
+          "seen_on": "2026-11-19",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Northwest Zone report, which carries no date; first seen here Nov 19. Covers the whole river, not a Loren's Drift catch survey.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW in-season rule: all Chinook angling and retention closes Dec. 1 to 31, 2026 on the Trask mainstem and the rest of the Tillamook Bay system. Until Nov. 30: 1 wild adult Chinook a day and 5 for the period, in aggregate.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "Closed from the Dam Hole marker (milepost 7 on Trask River Road) up to Blue Ridge Creek through Nov. 30.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "ODFW has reported trespass and vandalism at Loren's Drift and services the toilet only from March to June. Flow, bank footing and neighboring private land need a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.dfw.state.or.us/news/2020/07_July/071520.asp"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW: Easy angling in the Northwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          },
+          {
+            "label": "ODFW news, July 15, 2020: Lorens Drift access site",
+            "url": "https://www.dfw.state.or.us/news/2020/07_July/071520.asp"
+          },
+          {
+            "label": "ODFW in-season regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "hebo-lake",
+      "name": "Hebo Lake",
+      "reach": "Hebo Lake Campground, Siuslaw National Forest",
+      "kind": "lake",
+      "region": "North coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "hebo-lake",
+        "target_species": [
+          "Rainbow trout"
+        ],
+        "access_summary": "Forest Service lake with five accessible fishing docks",
+        "access_detail": "Hebo Lake is 4.5 miles up Forest Service Road 14 from Highway 22 at Hebo, at 1,650 feet. The Forest Service lists five accessible fishing docks around the 3-acre lake, a half-mile loop trail, vault toilets and no drinking water. ODFW says fishing is mostly from the bank, and small rafts, float tubes and canoes can be launched from shore.",
+        "access_point": {
+          "label": "Hebo Lake Campground",
+          "map_query": "Hebo Lake Campground Forest Service Road 14 Hebo Oregon"
+        },
+        "seasonal_summary": "Day-use site open April to November",
+        "seasonal_detail": "Northwest Zone lake rules apply all year in the 2026 regulations: 5 trout a day, 8-inch minimum, only one over 20 inches. ODFW stocks rainbows from mid-March to mid-June and sometimes adds larger trout in fall, as it did about two weeks before its Nov. 19 report. The Forest Service lists the day-use site as open April to November, 6 a.m. to 10 p.m.",
+        "methods": "ODFW says all lake techniques for trout work here, mostly from the bank and the docks.",
+        "report": {
+          "summary": "ODFW says Hebo Lake and Town Lake were stocked with trophy trout a couple of weeks ago, an unscheduled release of big trout that are fun to catch.",
+          "reported_on": null,
+          "seen_on": "2026-11-19",
+          "checked_on": "2026-11-19",
+          "coverage": "ODFW's weekly Northwest Zone report, which carries no date; first seen here Nov 19. A stocking note, not a catch report. The release was unscheduled, so it is not on ODFW's stocking schedule.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Forest Service lists the day-use site as open April to November, so access after Nov. 30 is uncertain. A recreation pass or a digital day pass from Recreation.gov is needed; no cash is taken on site.",
+            "status": "advisory",
+            "checked_on": "2026-11-19",
+            "url": "https://www.fs.usda.gov/r06/siuslaw/recreation/hebo-lake-day-use"
+          },
+          {
+            "summary": "Forest Service Road 14, winter weather and fire or burning notices need a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.fs.usda.gov/r06/siuslaw/recreation/hebo-lake-campground"
+          }
+        ],
+        "checked_on": "2026-11-19",
+        "sources": [
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "Forest Service: Hebo Lake Day Use",
+            "url": "https://www.fs.usda.gov/r06/siuslaw/recreation/hebo-lake-day-use"
+          },
+          {
+            "label": "Forest Service: Hebo Lake Campground",
+            "url": "https://www.fs.usda.gov/r06/siuslaw/recreation/hebo-lake-campground"
+          },
+          {
+            "label": "ODFW: Easy angling in the Northwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
     }
   ]
 }

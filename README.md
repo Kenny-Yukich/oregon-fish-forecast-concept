@@ -26,6 +26,7 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 - All 24 supplied Oregon records, preserving actual species, methods, access, alerts, report dates, coverage, sources and October 12 editorial review dates.
 - Two waters added Nov 18, 2026: **Lava Lake** (Big Lava Lake at Lava Lake Campground) and the **Deschutes River at Tumalo State Park**, researched from ODFW's 2026 regulations and Bend-area guides, the Forest Service and Oregon State Parks. Neither has a dated report or live gauge yet, so both show as not scored. ODFW lists Big Lava Lake as "LAVA LK, B" in its stocking schedule.
 - Two more added Nov 19, 2026: **Howard Prairie Reservoir** (Howard Prairie Resort and Klum Landing) and **Fourmile Lake** (Fourmile Lake Campground and Day Use Area), from ODFW's 2026 regulations and Southwest/Southeast Zone guides, Jackson County Parks, ODFW's 2020 Howard Prairie drawdown notice and the Forest Service. Neither has a dated report or a live lake-level feed yet, so both show as not scored.
+- Eight more added Nov 19, 2026, each chosen because ODFW's current weekly report or stocking schedule gives it something to score: **Malheur Reservoir**, **Phillips Reservoir** (Mason Dam and Union Creek launches), **Empire Lakes** (John Topits Park, Coos Bay), the **Sixes River** at Cape Blanco State Park, **Walter Wirth Lake** (Cascades Gateway Park, Salem), the **North Santiam** from Greens Bridge to Jefferson, the **Trask River** at Loren's Drift and **Hebo Lake**. Researched from ODFW's 2026 regulations and in-season updates, ODFW's weekly zone reports, Easy Angling and south coast guides and news releases, the Forest Service and Oregon State Parks. The three rivers have live USGS gauges, the North Santiam is linked to the Willamette Falls counts, and Phillips, Empire, Walter Wirth and Hebo are matched to the stocking schedule. ODFW updated its reports on Nov 19 and dropped the lines about the Chetco, Garrison Lake and the North Santiam, so the first two were left out and the North Santiam's Nov 18 report is shown for context but not scored.
 - Angler posts filed under "not in the guide yet" before a lake got its page are hidden from that homepage list (Eddy sees them pointed at the new page) until they age out after 30 days.
 - Hash navigation for directory, every water and approach/sources; search by water/reach/region/species; river/lake filters; result counts and resettable empty state.
 - Editable Portland origin saved only in this browser. All 22 driving links use the exact documented map query. No estimated drive durations and no routes to the two unverified gauge locations.
@@ -118,7 +119,7 @@ Open `#/stocking` from the main navigation.
 
 - **WDFW creel report:** finds the newest weekly Columbia River creel PDF and has Claude summarize it for the Oregon guide's Columbia River reach (period, report end date, one-sentence summary with numbers, which section of the river it covers, and a positive, mixed, negative or neutral signal). When this report is newer than a water's own report, water pages show it as the latest report and the score uses it for report tone and freshness. The report's coverage explains where its catch checks apply to the Columbia River.
 - **ODFW regulation updates:** reads ODFW's in-season regulation updates page and has Claude list the rule changes in effect or starting within 14 days for each Oregon guide water. They show under **Before you go** as "ODFW regulation update" notices. They never withhold a score; an active closure or restriction adds a score note.
-- **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
+- **Cost:** Claude only runs when a source changes: a new PDF address, a new hash of the ODFW page text, or a change in the list of guide waters (so new waters get their rules on the next morning run). Both are stored in the file, so most days make no Claude call and a normal week makes about two.
 - **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
 
 ## ODFW weekly zone reports
@@ -127,6 +128,7 @@ Open `#/stocking` from the main navigation.
 
 - Most report pages carry no date, so each zone records `changed_on`, the first day its exact text was read, plus any date written in the report.
 - A zone that fails keeps its previous text, and the step is allowed to fail without stopping the daily data commit.
+- A date written in the report counts only when it is not after the day it was read, so a deadline such as "good through April 30, 2027" is not taken for the report's date.
 - Only Eddy reads this file; the pages do not show it yet. It lets Eddy speak to waters outside the guide.
 
 ## Fishing scores
@@ -152,7 +154,7 @@ Every visitor sees the scores for free. Eddy, the AI assistant, can be sold as a
   - A notice withholds the score unless the record lists the species that can still be scored (`score_species`, used for trout on both Lower Deschutes reaches, where steelhead and coho are restricted) or the notice has an end date that has passed (`score_notice_until`).
   - Either way, the notice stays visible.
 - **Missing inputs.** Missing inputs are skipped and lower confidence, and unverified rule notices lower it too. A water needs at least one input besides gauge readings to be scored.
-- **Undated reports.** Crooked River below Opal Springs has no dated fishing report; missing report inputs remain unavailable.
+- **Undated reports.** Most of ODFW's weekly zone report pages carry no date. A record's report can carry `seen_on`, the day its text was first seen on ODFW's page, in place of `reported_on`. Its tone counts, and its freshness counts from that day but never above 80 (it is never treated as fully fresh), and pages and Eddy call it "Undated, first seen" that day, never its date. A report with neither date (Crooked River below Opal Springs, the four waters added Nov 18 and the North Santiam's Nov 18 report) is shown but not scored.
 - **Where scores appear.** In the directory, a score shows under each water's name, with a **Best score first** sort. Water pages show the score with a breakdown of every input and its source.
 - **Not yet tested against catches.** The formula has not been checked against catch results. Scores are shown without a label on the site.
 

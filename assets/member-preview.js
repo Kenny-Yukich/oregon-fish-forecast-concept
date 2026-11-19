@@ -4,6 +4,8 @@
    from data/auto-reports.js stands in for the dated report. It has not yet been
    checked against catch results. A rules notice withholds a score unless the record names the species that can
    still be scored (Lower Deschutes trout) or the notice has an end date that has passed.
+   A report from a page that carries no date (most of ODFW's weekly zone reports) counts only with `seen_on`, the day
+   its text was first seen there; it is labeled undated and never counts as fully fresh.
    First-hand field checks (data/field-checks.js) move a score either way. A score needs three inputs, and on a river a
    live flow reading, to reach Excellent. During an irrigation switch (data/flow-seasons.js) a river with no live flow
    reading is capped at Fair. */
@@ -47,6 +49,10 @@
     const a = window.ORFF_AUTO?.reports?.[w.id], r = w.planning.report;
     return a?.reported_on && (!r?.reported_on || a.reported_on > r.reported_on) ? a : null;
   }
+  // A report's date: the date it carries, or for an undated page the day its text was first seen (`seen_on`).
+  // An undated report's real age is unknown, so its freshness never goes above this.
+  const UNDATED_FRESH_MAX = 80;
+  const reportDay = r => r?.reported_on || r?.seen_on || null;
   // ODFW in-season rules from the same file never withhold a score; an active closure or restriction adds a note.
   const activeRule = (w, t) => (window.ORFF_AUTO?.rules?.[w.id] || []).some(r => (r.kind === 'closure' || r.kind === 'restriction') && r.effective_from <= t && (!r.effective_to || t <= r.effective_to));
 
@@ -57,7 +63,7 @@
       return {key: 'tone', value, display: value >= 75 ? 'Positive' : value >= 45 ? 'Mixed' : 'Slow', reason: 'WDFW creel report, ' + a.period + ': “' + a.summary + '”'};
     }
     const r = w.planning.report;
-    if (!r?.reported_on) return null;
+    if (!reportDay(r)) return null;
     const text = r.summary;
     const pos = POSITIVE.test(text), neg = NEGATIVE.test(text), mixed = MIXED.test(text);
     const value = pos && !neg ? (mixed ? 65 : 80) : neg && !pos ? 30 : pos && neg ? 55 : mixed ? 50 : 55;
@@ -65,10 +71,14 @@
     return {key: 'tone', value, display: word, reason: '“' + text + '”'};
   }
   function reportFreshness(w) {
-    const a = autoReport(w), r = a || w.planning.report;
-    if (!r?.reported_on) return null;
-    const age = days(r.reported_on, today());
+    const a = autoReport(w), r = a || w.planning.report, on = reportDay(r);
+    if (!on) return null;
+    const age = days(on, today());
     const value = age <= 7 ? 100 : age <= 14 ? 80 : age <= 30 ? 55 : 25;
+    if (!r.reported_on) {
+      return {key: 'fresh', value: Math.min(value, UNDATED_FRESH_MAX), display: 'Undated, first seen ' + short(on),
+        reason: 'The report page carries no date. This text was first seen there on ' + short(on) + ', so its real age is unknown and it never counts as fully fresh. Older text counts for less.'};
+    }
     return {key: 'fresh', value, display: age + (age === 1 ? ' day old' : ' days old'), reason: (a ? 'WDFW creel report for ' + a.period + ', through ' : 'Reported ') + r.reported_on + '. Older reports count for less.'};
   }
   function runStrength(w) {

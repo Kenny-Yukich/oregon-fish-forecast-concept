@@ -40,12 +40,15 @@ export function reportText(html) {
   return text || null;
 }
 
-// A date written in the report ("November 13, 2026"), when the page has one.
-export function writtenDate(text) {
-  const m = new RegExp('\\b(' + MONTHS + ')\\.?\\s+(\\d{1,2}),\\s*(20\\d\\d)\\b').exec(text);
-  if (!m) return null;
-  const d = new Date(`${m[1]} ${m[2]}, ${m[3]} 12:00 UTC`);
-  return Number.isNaN(+d) ? null : d.toISOString().slice(0, 10);
+// A date written in the report ("November 13, 2026"), when the page has one: the first one that is not after
+// the day it was read, so a deadline such as "good through April 30, 2027" is never taken for the report's date.
+export function writtenDate(text, today = pacificDate(Date.now())) {
+  const re = new RegExp('\\b(' + MONTHS + ')\\.?\\s+(\\d{1,2}),\\s*(20\\d\\d)\\b', 'g');
+  for (const m of text.matchAll(re)) {
+    const d = new Date(`${m[1]} ${m[2]}, ${m[3]} 12:00 UTC`);
+    if (!Number.isNaN(+d) && d.toISOString().slice(0, 10) <= today) return d.toISOString().slice(0, 10);
+  }
+  return null;
 }
 
 async function main() {
@@ -66,7 +69,7 @@ async function main() {
       if (!text) throw new Error('no report text found on the page');
       if (text.length > MAX_CHARS) text = text.slice(0, MAX_CHARS).replace(/\s+\S*$/, '') + ' …';
       const hash = createHash('sha256').update(text).digest('hex').slice(0, 16);
-      zones[slug] = {name, url, text, dated: writtenDate(text), changed_on: old?.hash === hash ? old.changed_on : today, read_on: today, hash};
+      zones[slug] = {name, url, text, dated: writtenDate(text, today), changed_on: old?.hash === hash ? old.changed_on : today, read_on: today, hash};
       console.log(`${name}: ${text.length} characters${old?.hash === hash ? ', unchanged' : ', new text'}`);
     } catch (e) {
       failed++;
