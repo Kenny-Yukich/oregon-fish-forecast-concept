@@ -6,6 +6,7 @@
 - **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule and approach page. The homepage links to it for those pages.
 - **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
 - The old `/v2/` address forwards to the homepage.
+- **One address:** the site lives at **oregonfishforecast.com**. `orfishforecast.com` forwards there (`_redirects`, read by Netlify), keeping the path and any `#/water/…` route, so Eddy passes and saved settings stay in one place.
 - **Eddy, the AI fishing assistant (`server/`, `v2/assets/ask.js`):** an "Ask Eddy" chat panel where visitors ask about the guide waters and Claude Haiku 5.5 answers from the site's own data, plus water alerts by email for pass holders ("Follow this water" on a water page). It needs a small server endpoint, so it stays hidden on GitHub Pages until one is deployed. See [server/README.md](server/README.md).
 
 GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/** (classic: `/classic/`)
