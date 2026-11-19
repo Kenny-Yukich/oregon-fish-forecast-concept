@@ -12,6 +12,10 @@ import {blobAlertStore} from '../alerts.mjs';
 // back to false (or sell: false) closes Eddy to the public again. EDDY_FREE_PER_DAY on Netlify overrides the number.
 export const LAUNCHED = true;
 const DEFAULT_ACCESS_HASH = '4dc8eb75a7d3d3bf8e49de60f33c4486ebfc97592944cb5341c0cf370900907f';
+// Every address the site is served at. Eddy answers a browser only from these, so a site address missing here
+// shows no Eddy at all. Both domains, with and without www, and the GitHub Pages copy.
+export const SITE_ORIGINS = ['https://oregonfishforecast.com', 'https://www.oregonfishforecast.com',
+  'https://orfishforecast.com', 'https://www.orfishforecast.com', 'https://kenny-yukich.github.io'];
 const env = name => globalThis.Netlify?.env.get(name) ?? process.env[name];
 let eddy = null;
 
@@ -23,7 +27,7 @@ export function netlifySettings(get, {launched = LAUNCHED} = {}) {
   return {
     ANTHROPIC_API_KEY: get('ANTHROPIC_API_KEY'),
     ORFF_SITE_URL: get('ORFF_SITE_URL') || 'https://kenny-yukich.github.io/oregon-fish-forecast-concept/',
-    ORFF_ALLOWED_ORIGINS: get('ORFF_ALLOWED_ORIGINS') || 'https://oregonfishforecast.com,https://www.oregonfishforecast.com,https://kenny-yukich.github.io',
+    ORFF_ALLOWED_ORIGINS: get('ORFF_ALLOWED_ORIGINS') || SITE_ORIGINS.join(','),
     EDDY_ACCESS_CODE: get('EDDY_ACCESS_CODE'),
     EDDY_ACCESS_HASH: get('EDDY_ACCESS_HASH') || DEFAULT_ACCESS_HASH,
     STRIPE_SECRET_KEY: stripeKey,

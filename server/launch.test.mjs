@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {netlifySettings, LAUNCHED} from './netlify/eddy-env.mjs';
+import {createAskHandler} from './ask.mjs';
 
 const getter = vars => name => vars[name];
 
@@ -27,4 +28,18 @@ test('the key is also read under the misspelled name STRIP_SECRET_KEY, and the r
   assert.equal(s.STRIPE_SECRET_KEY, 'sk_live_typo');
   assert.equal(s.EDDY_FREE_PER_DAY, '3');
   assert.equal(netlifySettings(getter({STRIPE_SECRET_KEY: 'sk_live_right', STRIP_SECRET_KEY: 'sk_test_old'})).STRIPE_SECRET_KEY, 'sk_live_right');
+});
+
+test('Eddy answers from every address the site is served at, and from nowhere else', async () => {
+  const origins = netlifySettings(getter({})).ORFF_ALLOWED_ORIGINS.split(',');
+  const handler = createAskHandler({getContext: async () => 'data', client: {}, allowedOrigins: origins, onUsage: () => {}});
+  const status = origin => handler(new Request('https://eddy.example/api/ask', {method: 'GET', headers: {origin}}));
+  for (const site of ['https://oregonfishforecast.com', 'https://www.oregonfishforecast.com', 'https://orfishforecast.com', 'https://www.orfishforecast.com', 'https://kenny-yukich.github.io']) {
+    const res = await status(site);
+    assert.equal(res.status, 200, site);
+    assert.equal(res.headers.get('access-control-allow-origin'), site);
+  }
+  assert.equal((await status('https://orfishforecast.com.example.net')).status, 403);
+  // A list set on Netlify replaces the default.
+  assert.equal(netlifySettings(getter({ORFF_ALLOWED_ORIGINS: 'https://one.example'})).ORFF_ALLOWED_ORIGINS, 'https://one.example');
 });

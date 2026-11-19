@@ -102,4 +102,4 @@ Settings the function reads (Netlify project, Project configuration, Environment
 
 - `ANTHROPIC_API_KEY` (required, mark it secret): the key Eddy uses. Redeploy after adding or changing it.
 - `ORFF_SITE_URL` (optional): where to read the data files. Defaults to `https://kenny-yukich.github.io/oregon-fish-forecast-concept/`, so answers follow the daily data commits without a redeploy.
-- `ORFF_ALLOWED_ORIGINS` (optional): comma-separated sites allowed to call Eddy. Defaults to `https://oregonfishforecast.com`, `https://www.oregonfishforecast.com` and `https://kenny-yukich.github.io`, the two places this repository's `main` branch is published.
+- `ORFF_ALLOWED_ORIGINS` (optional): comma-separated sites allowed to call Eddy. Defaults to `oregonfishforecast.com` and `orfishforecast.com` (each with and without `www`) and `https://kenny-yukich.github.io`, the places this repository's `main` branch is published (`SITE_ORIGINS` in `netlify/eddy-env.mjs`). A site address that is not listed shows no Eddy. Setting this variable replaces the whole list. The owner's code and a guest's pass are saved per address, so each domain needs its own unlock or personal pass link.

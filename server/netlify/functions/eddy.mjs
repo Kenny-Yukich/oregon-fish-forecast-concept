@@ -10,7 +10,7 @@
 //   EDDY_ACCESS_CODE       optional: a new owner code, replacing the default in ../eddy-env.mjs
 //   EDDY_FREE_PER_DAY      optional: free questions a day for visitors (defaults to 0 before launch, 3 after)
 //   ORFF_SITE_URL          where to read the data files; defaults to the GitHub Pages site
-//   ORFF_ALLOWED_ORIGINS   sites allowed to call Eddy; defaults to oregonfishforecast.com and the GitHub Pages origin
+//   ORFF_ALLOWED_ORIGINS   sites allowed to call Eddy; defaults to oregonfishforecast.com, orfishforecast.com and the GitHub Pages origin
 // The owner's code (from the unlock link, ?eddy=<code>) is free and unlimited. Only its SHA-256 is kept in the repository.
 // Daily question counts live in the "eddy-usage" Netlify Blobs store, alert followers in "eddy-alerts".
 import {netlifyEddy} from '../eddy-env.mjs';
