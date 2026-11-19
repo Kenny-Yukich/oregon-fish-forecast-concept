@@ -8,8 +8,9 @@
 // Stream lines: {"type":"text","text":"..."} then one of
 //   {"type":"done","stop":"end_turn"|"max_tokens"}, {"type":"refusal","message":"..."}, {"type":"error","message":"..."}
 import Anthropic from '@anthropic-ai/sdk';
-import {createAccess, createBillingHandler, stripeClient, memoryUsage, clientIp, matchesHash, sha256} from './access.mjs';
-import {contextCache, localSource, remoteSource} from './context.mjs';
+import {createAccess, createBillingHandler, stripeClient, memoryUsage, clientIp, matchesHash, sha256, planOptions} from './access.mjs';
+import {contextCache, siteCache, loadSite, localSource, remoteSource} from './context.mjs';
+import {createAlertsHandler, runAlerts, resendMailer, memoryAlertStore} from './alerts.mjs';
 
 export const MODEL = 'claude-haiku-5-5';
 
@@ -159,7 +160,7 @@ export function createAskHandler({
     // GET is the status check the chat makes before it shows itself. It never calls Claude.
     if (request.method === 'GET') {
       const status = ready ? {ok: true, name: 'Eddy', model, access: grant.kind, remaining: grant.remaining, limit: grant.limit, billing: grant.billing,
-        ...(grant.billing ? {price: access.plan.price, paid_per_day: access.plan.paidPerDay, free_per_day: access.plan.freePerDay, test_mode: access.testMode} : {}),
+        ...(grant.billing ? {price: access.plan.price, plans: planOptions(access.plan), paid_per_day: access.plan.paidPerDay, free_per_day: access.plan.freePerDay, test_mode: access.testMode} : {}),
         ...(grant.pass ? {pass: grant.pass} : {}), ...(grant.expired ? {expired: true} : {})} : {ok: false, message: 'Eddy is not set up yet.'};
       return new Response(JSON.stringify(status), {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
     }
@@ -182,7 +183,7 @@ export function createAskHandler({
     }
     if (grant.remaining === 0) {
       if (grant.kind === 'paid') return new Response(JSON.stringify({type: 'limit', message: 'You’ve asked ' + grant.limit + ' questions today, the most a pass allows. Your questions reset at midnight Pacific.'}), {status: 429, headers: {'content-type': 'application/json', ...headers}});
-      return new Response(JSON.stringify({type: 'paywall', reason: grant.expired ? 'expired' : grant.limit === 0 ? 'pass_required' : 'free_used', price: access.plan.price, paid_per_day: access.plan.paidPerDay,
+      return new Response(JSON.stringify({type: 'paywall', reason: grant.expired ? 'expired' : grant.limit === 0 ? 'pass_required' : 'free_used', price: access.plan.price, plans: planOptions(access.plan), paid_per_day: access.plan.paidPerDay,
         message: grant.expired ? 'Your Eddy pass has ended.' : grant.limit === 0 ? 'Eddy is for Eddy pass holders.' : 'You’ve used today’s ' + grant.limit + ' free questions.'}), {status: 402, headers: {'content-type': 'application/json', ...headers}});
     }
     if (!perVisitor(clientIp(request))) return json(429, 'That’s a lot of questions in a short time. Wait a few minutes and try again.', headers);
@@ -253,24 +254,37 @@ export const hasAccess = (request, accessHash) => !accessHash || matchesHash(req
 //   ANTHROPIC_API_KEY, ORFF_SITE_URL, ORFF_ALLOWED_ORIGINS
 //   EDDY_ACCESS_CODE or EDDY_ACCESS_HASH   the owner's code (free, unlimited)
 //   STRIPE_SECRET_KEY                      turns on Eddy passes and free questions; sk_test_ keys use Stripe's test mode
-//   STRIPE_PRICE_ID (optional)             a Stripe price to sell instead of the built-in $4.99/month
+//   STRIPE_PRICE_ID, STRIPE_PRICE_ID_YEARLY (optional)  Stripe prices to sell instead of the built-in $4.99/month and $39.99/year
 //   EDDY_PASS_SECRET (optional)            signs passes; defaults to a secret derived from the Stripe key
 //   EDDY_FREE_PER_DAY (optional)           free questions a day for visitors without a pass (default 3; 0 = none)
-// Returns {ask, billing}: the /api/ask handler and the /api/eddy/* handler.
-export function eddyFromEnv(env = process.env, {usage = null} = {}) {
+//   RESEND_API_KEY                         sends alert emails (resend.com); without it alerts are saved but not sent
+//   EDDY_ALERTS_FROM (optional)            the sender, on a domain verified in Resend
+//   ORFF_PUBLIC_URL (optional)             the public site, for links in emails (default https://oregonfishforecast.com/)
+//   EDDY_STOP_URL (optional)               this endpoint's stop page, for links in emails
+// Returns {ask, billing, alerts, runAlerts}: the /api/ask handler, the checkout routes, the alert routes and the morning run.
+export function eddyFromEnv(env = process.env, {usage = null, alertStore = null} = {}) {
   const allowedOrigins = (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const ownerHash = env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null;
-  const stripe = env.STRIPE_SECRET_KEY ? stripeClient(env.STRIPE_SECRET_KEY, {priceId: env.STRIPE_PRICE_ID || null}) : null;
+  const stripe = env.STRIPE_SECRET_KEY ? stripeClient(env.STRIPE_SECRET_KEY, {priceIds: {month: env.STRIPE_PRICE_ID || null, year: env.STRIPE_PRICE_ID_YEARLY || null}}) : null;
   const passSecret = env.EDDY_PASS_SECRET || (env.STRIPE_SECRET_KEY ? sha256('eddy-pass-v1:' + env.STRIPE_SECRET_KEY) : null);
   const freePerDay = env.EDDY_FREE_PER_DAY != null && env.EDDY_FREE_PER_DAY !== '' ? Number(env.EDDY_FREE_PER_DAY) : undefined;
-  const access = createAccess({ownerHash, stripe, passSecret, usage: stripe ? (usage || memoryUsage()) : null, salt: passSecret || '', freePerDay});
+  const counts = stripe ? (usage || memoryUsage()) : null;
+  const access = createAccess({ownerHash, stripe, passSecret, usage: counts, salt: passSecret || '', freePerDay});
+  const read = env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource();
+  const mailer = env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, {from: env.EDDY_ALERTS_FROM || 'Eddy at Oregon Fish Forecast <alerts@oregonfishforecast.com>'}) : null;
+  const alertSecret = passSecret || sha256('eddy-alerts-v1:' + (env.ANTHROPIC_API_KEY || ''));
+  const siteUrl = env.ORFF_PUBLIC_URL || 'https://oregonfishforecast.com/';
+  const stopBase = env.EDDY_STOP_URL || 'https://oregon-fish-forecast-eddy.netlify.app/api/eddy/stop';
+  const store = alertStore || memoryAlertStore();
+  const alerts = createAlertsHandler({access, store, mailer, getSite: siteCache(read), stripe, secret: alertSecret, allowedOrigins, siteUrl, stopBase, usage: counts});
+  const morning = () => runAlerts({loadSite: () => loadSite(read), store, mailer, stripe, LIVE: access.LIVE, periodEnd: access.periodEnd, secret: alertSecret, siteUrl, stopBase});
   const ask = createAskHandler({
-    getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
+    getContext: contextCache(read),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
     allowedOrigins,
     ready: !!env.ANTHROPIC_API_KEY,
     access
   });
-  return {ask, billing: createBillingHandler({access, stripe, passSecret, allowedOrigins}), access};
+  return {ask, billing: createBillingHandler({access, stripe, passSecret, allowedOrigins}), alerts, runAlerts: morning, access};
 }
 export const askHandlerFromEnv = (env = process.env, options) => eddyFromEnv(env, options).ask;

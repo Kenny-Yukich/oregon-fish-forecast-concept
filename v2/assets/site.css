@@ -456,6 +456,52 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .ask-buy-main:disabled { opacity: .6; cursor: progress; }
 .ask-fine { margin-top: 10px !important; font-size: 13px; color: var(--muted); }
 .ask-welcome .ask-body { background: color-mix(in oklch, var(--sun) 22%, var(--paper)); }
+.ask-buy-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.ask-buy-row .ask-buy-main { margin-top: 0; }
+.ask-buy-alt { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink-deep); font-weight: 600; font-size: 15px; cursor: pointer; transition: background-color .2s; }
+.ask-buy-alt:hover { background: var(--paper-2); }
+.ask-buy-alt:disabled { opacity: .6; cursor: progress; }
+.ask-buy small { font-weight: 500; font-size: 12.5px; }
+.ask-alerts-btn[aria-pressed="true"] { background: var(--on-ink); color: var(--ink); }
+.ask-alerts-btn[hidden] { display: none; }
+/* Water alerts view: replaces the chat inside the panel. */
+.ask-panel.show-alerts .ask-log, .ask-panel.show-alerts .ask-form, .ask-panel.show-alerts .ask-plan, .ask-panel.show-alerts .ask-note { display: none; }
+.ask-alerts { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 22px max(24px, env(safe-area-inset-bottom)); font-size: 15px; line-height: 1.5; }
+.ask-alerts[hidden] { display: none; }
+.ask-back { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 14px; min-height: 32px; }
+.ask-back .icon { width: 18px; height: 18px; }
+.ask-alerts-h { font: 500 1.6rem/1.1 var(--display); margin: 12px 0 6px; }
+.ask-alerts-h:focus { outline: none; }
+.ask-alerts-lede { margin: 0 0 16px; color: var(--muted); }
+.ask-alerts-warn { margin: 0 0 16px; padding: 10px 14px; border-radius: 12px; background: color-mix(in oklch, var(--sun) 30%, var(--paper)); font-size: 14px; }
+.ask-field { margin: 0 0 20px; padding: 0; border: 0; min-width: 0; }
+.ask-label { display: block; margin: 0 0 8px; padding: 0; font: 500 11.5px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ask-row { display: flex; gap: 8px; }
+.ask-row input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); color: inherit; }
+.ask-row input:focus { border-color: var(--ink); outline: none; }
+.ask-row input:focus-visible { outline: 3px solid var(--sun-deep); outline-offset: 2px; }
+.ask-mini { flex: none; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); font-weight: 600; font-size: 14px; cursor: pointer; transition: background-color .2s, color .2s; }
+.ask-mini:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.ask-mini:disabled { opacity: .45; cursor: default; }
+.ask-email { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.ask-follow-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.ask-follow-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.ask-follow-list small { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
+.ask-follow-list .ask-mini { min-height: 34px; padding: 0 12px; font-size: 13px; }
+.ask-kinds { display: grid; gap: 10px; }
+.ask-check { display: flex; align-items: flex-start; gap: 10px; font-size: 14.5px; line-height: 1.35; cursor: pointer; }
+.ask-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); flex: none; }
+.ask-alerts-msg { min-height: 1.4em; margin: 8px 0 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+.ask-alerts-msg.bad { color: var(--alert); }
+.ask-alerts .ask-fine { margin-top: 6px !important; }
+/* "Follow this water" in a water page's header (filled by ask.js for the owner and pass holders). */
+.d-follow { margin-top: 22px; }
+.d-follow:empty { display: none; }
+.follow-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px 0 14px; border-radius: 999px; border: 1.5px solid var(--line-ink); background: transparent; color: var(--on-ink); font: 600 15px/1 var(--sans); cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+.follow-btn:hover { border-color: var(--sun); color: var(--sun); }
+.follow-btn.on { background: var(--sun); color: var(--ink-deep); border-color: var(--sun); }
+.follow-btn .icon { width: 20px; height: 20px; }
+.follow-btn:disabled { opacity: .6; cursor: progress; }
 @media (max-width: 640px) {
   .ask-launch { min-height: 48px; padding: 0 18px 0 14px; font-size: 15px; }
   .ask-panel { inset: 0; width: auto; height: 100dvh; border-radius: 0; transform: translateY(24px); }

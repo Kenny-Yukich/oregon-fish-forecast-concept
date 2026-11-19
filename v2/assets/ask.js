@@ -5,12 +5,16 @@
 
    Who can use Eddy (server/access.mjs decides; this script only carries the proof):
    - The owner: the unlock link (?eddy=<code>) saves the owner's code in this browser. Free and unlimited.
-   - Guests with an Eddy pass: bought through Stripe checkout ($4.99/month). Stripe sends them back with
+   - Guests with an Eddy pass: bought through Stripe checkout ($4.99/month or $39.99/year). Stripe sends them back with
      ?eddy_paid=<checkout id>; the pass is saved in this browser, and a personal link (?eddy_pass=<pass>) opens
      Eddy on another device.
    - Free visitors: a few questions a day, then an offer of a pass. Only when passes are on sale:
      ask-config.js `sell: true`, or this browser opened once with ?eddy_shop=1 (to test before going live).
-   Without any of these the page never contacts Eddy. ?eddy=off forgets the code, the pass and the test flag. */
+   Without any of these the page never contacts Eddy. ?eddy=off forgets the code, the pass and the test flag.
+
+   Water alerts (server/alerts.mjs): the owner and pass holders follow waters, from the Alerts view in the panel or the
+   "Follow this water" button on a water page (the .d-follow slot app.js leaves in the page header), and get one email a
+   morning when something new happens on them. */
 (() => {
   'use strict';
   const config = window.ORFF_ASK || {};
@@ -108,9 +112,10 @@
   panel.setAttribute('aria-labelledby', 'ask-title');
   panel.innerHTML =
     '<header class="ask-head"><div><p class="eyebrow on-ink">AI fishing assistant</p><h2 id="ask-title" class="display">Eddy</h2></div>' +
-      '<div class="ask-head-actions"><button type="button" class="ask-reset" hidden>New chat</button>' +
+      '<div class="ask-head-actions"><button type="button" class="ask-reset ask-alerts-btn" hidden>Alerts</button><button type="button" class="ask-reset ask-new" hidden>New chat</button>' +
       '<button type="button" class="ask-close" aria-label="Close Eddy">' + icon('close-circle-linear') + '</button></div></header>' +
     '<div class="ask-log" data-lenis-prevent tabindex="-1"></div>' +
+    '<section class="ask-alerts" data-lenis-prevent hidden aria-labelledby="ask-alerts-title"></section>' +
     '<p class="sr-only" aria-live="polite" data-ask-status></p>' +
     '<p class="ask-plan" hidden></p>' +
     '<form class="ask-form" novalidate>' +
@@ -121,8 +126,9 @@
     '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
-  const reset = panel.querySelector('.ask-reset'), status = panel.querySelector('[data-ask-status]'), planLine = panel.querySelector('.ask-plan');
-  let history = store.load(), busy = null, plan = null, planAt = 0, shown = false;
+  const reset = panel.querySelector('.ask-new'), status = panel.querySelector('[data-ask-status]'), planLine = panel.querySelector('.ask-plan');
+  const alertsBtn = panel.querySelector('.ask-alerts-btn'), alertsBox = panel.querySelector('.ask-alerts');
+  let history = store.load(), busy = null, plan = null, planAt = 0, shown = false, alerts = null;
 
   /* ---------- Status: who this browser is to Eddy, and what is left today ---------- */
   async function fetchStatus() {
@@ -132,7 +138,7 @@
       if (res.status === 401) { if (code) { ls.set(CODE, null); code = null; } return null; }
       const s = res.ok ? await res.json() : null;
       if (s?.pass) setPass(s.pass);
-      if (s?.ok) { plan = s; planAt = Date.now(); renderPlan(); }
+      if (s?.ok) { plan = s; planAt = Date.now(); renderPlan(); alertsBtn.hidden = !alertsOK(); paintFollow(); }
       return s;
     } catch { return null; }
   }
@@ -141,16 +147,19 @@
     const left = plan.remaining;
     planLine.innerHTML = plan.access === 'paid'
       ? 'Eddy pass · ' + left + ' of ' + plan.limit + ' questions left today · <button type="button" class="ask-textbtn ask-manage">Manage subscription</button>'
-      : plan.limit === 0 ? 'Eddy pass · ' + esc(plan.price) + ', up to ' + (plan.paid_per_day || 50) + ' questions a day · <button type="button" class="ask-textbtn ask-buy">Get Eddy</button>'
-      : left + ' of ' + plan.limit + ' free questions left today · <button type="button" class="ask-textbtn ask-buy">Get Eddy, ' + esc(plan.price) + '</button>';
+      : plan.limit === 0 ? 'Eddy pass · ' + prices() + ' · <button type="button" class="ask-textbtn ask-offer">Get Eddy</button>'
+      : left + ' of ' + plan.limit + ' free questions left today · <button type="button" class="ask-textbtn ask-offer">Get Eddy</button>';
     if (plan.test_mode) planLine.insertAdjacentHTML('beforeend', '<span class="ask-test">Stripe test mode: pay with card 4242 4242 4242 4242, any future date and CVC.</span>');
     planLine.hidden = false;
   }
+  const plansOf = info => info?.plans || plan?.plans || [{id: 'month', price: info?.price || plan?.price || '$4.99/month'}];
+  const priceWords = p => p.price.replace('/', ' a ');
+  const prices = () => plansOf().map(p => esc(p.price)).join(' or ');
   function paywallHTML(info) {
-    const price = info?.price || plan?.price || '$4.99/month', per = info?.paid_per_day || plan?.paid_per_day || 50;
+    const per = info?.paid_per_day || plan?.paid_per_day || 50;
     return '<p><strong>' + esc(info?.message || 'You’ve used today’s free questions.') + '</strong></p>' +
-      '<p>Get an Eddy pass for ' + esc(price) + ': up to ' + per + ' questions a day about every river and lake on the site. Cancel anytime.</p>' +
-      '<button type="button" class="ask-buy ask-buy-main">Get Eddy, ' + esc(price) + '</button>' +
+      '<p>An Eddy pass gets you up to ' + per + ' questions a day about every river and lake on the site, plus a morning email when something new happens on the waters you follow. Cancel anytime.</p>' +
+      '<div class="ask-buy-row">' + plansOf(info).map((p, i) => '<button type="button" class="ask-buy ' + (i ? 'ask-buy-alt' : 'ask-buy-main') + '" data-plan="' + esc(p.id) + '">' + esc(priceWords(p)) + (p.note ? ' <small>' + esc(p.note) + '</small>' : '') + '</button>').join('') + '</div>' +
       '<p class="ask-fine">Already have a pass? Open your personal Eddy link on this device.</p>';
   }
 
@@ -162,13 +171,14 @@
     return out;
   }
   async function checkout(button) {
-    if (button) { button.disabled = true; button.textContent = 'Opening secure checkout…'; }
+    const choice = button?.dataset.plan || 'month';
+    if (button) { button.closest('.ask-buy-row')?.querySelectorAll('button').forEach(b => { b.disabled = true; }); button.textContent = 'Opening secure checkout…'; }
     try {
-      const {url} = await billing('checkout', {}, 'Checkout did not open.');
+      const {url} = await billing('checkout', {plan: choice}, 'Checkout did not open.');
       if (!/^https:\/\/checkout\.stripe\.com\//.test(url)) throw new Error('Checkout did not open.');
       location.href = url;
     } catch (e) {
-      if (button) { button.disabled = false; button.textContent = 'Try checkout again'; }
+      if (button) { button.closest('.ask-buy-row')?.querySelectorAll('button').forEach(b => { b.disabled = false; }); button.textContent = 'Try checkout again'; }
       bubble('guide', '<p class="ask-error-note">' + esc(e.message || 'Checkout did not open. Try again shortly.') + '</p>').classList.add('ask-error');
     }
   }
@@ -194,9 +204,159 @@
     const link = pageAddress() + '?eddy_pass=' + encodeURIComponent(pass);
     const el = bubble('guide', '<p><strong>You’re in. Your Eddy pass is active.</strong> Ask away: up to ' + (plan?.limit || 50) + ' questions a day.</p>' +
       '<p>To use Eddy on your phone or another computer, open your personal link there. Keep it to yourself; it carries your pass.</p>' +
+      '<p>Want a heads-up when your waters get stocked or turn good? Open <button type="button" class="ask-textbtn ask-alerts-open">Alerts</button> and pick them.</p>' +
       '<p><button type="button" class="ask-copy" data-link="' + esc(link) + '">Copy my personal link</button></p>');
     el.classList.add('ask-welcome');
   }
+
+  /* ---------- Water alerts ---------- */
+  const alertsOK = () => !!plan && (plan.access === 'owner' || plan.access === 'paid');
+  async function alertsCall(method, path, body) {
+    const res = await fetch(billingBase + '/' + path, {method, cache: 'no-store', headers: {'content-type': 'application/json', ...proof()}, body: body ? JSON.stringify(body) : undefined});
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(out?.message || 'Alerts are not available just now. Try again shortly.'), {status: res.status});
+    return out;
+  }
+  async function loadAlerts(force) {
+    if (!alerts || force) alerts = await alertsCall('GET', 'alerts');
+    return alerts;
+  }
+  // Everything that can be followed: the guide waters, then every other water on ODFW's stocking schedule.
+  let choices = null;
+  function options() {
+    if (choices) return choices;
+    choices = waters.map(w => ({key: w.id, label: w.name + ', ' + w.reach}));
+    const res = Object.values(window.ORFF_STOCKING_MATCH || {}).flat().map(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'));
+    const seen = new Set();
+    for (const r of window.ORFF_STOCKING?.rows || []) {
+      if (seen.has(r.waterbody)) continue;
+      seen.add(r.waterbody);
+      // Waters with a guide page are already listed under their guide name.
+      if (!res.some(re => re.test(r.waterbody))) choices.push({key: 's:' + r.waterbody, label: r.waterbody + ' (ODFW stocking)'});
+    }
+    return choices;
+  }
+  function renderAlerts(note, isError) {
+    const a = alerts;
+    if (!a) return;
+    const kinds = Object.entries(a.kind_labels).map(([k, label]) => '<label class="ask-check"><input type="checkbox" data-kind="' + esc(k) + '"' + (a.kinds[k] ? ' checked' : '') + '><span>' + esc(label) + '</span></label>').join('');
+    alertsBox.innerHTML =
+      '<button type="button" class="ask-textbtn ask-back">' + icon('arrow-left-linear') + 'Back to chat</button>' +
+      '<h3 id="ask-alerts-title" class="ask-alerts-h" tabindex="-1">Water alerts</h3>' +
+      '<p class="ask-alerts-lede">One email a morning when something new happens on the waters you follow. Nothing new, no email.</p>' +
+      (a.sending ? '' : '<p class="ask-alerts-warn">Alert emails are not switched on yet. Your choices are saved, and emails start once they are.</p>') +
+      (a.stopped ? '<p class="ask-alerts-warn">You stopped these emails from a link in one. Save any change here to turn them back on.</p>' : '') +
+      '<div class="ask-field"><label class="ask-label" for="ask-email">Send to</label>' + (a.email_editable
+        ? '<div class="ask-row"><input id="ask-email" type="email" autocomplete="email" value="' + esc(a.email || '') + '" placeholder="you@example.com"><button type="button" class="ask-mini ask-email-save">Save</button></div>'
+        : '<p id="ask-email" class="ask-email">' + esc(a.email || 'The email on your Eddy pass') + '</p><p class="ask-fine">To change it, use <button type="button" class="ask-textbtn ask-manage">Manage subscription</button>.</p>') + '</div>' +
+      '<div class="ask-field"><p class="ask-label">Following ' + a.waters.length + ' of ' + a.max + '</p>' + (a.waters.length
+        ? '<ul class="ask-follow-list">' + a.waters.map(w => '<li><span><strong>' + esc(w.name) + '</strong>' + (w.detail ? '<small>' + esc(w.detail) + '</small>' : '') + '</span><button type="button" class="ask-mini ask-unfollow" data-key="' + esc(w.key) + '" aria-label="Stop following ' + esc(w.name) + '">Remove</button></li>').join('') + '</ul>'
+        : '<p class="ask-fine">None yet. Add one below, or use “Follow this water” on any water page.</p>') + '</div>' +
+      '<form class="ask-field ask-add"><label class="ask-label" for="ask-add">Add a water</label><div class="ask-row"><input id="ask-add" list="ask-waters" autocomplete="off" placeholder="River, lake or pond"' + (a.waters.length >= a.max ? ' disabled' : '') + '><button type="submit" class="ask-mini">Add</button></div>' +
+        '<datalist id="ask-waters">' + options().map(o => '<option value="' + esc(o.label) + '"></option>').join('') + '</datalist></form>' +
+      '<fieldset class="ask-field ask-kinds"><legend class="ask-label">Email me about</legend>' + kinds + '</fieldset>' +
+      '<p><button type="button" class="ask-mini ask-sample"' + (a.sending && a.waters.length ? '' : ' disabled') + '>Email me a sample now</button></p>' +
+      '<p class="ask-alerts-msg' + (isError ? ' bad' : '') + '" role="status">' + esc(note || '') + '</p>' +
+      (a.last_sent_on ? '<p class="ask-fine">Last alert email: ' + esc(a.last_sent_on) + '.</p>' : '');
+  }
+  const alertsNote = (text, bad) => { const el = alertsBox.querySelector('.ask-alerts-msg'); if (el) { el.textContent = text; el.classList.toggle('bad', !!bad); } };
+  async function saveAlerts(patch, done) {
+    try {
+      alerts = await alertsCall('POST', 'alerts', patch);
+      if (!alertsBox.hidden) renderAlerts(done);
+      paintFollow();
+      return true;
+    } catch (e) {
+      if (!alertsBox.hidden) alertsNote(e.message, true);
+      return false;
+    }
+  }
+  async function openAlerts(note) {
+    if (!alertsOK()) return;
+    panel.classList.add('show-alerts');
+    alertsBox.hidden = false;
+    alertsBtn.setAttribute('aria-pressed', 'true');
+    if (!alerts) alertsBox.innerHTML = '<p class="ask-alerts-lede">Loading your alerts…</p>';
+    try { await loadAlerts(true); renderAlerts(note); }
+    catch (e) { alertsBox.innerHTML = '<button type="button" class="ask-textbtn ask-back">' + icon('arrow-left-linear') + 'Back to chat</button><p class="ask-alerts-msg bad" role="status">' + esc(e.message) + '</p>'; }
+    alertsBox.querySelector('h3')?.focus({preventScroll: true});
+  }
+  function closeAlerts() {
+    panel.classList.remove('show-alerts');
+    alertsBox.hidden = true;
+    alertsBtn.setAttribute('aria-pressed', 'false');
+    input.focus({preventScroll: true});
+  }
+  alertsBox.addEventListener('submit', async e => {
+    e.preventDefault();
+    const field = alertsBox.querySelector('#ask-add'), text = field.value.trim().toLowerCase();
+    if (!text) return;
+    const pick = options().find(o => o.label.toLowerCase() === text) || options().find(o => o.label.toLowerCase().startsWith(text));
+    if (!pick) { alertsNote('Pick a water from the list.', true); return; }
+    if (alerts.waters.some(w => w.key === pick.key)) { alertsNote('You already follow ' + pick.label + '.'); return; }
+    await saveAlerts({waters: [...alerts.waters.map(w => w.key), pick.key]}, 'Following ' + pick.label.replace(/ \(ODFW stocking\)$/, '') + '.');
+    alertsBox.querySelector('#ask-add')?.focus();
+  });
+  alertsBox.addEventListener('change', e => {
+    const box = e.target.closest('input[data-kind]');
+    if (!box) return;
+    const kinds = Object.fromEntries([...alertsBox.querySelectorAll('input[data-kind]')].map(x => [x.dataset.kind, x.checked]));
+    saveAlerts({kinds}, 'Saved.');
+  });
+  alertsBox.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'ask-email') { e.preventDefault(); alertsBox.querySelector('.ask-email-save')?.click(); }
+  });
+  async function alertsClick(e) {
+    if (e.target.closest('.ask-back')) { closeAlerts(); return true; }
+    const un = e.target.closest('.ask-unfollow');
+    if (un) { un.disabled = true; await saveAlerts({waters: alerts.waters.map(w => w.key).filter(k => k !== un.dataset.key)}, 'Removed.'); return true; }
+    if (e.target.closest('.ask-email-save')) { await saveAlerts({email: alertsBox.querySelector('#ask-email').value.trim()}, 'Saved. Alerts go to this address.'); return true; }
+    const sample = e.target.closest('.ask-sample');
+    if (sample) {
+      sample.disabled = true;
+      try { const out = await alertsCall('POST', 'alerts/test', {}); alertsNote('Sent a sample to ' + out.sent_to + '. It can take a minute to arrive.'); }
+      catch (err) { alertsNote(err.message, true); }
+      sample.disabled = false;
+      return true;
+    }
+    return false;
+  }
+
+  // The "Follow this water" button in a water page's header.
+  function paintFollow() {
+    const slot = document.querySelector('.d-follow[data-follow]');
+    if (!slot) return;
+    const id = slot.dataset.follow;
+    if (alertsOK()) {
+      const on = !!alerts?.waters.some(w => w.key === id);
+      slot.innerHTML = '<button type="button" class="follow-btn' + (on ? ' on' : '') + '" aria-pressed="' + on + '">' + icon(on ? 'check-circle-linear' : 'calendar-linear') + '<span>' + (on ? 'Following: alerts on' : 'Follow this water') + '</span></button>';
+      if (!alerts) loadAlerts().then(() => { if (alerts.waters.some(w => w.key === id)) paintFollow(); }, () => {});
+    } else if (selling) {
+      slot.innerHTML = '<button type="button" class="follow-btn" data-offer>' + icon('calendar-linear') + '<span>Get alerts for this water</span></button>';
+    } else slot.innerHTML = '';
+  }
+  document.addEventListener('orff:render', paintFollow);
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('.follow-btn');
+    if (!btn) return;
+    if (btn.hasAttribute('data-offer')) { show(); open(); offer(true); return; }
+    const id = btn.closest('[data-follow]')?.dataset.follow;
+    if (!id || btn.disabled) return;
+    btn.disabled = true;
+    try {
+      await loadAlerts();
+      const keys = alerts.waters.map(w => w.key);
+      const on = keys.includes(id);
+      if (!on && keys.length >= alerts.max) { show(); open(); openAlerts('You follow ' + alerts.max + ' waters, the most alerts allow. Remove one to add this one.'); return; }
+      const ok = await saveAlerts({waters: on ? keys.filter(k => k !== id) : [...keys, id]});
+      // Without an address yet (the owner), open Alerts so one can be added.
+      if (ok && !on && !alerts.email) { show(); open(); openAlerts('Following. Add the address to send alerts to.'); }
+    } catch (err) {
+      btn.title = err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   /* ---------- Rendering ---------- */
   function bubble(role, html) {
@@ -318,10 +478,14 @@
     if (Date.now() - planAt > 60000) fetchStatus().then(offer); else offer();
   }
   // A visitor with no questions left (or none before launch) sees the offer as soon as Eddy opens, not after typing.
-  function offer() {
-    if (!plan || plan.access !== 'free' || plan.remaining !== 0 || busy || log.querySelector('.ask-paywall')) return;
-    const card = bubble('guide', paywallHTML({price: plan.price, paid_per_day: plan.paid_per_day,
-      message: plan.expired ? 'Your Eddy pass has ended.' : plan.limit === 0 ? 'Eddy is for Eddy pass holders.' : 'You’ve used today’s free questions.'}));
+  // force: show it anyway (the "Get Eddy" link, or "Get alerts" on a water page).
+  async function offer(force) {
+    if (force === true && !plan) await fetchStatus();   // so the offer lists every pass option
+    const card0 = log.querySelector('.ask-paywall');
+    if (force === true && card0) { card0.scrollIntoView({block: 'nearest'}); card0.querySelector('.ask-buy')?.focus({preventScroll: true}); return; }
+    if (force !== true && (!plan || plan.access !== 'free' || plan.remaining !== 0 || busy || card0)) return;
+    const card = bubble('guide', paywallHTML({paid_per_day: plan?.paid_per_day,
+      message: plan?.expired ? 'Your Eddy pass has ended.' : plan?.access === 'free' && plan.remaining === 0 ? (plan.limit === 0 ? 'Eddy is for Eddy pass holders.' : 'You’ve used today’s free questions.') : 'Get an Eddy pass.'}));
     card.classList.add('ask-paywall');
   }
   function close(returnFocus = true) {
@@ -341,8 +505,12 @@
   form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
   input.addEventListener('input', grow);
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(input.value); } });
-  panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
-  panel.addEventListener('click', e => {
+  panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); if (!alertsBox.hidden) closeAlerts(); else close(); } });
+  alertsBtn.addEventListener('click', () => { if (alertsBox.hidden) openAlerts(); else closeAlerts(); });
+  panel.addEventListener('click', async e => {
+    if (!alertsBox.hidden && alertsBox.contains(e.target) && await alertsClick(e)) return;
+    if (e.target.closest('.ask-alerts-open')) { openAlerts(); return; }
+    if (e.target.closest('.ask-offer')) { offer(true); return; }
     const buy = e.target.closest('.ask-buy');
     if (buy) { checkout(buy); return; }
     const mg = e.target.closest('.ask-manage');
@@ -389,5 +557,6 @@
       show();
     }
     if (cancelled != null && shown) { open(); bubble('guide', '<p>Checkout was cancelled, and you weren’t charged.</p>'); }
+    paintFollow();
   })();
 })();

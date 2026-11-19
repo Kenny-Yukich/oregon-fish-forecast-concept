@@ -404,7 +404,7 @@
 
     return '<article><header class="d-hero"><div class="inner">' +
       '<a class="crumb" href="#/waters">' + icon('arrow-left-linear') + 'All waters</a>' +
-      '<div class="d-top"><div><p class="eyebrow on-ink">' + esc(w.region) + ' · ' + kindLabel(w) + '</p><h1 class="d-title" data-split tabindex="-1" id="d-title">' + esc(w.name) + '</h1><p class="d-reach">' + esc(w.reach) + '</p></div>' +
+      '<div class="d-top"><div><p class="eyebrow on-ink">' + esc(w.region) + ' · ' + kindLabel(w) + '</p><h1 class="d-title" data-split tabindex="-1" id="d-title">' + esc(w.name) + '</h1><p class="d-reach">' + esc(w.reach) + '</p><div class="d-follow" data-follow="' + esc(w.id) + '"></div></div>' +
       '<div class="d-score">' + scoreBlock + '</div></div>' +
       '<dl class="facts">' + facts.map(([l, v]) => '<div><dt>' + l + '</dt><dd>' + esc(v) + '</dd></div>').join('') + '</dl></div></header>' +
       '<div class="d-body"><div class="inner"><div class="d-main">' + report + notices + river + fish + stock + season + breakdown + '</div>' +
@@ -574,6 +574,8 @@
     }
     current = route.view;
     animateIn(view, route.view === 'home');
+    // Lets the Eddy panel (ask.js) fill the page's "Follow this water" slot.
+    document.dispatchEvent(new CustomEvent('orff:render', {detail: {water: route.water?.id || null}}));
   }
   function afterRender(route, immediate) {
     setNav(route);
