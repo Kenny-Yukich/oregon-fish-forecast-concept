@@ -445,6 +445,17 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .ask-send:hover { background: var(--ink-deep); }
 .ask-form[aria-busy="true"] .ask-send { opacity: .45; cursor: progress; }
 .ask-note { margin: 10px 20px 14px; font-size: 12px; line-height: 1.45; color: var(--muted); }
+.ask-plan { margin: 0 20px 10px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.ask-plan[hidden] { display: none; }
+.ask-textbtn { border: 0; background: none; padding: 0; color: var(--ink); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ask-textbtn:hover { color: var(--river-deep); }
+.ask-test { display: block; margin-top: 4px; font: 500 11.5px/1.4 var(--mono); color: var(--alert); }
+.ask-paywall .ask-body { background: var(--paper); border: 1.5px solid var(--ink); }
+.ask-buy-main, .ask-copy { margin-top: 12px; min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--sun); color: var(--ink-deep); font-weight: 600; font-size: 15px; cursor: pointer; transition: background-color .2s; }
+.ask-buy-main:hover, .ask-copy:hover { background: oklch(94% 0.16 103); }
+.ask-buy-main:disabled { opacity: .6; cursor: progress; }
+.ask-fine { margin-top: 10px !important; font-size: 13px; color: var(--muted); }
+.ask-welcome .ask-body { background: color-mix(in oklch, var(--sun) 22%, var(--paper)); }
 @media (max-width: 640px) {
   .ask-launch { min-height: 48px; padding: 0 18px 0 14px; font-size: 15px; }
   .ask-panel { inset: 0; width: auto; height: 100dvh; border-radius: 0; transform: translateY(24px); }

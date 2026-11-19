@@ -8,7 +8,7 @@
 // Stream lines: {"type":"text","text":"..."} then one of
 //   {"type":"done","stop":"end_turn"|"max_tokens"}, {"type":"refusal","message":"..."}, {"type":"error","message":"..."}
 import Anthropic from '@anthropic-ai/sdk';
-import {createHash, timingSafeEqual} from 'node:crypto';
+import {createAccess, createBillingHandler, stripeClient, memoryUsage, clientIp, matchesHash, sha256} from './access.mjs';
 import {contextCache, localSource, remoteSource} from './context.mjs';
 
 export const MODEL = 'claude-haiku-5-5';
@@ -89,8 +89,6 @@ export function rateLimiter({limit, windowMs, now = () => Date.now()}) {
   };
 }
 
-const clientIp = request => (request.headers.get('x-nf-client-connection-ip') || request.headers.get('cf-connecting-ip') ||
-  request.headers.get('x-forwarded-for')?.split(',')[0] || request.headers.get('x-real-ip') || 'unknown').trim();
 
 /* ---------- The Claude request ---------- */
 export function buildParams(context, {messages, page}, {model = MODEL, maxTokens = LIMITS.maxTokens} = {}) {
@@ -136,10 +134,11 @@ export function createAskHandler({
   overall = rateLimiter({limit: 600, windowMs: 60 * 60 * 1000}),
   onUsage = (usage, meta) => console.log('ask', JSON.stringify({...meta, ...usage})),
   ready = true,                  // false when the host has no API key: GET then reports Eddy as not ready
-  accessHash = null              // SHA-256 (hex) of the access code; when set, every GET and POST must send the code
+  accessHash = null,             // SHA-256 (hex) of the owner's access code; used when no access object is given
+  access = createAccess({ownerHash: accessHash})   // who may ask, and how many questions they have left (access.mjs)
 }) {
   const allowed = new Set(allowedOrigins.map(o => o.replace(/\/$/, '')));
-  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type, x-eddy-key', 'access-control-max-age': '86400', vary: 'origin'} : {};
+  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type, x-eddy-key, x-eddy-pass', 'access-control-expose-headers': 'x-eddy-pass, x-eddy-remaining', 'access-control-max-age': '86400', vary: 'origin'} : {};
   const json = (status, message, headers) => new Response(JSON.stringify({type: 'error', message}), {status, headers: {'content-type': 'application/json', ...headers}});
 
   return async function handleAsk(request) {
@@ -149,11 +148,21 @@ export function createAskHandler({
     const headers = okOrigin && origin && origin !== ownOrigin ? cors(origin) : {};
     if (!okOrigin) return json(403, 'This site is not allowed to use Eddy.');
     if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers});
-    // Eddy is private: without the access code nothing else runs, so a stranger or a bot costs nothing.
-    if (!hasAccess(request, accessHash)) return json(401, 'Eddy is private. Ask the site owner for the link.', headers);
-    // GET is the readiness check the chat makes before it shows itself. It never calls Claude.
-    if (request.method === 'GET') return new Response(JSON.stringify(ready ? {ok: true, name: 'Eddy', model} : {ok: false, message: 'Eddy is not set up yet.'}),
-      {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
+    // Who is asking: the owner, a guest with a pass, a free visitor (when passes are on sale), or nobody.
+    // With passes off and no owner code nothing else runs, so a stranger or a bot costs nothing.
+    let grant;
+    try { grant = await access.check(request); } catch (e) {
+      console.error('ask: access check failed:', e.message);
+      return json(503, 'Eddy could not check your pass just now. Try again shortly.', headers);
+    }
+    if (grant.kind === 'none') return json(401, 'Eddy is private. Ask the site owner for the link.', headers);
+    // GET is the status check the chat makes before it shows itself. It never calls Claude.
+    if (request.method === 'GET') {
+      const status = ready ? {ok: true, name: 'Eddy', model, access: grant.kind, remaining: grant.remaining, limit: grant.limit, billing: grant.billing,
+        ...(grant.billing ? {price: access.plan.price, paid_per_day: access.plan.paidPerDay, free_per_day: access.plan.freePerDay, test_mode: access.testMode} : {}),
+        ...(grant.pass ? {pass: grant.pass} : {}), ...(grant.expired ? {expired: true} : {})} : {ok: false, message: 'Eddy is not set up yet.'};
+      return new Response(JSON.stringify(status), {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
+    }
     if (request.method !== 'POST') return json(405, 'Use POST.', {...headers, allow: 'GET, POST, OPTIONS'});
 
     const raw = await request.text();
@@ -171,8 +180,15 @@ export function createAskHandler({
       if (e instanceof AskError) return json(e.status, e.message, headers);
       throw e;
     }
+    if (grant.remaining === 0) {
+      if (grant.kind === 'paid') return new Response(JSON.stringify({type: 'limit', message: 'You’ve asked ' + grant.limit + ' questions today, the most a pass allows. Your questions reset at midnight Pacific.'}), {status: 429, headers: {'content-type': 'application/json', ...headers}});
+      return new Response(JSON.stringify({type: 'paywall', reason: grant.expired ? 'expired' : 'free_used', price: access.plan.price, paid_per_day: access.plan.paidPerDay,
+        message: grant.expired ? 'Your Eddy pass has ended.' : 'You’ve used today’s ' + grant.limit + ' free questions.'}), {status: 402, headers: {'content-type': 'application/json', ...headers}});
+    }
     if (!perVisitor(clientIp(request))) return json(429, 'That’s a lot of questions in a short time. Wait a few minutes and try again.', headers);
     if (!overall('all')) return json(429, 'Eddy has had a busy hour. Try again later.', headers);
+    try { await access.spend(grant); } catch (e) { console.error('ask: could not count the question:', e.message); }
+    const extra = {...(grant.pass ? {'x-eddy-pass': grant.pass} : {}), ...(grant.remaining != null ? {'x-eddy-remaining': String(Math.max(0, grant.remaining - 1))} : {})};
 
     const params = buildParams(context, input, {model});
     const encoder = new TextEncoder();
@@ -201,7 +217,7 @@ export function createAskHandler({
       },
       cancel() { abort.abort(); }
     });
-    return new Response(body$, {status: 200, headers: {'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store', ...headers}});
+    return new Response(body$, {status: 200, headers: {'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store', ...headers, ...extra}});
   };
 }
 
@@ -229,25 +245,30 @@ export function anthropicClient(apiKey = process.env.ANTHROPIC_API_KEY) {
   return new Anthropic({apiKey, baseURL: process.env.ORFF_ANTHROPIC_BASE_URL || 'https://api.anthropic.com', maxRetries: 1, timeout: 60 * 1000});
 }
 
-// The handler as a host runs it, configured from environment settings (see server/README.md):
-// ANTHROPIC_API_KEY, ORFF_SITE_URL (read the data files from the published site) and ORFF_ALLOWED_ORIGINS.
+export {sha256};
 // True when no access code is configured, or the request's x-eddy-key header hashes to it.
-export const sha256 = text => createHash('sha256').update(String(text)).digest('hex');
-export function hasAccess(request, accessHash) {
-  if (!accessHash) return true;
-  const key = request.headers.get('x-eddy-key');
-  if (!key || key.length > 200) return false;
-  const a = Buffer.from(sha256(key), 'hex'), b = Buffer.from(accessHash, 'hex');
-  return a.length === b.length && timingSafeEqual(a, b);
-}
+export const hasAccess = (request, accessHash) => !accessHash || matchesHash(request.headers.get('x-eddy-key'), accessHash);
 
-export function askHandlerFromEnv(env = process.env) {
-  return createAskHandler({
+// Eddy as a host runs it, configured from environment settings (see server/README.md):
+//   ANTHROPIC_API_KEY, ORFF_SITE_URL, ORFF_ALLOWED_ORIGINS
+//   EDDY_ACCESS_CODE or EDDY_ACCESS_HASH   the owner's code (free, unlimited)
+//   STRIPE_SECRET_KEY                      turns on Eddy passes and free questions; sk_test_ keys use Stripe's test mode
+//   STRIPE_PRICE_ID (optional)             a Stripe price to sell instead of the built-in $4.99/month
+//   EDDY_PASS_SECRET (optional)            signs passes; defaults to a secret derived from the Stripe key
+// Returns {ask, billing}: the /api/ask handler and the /api/eddy/* handler.
+export function eddyFromEnv(env = process.env, {usage = null} = {}) {
+  const allowedOrigins = (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const ownerHash = env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null;
+  const stripe = env.STRIPE_SECRET_KEY ? stripeClient(env.STRIPE_SECRET_KEY, {priceId: env.STRIPE_PRICE_ID || null}) : null;
+  const passSecret = env.EDDY_PASS_SECRET || (env.STRIPE_SECRET_KEY ? sha256('eddy-pass-v1:' + env.STRIPE_SECRET_KEY) : null);
+  const access = createAccess({ownerHash, stripe, passSecret, usage: stripe ? (usage || memoryUsage()) : null, salt: passSecret || ''});
+  const ask = createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
-    allowedOrigins: (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean),
+    allowedOrigins,
     ready: !!env.ANTHROPIC_API_KEY,
-    // EDDY_ACCESS_CODE (the code itself) or EDDY_ACCESS_HASH (its SHA-256) makes Eddy private.
-    accessHash: env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null
+    access
   });
+  return {ask, billing: createBillingHandler({access, stripe, passSecret, allowedOrigins}), access};
 }
+export const askHandlerFromEnv = (env = process.env, options) => eddyFromEnv(env, options).ask;

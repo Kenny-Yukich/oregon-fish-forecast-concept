@@ -2,27 +2,50 @@
    server (server/ask.mjs), grounded in the same data files this page reads. The panel only appears when
    assets/ask-config.js names an endpoint, so the static site never shows a chat that cannot answer.
    The conversation is kept for this tab only (sessionStorage).
-   Eddy is private: when assets/ask-config.js says so, a browser needs the access code, which the owner's unlock
-   link (?eddy=<code>) saves in this browser. Without it the page never contacts Eddy. ?eddy=off forgets the code. */
+
+   Who can use Eddy (server/access.mjs decides; this script only carries the proof):
+   - The owner: the unlock link (?eddy=<code>) saves the owner's code in this browser. Free and unlimited.
+   - Guests with an Eddy pass: bought through Stripe checkout ($4.99/month). Stripe sends them back with
+     ?eddy_paid=<checkout id>; the pass is saved in this browser, and a personal link (?eddy_pass=<pass>) opens
+     Eddy on another device.
+   - Free visitors: a few questions a day, then an offer of a pass. Only when passes are on sale:
+     ask-config.js `sell: true`, or this browser opened once with ?eddy_shop=1 (to test before going live).
+   Without any of these the page never contacts Eddy. ?eddy=off forgets the code, the pass and the test flag. */
 (() => {
   'use strict';
   const config = window.ORFF_ASK || {};
   const endpoint = config.endpoint;
   if (!endpoint) return;
-  const CODE = 'orff-eddy.code';
+  const billingBase = config.billing || endpoint.replace(/\/api\/ask$/, '/api/eddy');
+  const CODE = 'orff-eddy.code', PASS = 'orff-eddy.pass', SHOP = 'orff-eddy.shop', PENDING = 'orff-eddy.pending';
+  const ls = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch {} }
+  };
+  const ss = {
+    get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { if (v == null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch {} }
+  };
+
+  // Read and remove Eddy's own address-bar settings, so codes and passes are not bookmarked or shared by accident.
   const params = new URLSearchParams(location.search);
-  if (params.has('eddy')) {
-    const value = (params.get('eddy') || '').trim();
-    try { if (!value || value === 'off') localStorage.removeItem(CODE); else localStorage.setItem(CODE, value); } catch {}
-    // Take the code out of the address bar so it is not bookmarked or shared by accident.
-    params.delete('eddy');
+  const take = name => { if (!params.has(name)) return null; const v = (params.get(name) || '').trim(); params.delete(name); return v; };
+  const unlock = take('eddy'), passLink = take('eddy_pass'), paidSession = take('eddy_paid'), cancelled = take('eddy_cancel'), shopFlag = take('eddy_shop');
+  if ([unlock, passLink, paidSession, cancelled, shopFlag].some(v => v != null)) {
     const rest = params.toString();
     window.history.replaceState(window.history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
   }
-  let code = null;
-  try { code = localStorage.getItem(CODE); } catch {}
-  if (config.private && !code) return;
-  const access = code ? {'x-eddy-key': code} : {};
+  if (unlock === 'off') { ls.set(CODE, null); ls.set(PASS, null); ls.set(SHOP, null); }
+  else if (unlock) ls.set(CODE, unlock);
+  if (passLink) ls.set(PASS, passLink);
+  if (shopFlag != null) ls.set(SHOP, shopFlag === '0' ? null : '1');
+
+  let code = ls.get(CODE), pass = ls.get(PASS);
+  const selling = !!config.sell || ls.get(SHOP) === '1';
+  if (config.private && !code && !pass && !selling && !paidSession) return;
+  const proof = () => ({...(code ? {'x-eddy-key': code} : {}), ...(pass ? {'x-eddy-pass': pass} : {})});
+  const setPass = value => { if (value && value !== pass) { pass = value; ls.set(PASS, value); } };
+
   const waters = window.ORFF_DATA?.waters || [];
   const byId = new Map(waters.map(w => [w.id, w]));
   const ICONS = window.V2_ICONS || {};
@@ -35,6 +58,7 @@
   };
   const pageWater = () => { const m = location.hash.match(/^#\/water\/([^?/]+)/); return m && byId.has(m[1]) ? m[1] : null; };
   const small = matchMedia('(max-width: 640px)');
+  const pageAddress = () => location.origin + location.pathname;
 
   /* ---------- Answer formatting: paragraphs, "- " bullets, **bold** and safe links only ---------- */
   function linkHTML(label, href) {
@@ -88,24 +112,90 @@
       '<button type="button" class="ask-close" aria-label="Close Eddy">' + icon('close-circle-linear') + '</button></div></header>' +
     '<div class="ask-log" data-lenis-prevent tabindex="-1"></div>' +
     '<p class="sr-only" aria-live="polite" data-ask-status></p>' +
+    '<p class="ask-plan" hidden></p>' +
     '<form class="ask-form" novalidate>' +
       '<label class="sr-only" for="ask-input">Your question</label>' +
       '<textarea id="ask-input" rows="1" maxlength="' + MAX + '" placeholder="Ask Eddy about a river or lake" autocomplete="off"></textarea>' +
       '<button type="submit" class="ask-send" aria-label="Send question">' + icon('arrow-right-linear') + '</button>' +
     '</form>' +
     '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
-  // Eddy appears only once its endpoint says it is ready, so the page never shows a chat that cannot answer
-  // (for example before the Netlify project is deployed, or while it has no API key).
-  fetch(endpoint, {method: 'GET', cache: 'no-store', headers: access}).then(r => {
-    // A refused code (mistyped, or replaced by the owner) is forgotten so this browser stops asking.
-    if (r.status === 401) { try { localStorage.removeItem(CODE); } catch {} }
-    return r.ok ? r.json() : null;
-  }).catch(() => null)
-    .then(status => { if (status?.ok) document.body.append(launch, panel); });
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
-  const send = panel.querySelector('.ask-send'), reset = panel.querySelector('.ask-reset'), status = panel.querySelector('[data-ask-status]');
-  let history = store.load(), busy = null;
+  const reset = panel.querySelector('.ask-reset'), status = panel.querySelector('[data-ask-status]'), planLine = panel.querySelector('.ask-plan');
+  let history = store.load(), busy = null, plan = null, planAt = 0, shown = false;
+
+  /* ---------- Status: who this browser is to Eddy, and what is left today ---------- */
+  async function fetchStatus() {
+    try {
+      const res = await fetch(endpoint, {method: 'GET', cache: 'no-store', headers: proof()});
+      // A refused owner code (mistyped, or replaced by the owner) is forgotten so this browser stops sending it.
+      if (res.status === 401) { if (code) { ls.set(CODE, null); code = null; } return null; }
+      const s = res.ok ? await res.json() : null;
+      if (s?.pass) setPass(s.pass);
+      if (s?.ok) { plan = s; planAt = Date.now(); renderPlan(); }
+      return s;
+    } catch { return null; }
+  }
+  function renderPlan() {
+    if (!plan || plan.access === 'owner' || !plan.billing) { planLine.hidden = true; return; }
+    const left = plan.remaining;
+    planLine.innerHTML = plan.access === 'paid'
+      ? 'Eddy pass · ' + left + ' of ' + plan.limit + ' questions left today · <button type="button" class="ask-textbtn ask-manage">Manage subscription</button>'
+      : left + ' of ' + plan.limit + ' free questions left today · <button type="button" class="ask-textbtn ask-buy">Get Eddy, ' + esc(plan.price) + '</button>';
+    if (plan.test_mode) planLine.insertAdjacentHTML('beforeend', '<span class="ask-test">Stripe test mode: pay with card 4242 4242 4242 4242, any future date and CVC.</span>');
+    planLine.hidden = false;
+  }
+  function paywallHTML(info) {
+    const price = info?.price || plan?.price || '$4.99/month', per = info?.paid_per_day || plan?.paid_per_day || 50;
+    return '<p><strong>' + esc(info?.message || 'You’ve used today’s free questions.') + '</strong></p>' +
+      '<p>Get an Eddy pass for ' + esc(price) + ': up to ' + per + ' questions a day about every river and lake on the site. Cancel anytime.</p>' +
+      '<button type="button" class="ask-buy ask-buy-main">Get Eddy, ' + esc(price) + '</button>' +
+      '<p class="ask-fine">Already have a pass? Open your personal Eddy link on this device.</p>';
+  }
+
+  /* ---------- Buying, returning from Stripe, and managing a pass ---------- */
+  async function billing(route, body, note) {
+    const res = await fetch(billingBase + '/' + route, {method: 'POST', headers: {'content-type': 'application/json', ...proof()}, body: JSON.stringify({return_to: pageAddress(), ...body})});
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || !out) throw Object.assign(new Error(out?.message || note), {status: res.status});
+    return out;
+  }
+  async function checkout(button) {
+    if (button) { button.disabled = true; button.textContent = 'Opening secure checkout…'; }
+    try {
+      const {url} = await billing('checkout', {}, 'Checkout did not open.');
+      if (!/^https:\/\/checkout\.stripe\.com\//.test(url)) throw new Error('Checkout did not open.');
+      location.href = url;
+    } catch (e) {
+      if (button) { button.disabled = false; button.textContent = 'Try checkout again'; }
+      bubble('guide', '<p class="ask-error-note">' + esc(e.message || 'Checkout did not open. Try again shortly.') + '</p>').classList.add('ask-error');
+    }
+  }
+  async function manage(button) {
+    if (button) button.disabled = true;
+    try { const {url} = await billing('portal', {}, 'Could not open your subscription.'); if (/^https:\/\/billing\.stripe\.com\//.test(url)) location.href = url; }
+    catch (e) { if (button) button.disabled = false; bubble('guide', '<p class="ask-error-note">' + esc(e.message) + '</p>').classList.add('ask-error'); }
+  }
+  async function redeem(sessionId) {
+    for (let attempt = 0; attempt < 4; attempt++) {
+      try {
+        const out = await billing('redeem', {session_id: sessionId}, 'Could not confirm your payment.');
+        setPass(out.pass);
+        return true;
+      } catch (e) {
+        if (e.status !== 402 || attempt === 3) { bubble('guide', '<p class="ask-error-note">' + esc(e.message) + ' If you were charged, open the link in your Stripe receipt email or contact the site owner.</p>').classList.add('ask-error'); return false; }
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+    return false;
+  }
+  function welcome() {
+    const link = pageAddress() + '?eddy_pass=' + encodeURIComponent(pass);
+    const el = bubble('guide', '<p><strong>You’re in. Your Eddy pass is active.</strong> Ask away: up to ' + (plan?.limit || 50) + ' questions a day.</p>' +
+      '<p>To use Eddy on your phone or another computer, open your personal link there. Keep it to yourself; it carries your pass.</p>' +
+      '<p><button type="button" class="ask-copy" data-link="' + esc(link) + '">Copy my personal link</button></p>');
+    el.classList.add('ask-welcome');
+  }
 
   /* ---------- Rendering ---------- */
   function bubble(role, html) {
@@ -113,6 +203,7 @@
     el.className = 'ask-msg ' + (role === 'user' ? 'from-user' : 'from-guide');
     el.innerHTML = '<span class="sr-only">' + (role === 'user' ? 'You said:' : 'Eddy said:') + ' </span><div class="ask-body">' + html + '</div>';
     log.append(el);
+    log.scrollTop = log.scrollHeight;
     return el;
   }
   function suggestions() {
@@ -147,7 +238,6 @@
     const out = bubble('guide', '<p class="ask-typing" aria-hidden="true"><span></span><span></span><span></span></p>');
     out.classList.add('pending');
     const body = out.querySelector('.ask-body');
-    log.scrollTop = log.scrollHeight;
     input.value = ''; grow();
     busy = new AbortController();
     form.setAttribute('aria-busy', 'true');
@@ -155,7 +245,10 @@
     reset.hidden = false;
     let text = '', end = null;
     try {
-      const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json', ...access}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
+      const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json', ...proof()}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
+      setPass(res.headers.get('x-eddy-pass'));
+      const left = res.headers.get('x-eddy-remaining');
+      if (left != null && plan) { plan.remaining = Number(left); renderPlan(); }
       if (!res.ok || !res.body) {
         end = await res.json().catch(() => null) || {type: 'error', message: 'Eddy could not answer just now. Try again shortly.'};
       } else {
@@ -187,14 +280,24 @@
       store.save(history);
       status.textContent = 'Eddy answered: ' + body.innerText;
     } else {
-      // A failed turn is taken back out of the conversation, so the next question starts clean.
+      // A failed or refused turn is taken back out of the conversation, so the next question starts clean.
       history.pop();
       store.save(history);
-      const note = end?.type === 'refusal' ? end.message : end?.type === 'stopped' ? 'Stopped.' : end?.message || 'Eddy did not answer. Try again.';
-      out.classList.add('ask-error');
-      body.innerHTML = (text.trim() ? format(text) : '') + '<p class="ask-error-note">' + esc(note) + '</p>' +
-        (end?.type === 'refusal' || end?.type === 'stopped' ? '' : '<button type="button" class="ask-retry" data-q="' + esc(question) + '">Try again</button>');
-      status.textContent = note;
+      if (end?.type === 'paywall') {
+        // Keep the question so it is waiting after checkout.
+        ss.set(PENDING, question);
+        if (plan) { plan.remaining = 0; renderPlan(); }
+        out.classList.add('ask-paywall');
+        body.innerHTML = paywallHTML(end);
+        status.textContent = (end.message || '') + ' Get an Eddy pass to keep asking.';
+      } else {
+        const note = end?.type === 'refusal' || end?.type === 'limit' ? end.message : end?.type === 'stopped' ? 'Stopped.' : end?.message || 'Eddy did not answer. Try again.';
+        out.classList.add('ask-error');
+        body.innerHTML = (text.trim() ? format(text) : '') + '<p class="ask-error-note">' + esc(note) + '</p>' +
+          (['refusal', 'stopped', 'limit'].includes(end?.type) ? '' : '<button type="button" class="ask-retry" data-q="' + esc(question) + '">Try again</button>');
+        status.textContent = note;
+      }
+      log.scrollTop = log.scrollHeight;
     }
     if (panel.contains(document.activeElement) || document.activeElement === document.body) input.focus({preventScroll: true});
   }
@@ -211,6 +314,7 @@
     document.documentElement.classList.add('ask-open');
     requestAnimationFrame(() => panel.classList.add('in'));
     input.focus({preventScroll: true});
+    if (Date.now() - planAt > 60000) fetchStatus();
   }
   function close(returnFocus = true) {
     if (panel.hidden) return;
@@ -221,6 +325,7 @@
     if (returnFocus) launch.focus({preventScroll: true});
   }
   function grow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 132) + 'px'; }
+  function show() { if (!shown) { shown = true; document.body.append(launch, panel); } }
 
   launch.addEventListener('click', open);
   panel.querySelector('.ask-close').addEventListener('click', () => close());
@@ -229,7 +334,16 @@
   input.addEventListener('input', grow);
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(input.value); } });
   panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
-  log.addEventListener('click', e => {
+  panel.addEventListener('click', e => {
+    const buy = e.target.closest('.ask-buy');
+    if (buy) { checkout(buy); return; }
+    const mg = e.target.closest('.ask-manage');
+    if (mg) { manage(mg); return; }
+    const copy = e.target.closest('.ask-copy');
+    if (copy) {
+      navigator.clipboard?.writeText(copy.dataset.link).then(() => { copy.textContent = 'Copied. Paste it on your other device.'; }, () => { window.prompt('Copy your personal Eddy link:', copy.dataset.link); });
+      return;
+    }
     const retry = e.target.closest('.ask-retry');
     if (retry) {
       // Take the failed exchange off the screen; ask() adds the question back.
@@ -244,4 +358,28 @@
     // On a phone the panel covers the page, so following a water link closes it.
     if (e.target.closest('a[data-internal]') && small.matches) close(false);
   });
+
+  /* ---------- Start ---------- */
+  (async () => {
+    if (paidSession) {
+      show(); open();
+      if (/^cs_[A-Za-z0-9_]+$/.test(paidSession) && await redeem(paidSession)) {
+        await fetchStatus();
+        welcome();
+        const waiting = ss.get(PENDING);
+        if (waiting) { ss.set(PENDING, null); input.value = waiting; grow(); }
+      }
+      return;
+    }
+    if (code || pass) {
+      // Eddy appears for the owner or a pass holder only once the endpoint confirms, so a stale code shows nothing.
+      const s = await fetchStatus();
+      if (s?.ok && (s.access !== 'free' || selling)) show();
+      else if (selling) show();
+    } else if (selling) {
+      // Selling: the button shows for everyone; the endpoint is first contacted when the panel opens.
+      show();
+    }
+    if (cancelled != null && shown) { open(); bubble('guide', '<p>Checkout was cancelled, and you weren’t charged.</p>'); }
+  })();
 })();
