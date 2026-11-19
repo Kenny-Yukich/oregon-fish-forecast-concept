@@ -8,6 +8,7 @@
 // Stream lines: {"type":"text","text":"..."} then one of
 //   {"type":"done","stop":"end_turn"|"max_tokens"}, {"type":"refusal","message":"..."}, {"type":"error","message":"..."}
 import Anthropic from '@anthropic-ai/sdk';
+import {createHash, timingSafeEqual} from 'node:crypto';
 import {contextCache, localSource, remoteSource} from './context.mjs';
 
 export const MODEL = 'claude-haiku-5-5';
@@ -134,10 +135,11 @@ export function createAskHandler({
   perVisitor = rateLimiter({limit: 20, windowMs: 10 * 60 * 1000}),
   overall = rateLimiter({limit: 600, windowMs: 60 * 60 * 1000}),
   onUsage = (usage, meta) => console.log('ask', JSON.stringify({...meta, ...usage})),
-  ready = true                   // false when the host has no API key: GET then reports Eddy as not ready
+  ready = true,                  // false when the host has no API key: GET then reports Eddy as not ready
+  accessHash = null              // SHA-256 (hex) of the access code; when set, every GET and POST must send the code
 }) {
   const allowed = new Set(allowedOrigins.map(o => o.replace(/\/$/, '')));
-  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin'} : {};
+  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type, x-eddy-key', 'access-control-max-age': '86400', vary: 'origin'} : {};
   const json = (status, message, headers) => new Response(JSON.stringify({type: 'error', message}), {status, headers: {'content-type': 'application/json', ...headers}});
 
   return async function handleAsk(request) {
@@ -147,6 +149,8 @@ export function createAskHandler({
     const headers = okOrigin && origin && origin !== ownOrigin ? cors(origin) : {};
     if (!okOrigin) return json(403, 'This site is not allowed to use Eddy.');
     if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers});
+    // Eddy is private: without the access code nothing else runs, so a stranger or a bot costs nothing.
+    if (!hasAccess(request, accessHash)) return json(401, 'Eddy is private. Ask the site owner for the link.', headers);
     // GET is the readiness check the chat makes before it shows itself. It never calls Claude.
     if (request.method === 'GET') return new Response(JSON.stringify(ready ? {ok: true, name: 'Eddy', model} : {ok: false, message: 'Eddy is not set up yet.'}),
       {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
@@ -227,11 +231,23 @@ export function anthropicClient(apiKey = process.env.ANTHROPIC_API_KEY) {
 
 // The handler as a host runs it, configured from environment settings (see server/README.md):
 // ANTHROPIC_API_KEY, ORFF_SITE_URL (read the data files from the published site) and ORFF_ALLOWED_ORIGINS.
+// True when no access code is configured, or the request's x-eddy-key header hashes to it.
+export const sha256 = text => createHash('sha256').update(String(text)).digest('hex');
+export function hasAccess(request, accessHash) {
+  if (!accessHash) return true;
+  const key = request.headers.get('x-eddy-key');
+  if (!key || key.length > 200) return false;
+  const a = Buffer.from(sha256(key), 'hex'), b = Buffer.from(accessHash, 'hex');
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export function askHandlerFromEnv(env = process.env) {
   return createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
     allowedOrigins: (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean),
-    ready: !!env.ANTHROPIC_API_KEY
+    ready: !!env.ANTHROPIC_API_KEY,
+    // EDDY_ACCESS_CODE (the code itself) or EDDY_ACCESS_HASH (its SHA-256) makes Eddy private.
+    accessHash: env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null
   });
 }

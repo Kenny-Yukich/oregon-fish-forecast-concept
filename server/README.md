@@ -13,6 +13,16 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
   - A refusal or an API error becomes a short message in the chat; nothing is retried automatically except once by the SDK.
 - **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only.
 
+## Private access
+
+Eddy is private, so only people with the unlock link can use it:
+
+- **Unlock a browser:** open the site once with `?eddy=<access code>` added, for example `https://oregonfishforecast.com/?eddy=<code>`. The code is saved in that browser (each site address keeps its own copy), removed from the address bar, and Eddy appears. `?eddy=off` locks the browser again.
+- **Everyone else** sees no chat, and their browser never contacts Eddy (`assets/ask-config.js` sets `private: true`).
+- **The endpoint checks the code** on every request (`x-eddy-key` header) and answers 401 before reading the question, loading data or calling Claude, so a stranger or a bot costs nothing.
+- **Changing the code:** add a secret `EDDY_ACCESS_CODE` in the Netlify project's environment variables and redeploy. It replaces the default, whose SHA-256 is in `netlify/functions/eddy.mjs` (the repository holds only that hash, never the code). Browsers holding the old code forget it on their next visit.
+- The local server (`dev.mjs`) has no code, so the chat works there without one.
+
 ## Run it locally
 
 ```bash

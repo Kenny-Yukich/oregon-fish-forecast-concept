@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import Anthropic from '@anthropic-ai/sdk';
-import {createAskHandler, validateBody, buildParams, readAnswer, rateLimiter, AskError, LIMITS, MODEL} from './ask.mjs';
+import {createAskHandler, validateBody, buildParams, readAnswer, rateLimiter, AskError, LIMITS, MODEL, sha256, askHandlerFromEnv} from './ask.mjs';
 import {loadSite, localSource, buildContext, contextCache} from './context.mjs';
 
 const site = await loadSite(localSource());
@@ -170,4 +170,40 @@ test('context lists every stocked water and ODFW zone reports, and survives a mi
     assert.ok(!without.text.includes('## ODFW weekly fishing reports'));
     assert.equal(without.waters.length, context.waters.length);
   } finally { console.error = original; }
+});
+
+test('a private Eddy refuses requests without the right access code, before any Claude call', async () => {
+  const client = fakeClient();
+  const handler = createAskHandler({getContext: async () => context, client, accessHash: sha256('right-code'), allowedOrigins: ['https://kenny-yukich.github.io'], onUsage: quiet});
+  const send = (method, key, body = method === 'POST' ? question : null) => handler(new Request('https://ask.example/api/ask', {
+    method, headers: {'content-type': 'application/json', origin: 'https://kenny-yukich.github.io', ...(key ? {'x-eddy-key': key} : {})},
+    body: body ? JSON.stringify(body) : undefined
+  }));
+  assert.equal((await send('GET')).status, 401, 'no code: readiness check refused');
+  assert.equal((await send('GET', 'wrong')).status, 401, 'wrong code refused');
+  assert.equal((await send('POST')).status, 401, 'no code: question refused');
+  assert.equal((await send('POST', 'wrong')).status, 401);
+  assert.equal((await send('POST', 'x'.repeat(500))).status, 401, 'oversized code refused');
+  assert.equal(client.calls.length, 0, 'refused requests never reach Claude');
+  const pre = await send('OPTIONS');
+  assert.equal(pre.status, 204, 'the browser preflight passes so the real request can carry the code');
+  assert.match(pre.headers.get('access-control-allow-headers'), /x-eddy-key/);
+  const ok = await send('GET', 'right-code');
+  assert.equal(ok.status, 200);
+  assert.equal((await ok.json()).ok, true);
+  const answer = await readAnswer(await send('POST', 'right-code'));
+  assert.equal(answer.end.type, 'done');
+  assert.equal(client.calls.length, 1);
+});
+
+test('the Netlify settings turn the access code on: EDDY_ACCESS_CODE wins over EDDY_ACCESS_HASH', async () => {
+  const get = (h, key) => h(new Request('https://ask.example/api/ask', {method: 'GET', headers: key ? {'x-eddy-key': key} : {}}));
+  const byHash = askHandlerFromEnv({ANTHROPIC_API_KEY: 'x', ORFF_SITE_URL: '', EDDY_ACCESS_HASH: sha256('abc').toUpperCase()});
+  assert.equal((await get(byHash)).status, 401);
+  assert.equal((await get(byHash, 'abc')).status, 200);
+  const byCode = askHandlerFromEnv({ANTHROPIC_API_KEY: 'x', ORFF_SITE_URL: '', EDDY_ACCESS_CODE: 'new-code', EDDY_ACCESS_HASH: sha256('abc')});
+  assert.equal((await get(byCode, 'abc')).status, 401, 'a new code replaces the default');
+  assert.equal((await get(byCode, 'new-code')).status, 200);
+  const open = askHandlerFromEnv({ANTHROPIC_API_KEY: 'x', ORFF_SITE_URL: ''});
+  assert.equal((await get(open)).status, 200, 'no code configured: open, as on the local server');
 });

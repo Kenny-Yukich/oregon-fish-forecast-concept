@@ -1,11 +1,28 @@
 /* Eddy: the AI fishing assistant, a chat panel where visitors ask about the guide waters. Answers come from Claude Haiku on the
    server (server/ask.mjs), grounded in the same data files this page reads. The panel only appears when
    assets/ask-config.js names an endpoint, so the static site never shows a chat that cannot answer.
-   The conversation is kept for this tab only (sessionStorage). */
+   The conversation is kept for this tab only (sessionStorage).
+   Eddy is private: when assets/ask-config.js says so, a browser needs the access code, which the owner's unlock
+   link (?eddy=<code>) saves in this browser. Without it the page never contacts Eddy. ?eddy=off forgets the code. */
 (() => {
   'use strict';
-  const endpoint = window.ORFF_ASK?.endpoint;
+  const config = window.ORFF_ASK || {};
+  const endpoint = config.endpoint;
   if (!endpoint) return;
+  const CODE = 'orff-eddy.code';
+  const params = new URLSearchParams(location.search);
+  if (params.has('eddy')) {
+    const value = (params.get('eddy') || '').trim();
+    try { if (!value || value === 'off') localStorage.removeItem(CODE); else localStorage.setItem(CODE, value); } catch {}
+    // Take the code out of the address bar so it is not bookmarked or shared by accident.
+    params.delete('eddy');
+    const rest = params.toString();
+    window.history.replaceState(window.history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
+  }
+  let code = null;
+  try { code = localStorage.getItem(CODE); } catch {}
+  if (config.private && !code) return;
+  const access = code ? {'x-eddy-key': code} : {};
   const waters = window.ORFF_DATA?.waters || [];
   const byId = new Map(waters.map(w => [w.id, w]));
   const ICONS = window.V2_ICONS || {};
@@ -79,7 +96,11 @@
     '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
   // Eddy appears only once its endpoint says it is ready, so the page never shows a chat that cannot answer
   // (for example before the Netlify project is deployed, or while it has no API key).
-  fetch(endpoint, {method: 'GET', cache: 'no-store'}).then(r => r.ok ? r.json() : null).catch(() => null)
+  fetch(endpoint, {method: 'GET', cache: 'no-store', headers: access}).then(r => {
+    // A refused code (mistyped, or replaced by the owner) is forgotten so this browser stops asking.
+    if (r.status === 401) { try { localStorage.removeItem(CODE); } catch {} }
+    return r.ok ? r.json() : null;
+  }).catch(() => null)
     .then(status => { if (status?.ok) document.body.append(launch, panel); });
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
@@ -134,7 +155,7 @@
     reset.hidden = false;
     let text = '', end = null;
     try {
-      const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
+      const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json', ...access}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
       if (!res.ok || !res.body) {
         end = await res.json().catch(() => null) || {type: 'error', message: 'Eddy could not answer just now. Try again shortly.'};
       } else {
