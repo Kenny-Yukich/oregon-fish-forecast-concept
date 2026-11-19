@@ -7,6 +7,8 @@ window.ORFF_MAP = {
     "lower-deschutes-warm-springs-trout-creek": [44.822, -121.088],
     "lower-deschutes-moody": [45.633, -120.908],
     "middle-deschutes-culver": [44.418, -121.293],
+    "deschutes-river-tumalo": [44.129, -121.331],
+    "lava-lake-campground": [43.914, -121.766],
     "crooked-river-opal-springs": [44.489, -121.298],
     "metolius-river-grandview": [44.626, -121.478],
     "crooked-river-bowman-dam": [44.105, -120.800],

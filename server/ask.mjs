@@ -8,6 +8,7 @@
 // Stream lines: {"type":"text","text":"..."} then one of
 //   {"type":"done","stop":"end_turn"|"max_tokens"}, {"type":"refusal","message":"..."}, {"type":"error","message":"..."}
 import Anthropic from '@anthropic-ai/sdk';
+import {createHash, timingSafeEqual} from 'node:crypto';
 import {contextCache, localSource, remoteSource} from './context.mjs';
 
 export const MODEL = 'claude-haiku-5-5';
@@ -20,7 +21,7 @@ export const LIMITS = {
   maxTokens: 3000        // room for adaptive thinking plus a short answer
 };
 
-export const INSTRUCTIONS = `You are Eddy, the AI fishing assistant on Oregon Fish Forecast, a website that puts dated fishing reports, river gauges, dam counts, ODFW trout stocking and weather for 24 Oregon waters on one page. Visitors are anglers deciding where and when to fish. If someone asks what you are, say you are Eddy, an AI assistant built on Claude, made by Anthropic.
+export const INSTRUCTIONS = `You are Eddy, the AI fishing assistant on Oregon Fish Forecast, a website that puts dated fishing reports, river gauges, dam counts, ODFW trout stocking and weather for a set of Oregon guide waters on one page. Visitors are anglers deciding where and when to fish. If someone asks what you are, say you are Eddy, an AI assistant built on Claude, made by Anthropic.
 
 Answer only from the site data that follows these instructions. It is rebuilt from the site's data files, which refresh every morning. If the answer is not in the data, say so plainly and point to the source link or the water's page. Never fill a gap with a guess or with general knowledge presented as current fact.
 
@@ -33,9 +34,10 @@ How to answer:
 - Angler posts are word of mouth from public social media and are not verified.
 - Gauges are often upstream or downstream of the reach, not at the access point. Weather is for the general area.
 - Stocking is ODFW's planned schedule, not confirmed releases.
+- The data has three levels. Guide waters have full detail. Waters on ODFW's stocking schedule have only their latest and next planned stockings; past stockings are kept for a few weeks, so "recent none" means none recently, not never. ODFW's weekly zone reports are ODFW's own words about many other waters; attribute them, for example "ODFW's Central Zone report (text from Nov 18) says...", and give the date shown.
 - Regulations: mention any notice or ODFW in-season rule in the data, and tell the visitor to check ODFW's current regulations before fishing. Never state seasons, bag limits, gear rules or closures that are not in the data.
 - Do not estimate drive times or distances. You can name the region and the access point, and point to the water's page, which has directions.
-- A water that is not one of the 24: say the guide does not cover it yet. If it appears under "Not in the guide yet", you can share that word-of-mouth note with its date.
+- A water without a guide page: say the guide does not cover it in full yet, then share whatever the data does have for it: its ODFW stocking schedule, any mention in an ODFW zone report, and any note under "Not in the guide yet" (word of mouth), each with its date. Do not give it a score, conditions or access details the data does not have. If nothing in the data mentions it, say so and point to ODFW's zone report for its area.
 - The site covers Oregon only. For Washington or other states, say so.
 - For high or rising water, cold weather or a weather alert, say what the data shows and remind them to judge conditions on site.
 - For anything unrelated to fishing these Oregon waters, say briefly that you can only help with that.
@@ -133,10 +135,11 @@ export function createAskHandler({
   perVisitor = rateLimiter({limit: 20, windowMs: 10 * 60 * 1000}),
   overall = rateLimiter({limit: 600, windowMs: 60 * 60 * 1000}),
   onUsage = (usage, meta) => console.log('ask', JSON.stringify({...meta, ...usage})),
-  ready = true                   // false when the host has no API key: GET then reports Eddy as not ready
+  ready = true,                  // false when the host has no API key: GET then reports Eddy as not ready
+  accessHash = null              // SHA-256 (hex) of the access code; when set, every GET and POST must send the code
 }) {
   const allowed = new Set(allowedOrigins.map(o => o.replace(/\/$/, '')));
-  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin'} : {};
+  const cors = origin => origin ? {'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type, x-eddy-key', 'access-control-max-age': '86400', vary: 'origin'} : {};
   const json = (status, message, headers) => new Response(JSON.stringify({type: 'error', message}), {status, headers: {'content-type': 'application/json', ...headers}});
 
   return async function handleAsk(request) {
@@ -146,6 +149,8 @@ export function createAskHandler({
     const headers = okOrigin && origin && origin !== ownOrigin ? cors(origin) : {};
     if (!okOrigin) return json(403, 'This site is not allowed to use Eddy.');
     if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers});
+    // Eddy is private: without the access code nothing else runs, so a stranger or a bot costs nothing.
+    if (!hasAccess(request, accessHash)) return json(401, 'Eddy is private. Ask the site owner for the link.', headers);
     // GET is the readiness check the chat makes before it shows itself. It never calls Claude.
     if (request.method === 'GET') return new Response(JSON.stringify(ready ? {ok: true, name: 'Eddy', model} : {ok: false, message: 'Eddy is not set up yet.'}),
       {status: ready ? 200 : 503, headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
@@ -226,11 +231,23 @@ export function anthropicClient(apiKey = process.env.ANTHROPIC_API_KEY) {
 
 // The handler as a host runs it, configured from environment settings (see server/README.md):
 // ANTHROPIC_API_KEY, ORFF_SITE_URL (read the data files from the published site) and ORFF_ALLOWED_ORIGINS.
+// True when no access code is configured, or the request's x-eddy-key header hashes to it.
+export const sha256 = text => createHash('sha256').update(String(text)).digest('hex');
+export function hasAccess(request, accessHash) {
+  if (!accessHash) return true;
+  const key = request.headers.get('x-eddy-key');
+  if (!key || key.length > 200) return false;
+  const a = Buffer.from(sha256(key), 'hex'), b = Buffer.from(accessHash, 'hex');
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export function askHandlerFromEnv(env = process.env) {
   return createAskHandler({
     getContext: contextCache(env.ORFF_SITE_URL ? remoteSource(env.ORFF_SITE_URL) : localSource()),
     client: anthropicClient(env.ANTHROPIC_API_KEY),
     allowedOrigins: (env.ORFF_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean),
-    ready: !!env.ANTHROPIC_API_KEY
+    ready: !!env.ANTHROPIC_API_KEY,
+    // EDDY_ACCESS_CODE (the code itself) or EDDY_ACCESS_HASH (its SHA-256) makes Eddy private.
+    accessHash: env.EDDY_ACCESS_CODE ? sha256(env.EDDY_ACCESS_CODE) : (env.EDDY_ACCESS_HASH || '').toLowerCase() || null
   });
 }

@@ -9,8 +9,10 @@ import {fileURLToPath} from 'node:url';
 export const SITE_FILES = [
   'data/waters.js', 'data/monitoring.js', 'data/count-stations.js', 'data/counts.js', 'data/stocking.js',
   'data/stocking-match.js', 'data/conditions.js', 'data/weather.js', 'data/angler.js', 'data/field-checks.js',
-  'data/flow-seasons.js', 'data/auto-reports.js', 'assets/member-preview.js'
+  'data/flow-seasons.js', 'data/auto-reports.js', 'data/odfw-reports.js', 'assets/member-preview.js'
 ];
+// Files Eddy can do without: a missing one is skipped instead of failing the whole build.
+const OPTIONAL = new Set(['data/odfw-reports.js']);
 
 // Reads the site files from this checkout.
 export function localSource(root = fileURLToPath(new URL('..', import.meta.url))) {
@@ -29,7 +31,7 @@ export function remoteSource(siteUrl, fetchImpl = fetch) {
 
 // Runs the files in a sandbox whose global object stands in for `window`.
 export async function loadSite(read) {
-  const texts = await Promise.all(SITE_FILES.map(read));
+  const texts = await Promise.all(SITE_FILES.map(path => OPTIONAL.has(path) ? read(path).catch(e => { console.error('Skipping ' + path + ': ' + e.message); return ''; }) : read(path)));
   const g = {};
   g.window = g;
   vm.createContext(g);
@@ -150,7 +152,7 @@ function waterBlock(g, w, today) {
   const a = g.ORFFPreview.autoReport?.(w), r = a || p.report;
   if (r?.reported_on) {
     out.push('Latest report (' + r.reported_on + ', ' + ago(r.reported_on, today) + (a ? ', WDFW creel report for ' + a.period : '') + '): "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : ''));
-  } else out.push('Latest report: no dated fishing report.');
+  } else out.push('Latest report: no dated fishing report.' + (r?.summary ? ' Note: "' + clean(r.summary) + '"' + (r.coverage ? ' Coverage: ' + clean(r.coverage) : '') + (r.url ? ' Source: ' + r.url : '') : ''));
   for (const n of p.alerts || []) out.push('Notice (' + n.status + '): ' + clean(n.summary) + (n.url ? ' Source: ' + n.url : ''));
   for (const rule of (g.ORFF_AUTO?.rules?.[w.id] || []).filter(x => !x.effective_to || x.effective_to >= today)) {
     out.push('ODFW in-season rule (' + rule.kind + ', ' + rule.effective_from + (rule.effective_to ? ' to ' + rule.effective_to : ', no end date') + '): ' + clean(rule.summary) + ' Source: ' + rule.url);
@@ -195,6 +197,51 @@ function stockingBlock(g, today, byId) {
   return out.join('\n');
 }
 
+// Every water on ODFW's schedule, guide or not, with its latest and next planned stockings, grouped by ODFW zone.
+// The site keeps past rows for g.ORFF_STOCKING.keep_days, so older releases are not known.
+function stockingDirectoryBlock(g, today, byId) {
+  const rows = g.ORFF_STOCKING?.rows || [];
+  if (!rows.length) return '';
+  const guideIds = new Map();
+  for (const [id, names] of Object.entries(g.ORFF_STOCKING_MATCH || {})) guideIds.set(id, nameRes(names));
+  const guideFor = waterbody => { for (const [id, res] of guideIds) if (res.some(re => re.test(waterbody))) return byId.get(id); return null; };
+  // One entry per water. ODFW labels some rows of the same water with different zones, so the region is the
+  // first part of its most common zone.
+  const byWater = new Map();
+  for (const r of rows) (byWater.get(r.waterbody) || byWater.set(r.waterbody, []).get(r.waterbody)).push(r);
+  const keepWeeks = Math.round((g.ORFF_STOCKING.keep_days || 56) / 7);
+  const regions = new Map();
+  const when = r => r.week_start + ' (' + num(r.total) + ')';
+  for (const [name, list] of byWater) {
+    const counts = new Map();
+    for (const r of list) { const z = (r.zone || '').split('/')[0].trim() || 'No zone listed'; counts.set(z, (counts.get(z) || 0) + 1); }
+    const region = [...counts].sort((a, b) => b[1] - a[1])[0][0];
+    const past = list.filter(r => r.week_start <= today).sort((a, b) => b.week_start.localeCompare(a.week_start))[0];
+    const next = list.filter(r => r.week_start > today).sort((a, b) => a.week_start.localeCompare(b.week_start)).slice(0, 2);
+    const gw = guideFor(name);
+    // ODFW's own name only where it carries a qualifier the readable name may lose, such as "LAVA LK, B".
+    const odfw = list[0].odfw_name && /[,(]/.test(list[0].odfw_name) ? ' [' + list[0].odfw_name + ']' : '';
+    const line = '- ' + name + odfw + ': recent ' + (past ? when(past) : 'none') + '; next ' + (next.length ? next.map(when).join(', ') : 'none') + (gw ? ' · #/water/' + gw.id : '');
+    (regions.get(region) || regions.set(region, []).get(region)).push(line);
+  }
+  const out = ['## Every water on the ODFW trout stocking schedule (' + byWater.size + ' waters; planned releases, not confirmed)',
+    'Format: water: recent = its most recent planned stocking week within the last ' + keepWeeks + ' weeks ("recent none" means none in that window, not never; older releases are not kept); next = its next two planned weeks. Numbers in brackets after a date are trout. ODFW\'s own name is in square brackets where it has a qualifier. A #/water/ link means the water has a guide page.'];
+  for (const region of [...regions.keys()].sort()) out.push(region + ':', ...regions.get(region).sort());
+  return out.join('\n');
+}
+
+// ODFW's weekly report for each zone, in ODFW's own words. They name many waters the guide does not cover.
+function odfwReportsBlock(g, today) {
+  const zones = Object.values(g.ORFF_ODFW_REPORTS?.zones || {});
+  if (!zones.length) return '';
+  const out = ['## ODFW weekly fishing reports by zone (ODFW\'s own words; most pages carry no date, so each shows when its text first appeared here)'];
+  for (const z of zones) {
+    out.push('### ' + z.name + ' report' + (z.dated ? ', dated ' + z.dated : '') + ' (text unchanged since ' + z.changed_on + ', ' + ago(z.changed_on, today) + '; last read ' + z.read_on + '). Source: ' + z.url);
+    out.push(z.text);
+  }
+  return out.join('\n');
+}
+
 function elsewhereBlock(g) {
   const list = g.ORFF_ANGLER?.elsewhere || [];
   if (!list.length) return '';
@@ -210,12 +257,16 @@ export function buildContext(g, today = pacificToday()) {
     '# Oregon Fish Forecast site data, built ' + today + ' (Pacific)',
     'Data files refresh every morning. Angler posts were last read ' + (g.ORFF_ANGLER?.checked_on || 'unknown') + '. Gauges were read ' + (g.ORFF_CONDITIONS?.fetched_at || 'unknown').slice(0, 16).replace('T', ' ') + ' UTC.',
     '',
-    '## The 24 guide waters',
+    '## The ' + waters.length + ' guide waters (full detail: score, reports, gauges, counts, stocking, weather, access)',
     waters.map(w => waterBlock(g, w, today)).join('\n\n'),
     '',
     countsBlock(g),
     '',
     stockingBlock(g, today, byId),
+    '',
+    stockingDirectoryBlock(g, today, byId),
+    '',
+    odfwReportsBlock(g, today),
     '',
     elsewhereBlock(g)
   ].join('\n');

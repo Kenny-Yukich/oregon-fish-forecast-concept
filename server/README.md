@@ -4,7 +4,7 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
 
 ## How it fits together
 
-- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 75K characters of plain text (about 32K tokens for Haiku 5.5), one block per water plus statewide counts, stocking and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
+- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 110K characters of plain text (about 47K tokens for Haiku 5.5): one block per guide water, statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
 - **`ask.mjs`** is the endpoint: `POST` a conversation, get the answer streamed back as newline-delimited JSON. It is a web-standard `(Request) => Response` handler.
   - Model `claude-haiku-5-5`, effort `low`, adaptive thinking (the model's default), up to 3,000 output tokens.
   - The instructions and site data go in the system prompt and are cached, so repeat questions within five minutes read the data at a tenth of the price.
@@ -12,6 +12,16 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
   - Limits: 20 questions per visitor per 10 minutes and 600 an hour overall, per server instance. Requests from other websites are refused unless listed.
   - A refusal or an API error becomes a short message in the chat; nothing is retried automatically except once by the SDK.
 - **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only.
+
+## Private access
+
+Eddy is private, so only people with the unlock link can use it:
+
+- **Unlock a browser:** open the site once with `?eddy=<access code>` added, for example `https://oregonfishforecast.com/?eddy=<code>`. The code is saved in that browser (each site address keeps its own copy), removed from the address bar, and Eddy appears. `?eddy=off` locks the browser again.
+- **Everyone else** sees no chat, and their browser never contacts Eddy (`assets/ask-config.js` sets `private: true`).
+- **The endpoint checks the code** on every request (`x-eddy-key` header) and answers 401 before reading the question, loading data or calling Claude, so a stranger or a bot costs nothing.
+- **Changing the code:** add a secret `EDDY_ACCESS_CODE` in the Netlify project's environment variables and redeploy. It replaces the default, whose SHA-256 is in `netlify/functions/eddy.mjs` (the repository holds only that hash, never the code). Browsers holding the old code forget it on their next visit.
+- The local server (`dev.mjs`) has no code, so the chat works there without one.
 
 ## Run it locally
 
@@ -28,7 +38,7 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 ## Tests
 
 - `npm test`: offline tests with a stand-in client (no API calls).
-- `node try.mjs`: asks Haiku 5.5 ten sample questions in nine conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request and "Who are you?") and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
+- `node try.mjs`: asks Haiku 5.5 twelve sample questions in eleven conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request, "Who are you?", Lava Lake (a new guide page) and Malheur Reservoir (ODFW zone report only)) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
 ## Cost

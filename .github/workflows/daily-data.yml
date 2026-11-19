@@ -11,6 +11,7 @@ on:
       - 'scripts/fetch-conditions.mjs'
       - 'scripts/fetch-weather.mjs'
       - 'scripts/fetch-reports.mjs'
+      - 'scripts/fetch-odfw-reports.mjs'
       - 'scripts/check-data.mjs'
       - '.github/workflows/daily-data.yml'
 
@@ -54,12 +55,17 @@ jobs:
         run: |
           npm install --no-save --no-package-lock --no-audit --no-fund @anthropic-ai/sdk@0.135.0
           node scripts/fetch-reports.mjs
+      # ODFW's weekly zone reports, in ODFW's own words, for Eddy. No API key. A failure keeps yesterday's text.
+      - name: Read ODFW weekly fishing reports by zone
+        continue-on-error: true
+        timeout-minutes: 5
+        run: node scripts/fetch-odfw-reports.mjs
       - name: Verify Oregon data relationships
         run: node scripts/check-data.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |
-          files="data/counts.js data/stocking.js data/conditions.js data/weather.js data/auto-reports.js"
+          files="data/counts.js data/stocking.js data/conditions.js data/weather.js data/auto-reports.js data/odfw-reports.js"
           if git diff --quiet -- $files; then echo "Data unchanged."; exit 0; fi
           git config user.name "daily-data bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

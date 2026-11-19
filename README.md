@@ -23,6 +23,7 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
 ## Included
 
 - All 24 supplied Oregon records, preserving actual species, methods, access, alerts, report dates, coverage, sources and October 12 editorial review dates.
+- Two waters added Nov 18, 2026: **Lava Lake** (Big Lava Lake at Lava Lake Campground) and the **Deschutes River at Tumalo State Park**, researched from ODFW's 2026 regulations and Bend-area guides, the Forest Service and Oregon State Parks. Neither has a dated report or live gauge yet, so both show as not scored. ODFW lists Big Lava Lake as "LAVA LK, B" in its stocking schedule.
 - Hash navigation for directory, every water and approach/sources; search by water/reach/region/species; river/lake filters; result counts and resettable empty state.
 - Editable Portland origin saved only in this browser. All 22 driving links use the exact documented map query. No estimated drive durations and no routes to the two unverified gauge locations.
 - Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
@@ -116,6 +117,14 @@ Open `#/stocking` from the main navigation.
 - **ODFW regulation updates:** reads ODFW's in-season regulation updates page and has Claude list the rule changes in effect or starting within 14 days for each Oregon guide water. They show under **Before you go** as "ODFW regulation update" notices. They never withhold a score; an active closure or restriction adds a score note.
 - **Cost:** Claude only runs when a source changes: a new PDF address, or a new hash of the ODFW page text. Both are stored in the file, so most days make no Claude call and a normal week makes about two.
 - **Failures:** a source that fails keeps its previous data and is tried again the next day. The step is allowed to fail without stopping the daily data commit. It needs the `ANTHROPIC_API_KEY` repository secret; without it the file is left alone. Pull requests only check that the script parses.
+
+## ODFW weekly zone reports
+
+`scripts/fetch-odfw-reports.mjs` runs every morning in the daily data workflow and writes `data/odfw-reports.js`: ODFW's weekly fishing report for each of its eight zones (Northwest, Southwest, Willamette, Central, Northeast, Southeast, Columbia and Marine), in ODFW's own words. No API key or AI is involved.
+
+- Most report pages carry no date, so each zone records `changed_on`, the first day its exact text was read, plus any date written in the report.
+- A zone that fails keeps its previous text, and the step is allowed to fail without stopping the daily data commit.
+- Only Eddy reads this file; the pages do not show it yet. It lets Eddy speak to waters outside the guide.
 
 ## Fishing scores
 

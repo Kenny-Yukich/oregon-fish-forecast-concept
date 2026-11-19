@@ -1781,6 +1781,143 @@
         ]
       },
       "readings": null
+    },
+    {
+      "id": "deschutes-river-tumalo",
+      "name": "Deschutes River",
+      "reach": "Tumalo State Park, below Bend",
+      "kind": "river",
+      "region": "Central Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "deschutes-river-tumalo",
+        "target_species": [
+          "Redband trout",
+          "Brown trout"
+        ],
+        "access_summary": "Tumalo State Park: day-use bank and river trail",
+        "access_detail": "Oregon State Parks says the day-use area sits on the Deschutes, and the Deschutes River Trail runs 1.4 miles south to Riley Ranch Nature Reserve and a mile north across the O.B. Riley Road bridge, with many places to cast from the bank and slow sections for wading. A day-use parking permit is required. State Parks warns of swift currents and hidden obstructions.",
+        "access_point": {
+          "label": "Tumalo State Park day-use area",
+          "map_query": "Tumalo State Park Day Use Area Bend Oregon"
+        },
+        "seasonal_summary": "Open all year for trout; flows swing with irrigation",
+        "seasonal_detail": "The 2026 regulations keep the Deschutes from Lake Billy Chinook to Benham Falls open all year for trout. Canals in Bend take much of the river during irrigation season, so flows below Bend drop in spring and rise in fall.",
+        "methods": "Central Zone streams are limited to artificial flies and lures, and this section has no bait exception. State Parks notes anglers casting for rainbow trout at dawn and dusk.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the river at Tumalo was found. ODFW's Bend-area guide describes excellent year-round trout fishing on the Deschutes from Little Lava Lake to Lake Billy Chinook.",
+          "reported_on": null,
+          "checked_on": "2026-11-18",
+          "coverage": "A standing ODFW guide entry for the whole upper and middle river, not a dated catch report at Tumalo.",
+          "url": "https://myodfw.com/sites/default/files/2026-04/50_in_60_bend.pdf"
+        },
+        "alerts": [
+          {
+            "summary": "2026 regulations: no harvest of rainbow trout over 20 inches from Lake Billy Chinook to Benham Falls; artificial flies and lures only.",
+            "status": "advisory",
+            "checked_on": "2026-11-18",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "River level, wading safety and State Parks seasonal closures (the A Loop campground and the day-use restroom) need a trip-day check. No live gauge is connected for this reach.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://stateparks.oregon.gov/index.cfm?do=park.profile&parkId=34"
+          }
+        ],
+        "checked_on": "2026-11-18",
+        "sources": [
+          {
+            "label": "ODFW: 50 places to fish within 60 minutes of Bend",
+            "url": "https://myodfw.com/sites/default/files/2026-04/50_in_60_bend.pdf"
+          },
+          {
+            "label": "Oregon State Parks: Tumalo State Park",
+            "url": "https://stateparks.oregon.gov/index.cfm?do=park.profile&parkId=34"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "lava-lake-campground",
+      "name": "Lava Lake",
+      "reach": "Big Lava Lake at Lava Lake Campground",
+      "kind": "lake",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "lava-lake-campground",
+        "target_species": [
+          "Rainbow trout"
+        ],
+        "access_summary": "Lava Lake Campground: boating site with docks",
+        "access_detail": "The Forest Service Lava Lake Boating Site, inside Lava Lake Campground off Cascade Lakes Highway (Forest Road 46) and Forest Road 4600-500, has docks and no fee. ODFW notes boat rentals and services at Lava Lake Lodge. The campground runs from about mid-May to mid-October. This is Big Lava Lake; Little Lava Lake, the Deschutes headwaters, is a separate lake nearby.",
+        "access_point": {
+          "label": "Lava Lake Campground and Boating Site",
+          "map_query": "Lava Lake Campground Forest Road 4600-500 Oregon"
+        },
+        "seasonal_summary": "Lake open all year; access is seasonal",
+        "seasonal_detail": "The 2026 regulations keep Central Zone lakes open all year for trout, and Lava Lake has no exception. Getting there is seasonal: the Forest Service campground is open from about mid-May to mid-October, and ODFW's stocking schedule plans its releases for June and July.",
+        "methods": "Boat access from the campground docks reaches the most water; ODFW's Bend guide notes boat rentals at Lava Lake Lodge. No current method report is documented for this lake.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Lava Lake was found. ODFW's Bend-area guide describes superb trout fishing with views of Mt. Bachelor and South Sister.",
+          "reported_on": null,
+          "checked_on": "2026-11-18",
+          "coverage": "A standing ODFW guide entry, not a dated catch report.",
+          "url": "https://myodfw.com/sites/default/files/2026-04/50_in_60_bend.pdf"
+        },
+        "alerts": [
+          {
+            "summary": "The Forest Service lists Lava Lake Campground and its boating site as closed for the season (closed Oct 18, 2026; tentatively reopens May 15). The lake itself stays open to fishing under the 2026 regulations.",
+            "status": "advisory",
+            "checked_on": "2026-11-18",
+            "url": "https://www.fs.usda.gov/r06/deschutes/recreation/lava-lake-campground"
+          },
+          {
+            "summary": "Winter road access on Cascade Lakes Highway, snow and ice need a trip-day check.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.fs.usda.gov/r06/deschutes/recreation/lava-lake-boating-site"
+          }
+        ],
+        "checked_on": "2026-11-18",
+        "sources": [
+          {
+            "label": "ODFW: 50 places to fish within 60 minutes of Bend",
+            "url": "https://myodfw.com/sites/default/files/2026-04/50_in_60_bend.pdf"
+          },
+          {
+            "label": "ODFW: Easy angling in the Central Zone",
+            "url": "https://myodfw.com/articles/easy-angling-central-zone"
+          },
+          {
+            "label": "Forest Service: Lava Lake Campground",
+            "url": "https://www.fs.usda.gov/r06/deschutes/recreation/lava-lake-campground"
+          },
+          {
+            "label": "Forest Service: Lava Lake Boating Site",
+            "url": "https://www.fs.usda.gov/r06/deschutes/recreation/lava-lake-boating-site"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
     }
   ]
 }
