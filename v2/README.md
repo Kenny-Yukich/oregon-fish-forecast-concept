@@ -17,6 +17,10 @@ The homepage reads the shared data files (`data/*.js`) and score formula (`asset
 - **Water pages:** `#/water/<id>` with report, notices, this morning's gauge reading against its 7-day median, dam counts, stocking, season and methods, score breakdown, access with editable driving origin, and sources.
 - Map and full stocking schedule link to the classic site at `classic/`.
 
+## After changing CSS or JavaScript
+
+Run `node scripts/stamp-assets.mjs`. It stamps each stylesheet and script address in `index.html` and `classic/index.html` with a hash of the file's contents (`v2/assets/app.js?v=…`). Browsers keep these files for a while, so without a new stamp a returning visitor can get the new page with an old stylesheet or script. The "Site check" workflow fails a pull request whose stamps are out of date. Files in `data/` are not stamped.
+
 ## Motion and fallbacks
 
 - GSAP 3.12.5 + ScrollTrigger. **Lenis** is the only smooth-scroll engine (Locomotive Scroll is not installed).

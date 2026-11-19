@@ -1,0 +1,31 @@
+name: Site check
+
+# A page must never be paired with a stale stylesheet or script: each address carries a hash of its file
+# (scripts/stamp-assets.mjs). This fails a pull request that changed CSS or JavaScript without restamping.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'classic/index.html'
+      - 'v2/**'
+      - 'assets/**'
+      - 'scripts/stamp-assets.mjs'
+      - '.github/workflows/site-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stamps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check the homepage scripts parse
+        run: node --check v2/assets/app.js && node --check v2/assets/ask.js
+      - name: Check every stylesheet and script address carries its current hash
+        run: node scripts/stamp-assets.mjs --check

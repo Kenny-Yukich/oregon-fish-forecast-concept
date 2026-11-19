@@ -110,6 +110,9 @@ main:focus, [tabindex="-1"]:focus { outline: none; }
 .hero-search input { flex: 1; min-width: 0; min-height: 48px; border: 0; background: transparent; padding: 0 6px; font-size: 18px; }
 .hero-search input::placeholder { color: var(--muted); opacity: 1; }
 .hero-search input:focus, .hero-search input:focus-visible { outline: none; }
+/* iOS draws its own search field, with a magnifier inside, unless the native look is switched off. */
+.hero-search input, .search input { -webkit-appearance: none; appearance: none; }
+.hero-search input::-webkit-search-decoration, .search input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
 .hero-search input::-webkit-search-cancel-button { display: none; }
 .hero-search-btn { flex: none; min-height: 50px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; font-size: 16px; cursor: pointer; transition: background-color .25s; }
 .hero-search-btn:hover { background: var(--ink-deep); }
