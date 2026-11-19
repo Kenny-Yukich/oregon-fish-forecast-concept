@@ -13,5 +13,7 @@ window.ORFF_STOCKING_MATCH = {
   "mckenzie-river-leaburg": ["below Leaburg Dam"],
   "fall-river-above-falls": ["Fall River"],
   // ODFW lists Big Lava Lake as "LAVA LK, B", shown as "Lava Lake (B)"; "Lava Lake (L)" is Little Lava Lake.
-  "lava-lake-campground": ["Lava Lake (B"]
+  "lava-lake-campground": ["Lava Lake (B"],
+  "howard-prairie-reservoir": ["Howard Prairie"],
+  "fourmile-lake-campground": ["Fourmile Lake"]
 };

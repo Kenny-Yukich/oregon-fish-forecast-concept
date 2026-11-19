@@ -273,6 +273,13 @@
       '<ol class="principles">' + p.map(([h, t], i) => '<li data-reveal><span class="n">' + pad(i + 1) + '</span><h3>' + h + '</h3><p>' + t + '</p></li>').join('') + '</ol></div></section>';
   }
 
+  // A lake or reservoir added to the guide after anglers' posts about it were filed as "not in the guide yet"
+  // (data/angler.js keeps them for 30 days). Rivers are left alone: a post may be about another section.
+  function guideLakeFor(name) {
+    const n = String(name || '').toLowerCase();
+    return waters.find(w => w.kind !== 'river' && [w.name, ...(window.ORFF_STOCKING_MATCH?.[w.id] || [])]
+      .some(x => x.length > 4 && !/[()]/.test(x) && n.includes(x.toLowerCase()))) || null;
+  }
   function anglers() {
     const a = window.ORFF_ANGLER;
     if (!a) return '';
@@ -286,7 +293,7 @@
       '<p class="lede" data-reveal>We read ' + num(r.facebook_posts || 0) + ' posts from public Oregon fishing groups on Facebook and ' + num(r.tiktok_videos || 0) + ' TikTok videos from the last 30 days. Here is what mentioned a real catch or condition. Word of mouth, not verified.</p></div>' +
       '<div class="word-grid"><div><h3 class="word-h">In the guide</h3><ul class="word-list">' + inGuide.map(({w, posts}) =>
         '<li data-reveal><a href="#/water/' + esc(w.id) + '"><strong>' + esc(w.name) + '</strong><span class="muted"> ' + esc(w.reach) + '</span></a><p>' + esc(lead(posts).note) + (lead(posts).where ? ' <span class="muted">(' + esc(lead(posts).where) + ')</span>' : '') + '</p><span class="a-meta">' + fmtDate(lead(posts).date) + '</span></li>').join('') + '</ul></div>' +
-      '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).slice().sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
+      '<div><h3 class="word-h">Also busy this month</h3><p class="small">Waters anglers talked about that are not in the guide yet.</p><ol class="word-list elsewhere">' + (a.elsewhere || []).filter(e => !guideLakeFor(e.water)).sort((x, y) => y.posts - x.posts || y.latest.localeCompare(x.latest)).map(e =>
         '<li data-reveal><strong>' + esc(e.water) + '</strong><p>' + esc(e.note) + '</p><span class="a-meta">' + fmtDate(e.latest) + '</span></li>').join('') + '</ol></div></div>' +
       '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
   }

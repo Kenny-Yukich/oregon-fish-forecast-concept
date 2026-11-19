@@ -245,8 +245,14 @@ function odfwReportsBlock(g, today) {
 function elsewhereBlock(g) {
   const list = g.ORFF_ANGLER?.elsewhere || [];
   if (!list.length) return '';
+  // Lakes added to the guide after their posts were filed here (posts stay 30 days) get a pointer to the new page.
+  const lakes = g.ORFF_DATA.waters.filter(w => w.kind !== 'river');
+  const pageFor = name => {
+    const n = String(name || '').toLowerCase();
+    return lakes.find(w => [w.name, ...(g.ORFF_STOCKING_MATCH?.[w.id] || [])].some(x => x.length > 4 && !/[()]/.test(x) && n.includes(x.toLowerCase())));
+  };
   return ['## Not in the guide yet (other Oregon waters anglers posted about in the last 30 days; word of mouth, not verified)',
-    ...list.map(e => '- ' + e.water + ' (' + e.posts + (e.posts === 1 ? ' post' : ' posts') + ', latest ' + e.latest + '): ' + clean(e.note))].join('\n');
+    ...list.map(e => { const w = pageFor(e.water); return '- ' + e.water + (w ? ' (now has a guide page: #/water/' + w.id + ')' : '') + ' (' + e.posts + (e.posts === 1 ? ' post' : ' posts') + ', latest ' + e.latest + '): ' + clean(e.note); })].join('\n');
 }
 
 // The full text the assistant reads, plus what the endpoint needs to validate requests.
