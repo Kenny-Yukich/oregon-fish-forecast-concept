@@ -9,7 +9,8 @@
      ?eddy_paid=<checkout id>; the pass is saved in this browser, and a personal link (?eddy_pass=<pass>) opens
      Eddy on another device.
    - Free visitors: a few questions a day, then an offer of a pass. Only when passes are on sale:
-     ask-config.js `sell: true`, or this browser opened once with ?eddy_shop=1 (to test before going live).
+     ask-config.js `sell: true` and the endpoint reports a live Stripe key (not test mode), or this browser opened
+     once with ?eddy_shop=1 (a test shopper, who also sees test mode).
    Without any of these the page never contacts Eddy. ?eddy=off forgets the code, the pass and the test flag.
 
    Water alerts (server/alerts.mjs): the owner and pass holders follow waters, from the Alerts view in the panel or the
@@ -45,7 +46,8 @@
   if (shopFlag != null) ls.set(SHOP, shopFlag === '0' ? null : '1');
 
   let code = ls.get(CODE), pass = ls.get(PASS);
-  const selling = !!config.sell || ls.get(SHOP) === '1';
+  const shopTest = ls.get(SHOP) === '1';
+  const selling = !!config.sell || shopTest;
   if (config.private && !code && !pass && !selling && !paidSession) return;
   const proof = () => ({...(code ? {'x-eddy-key': code} : {}), ...(pass ? {'x-eddy-pass': pass} : {})});
   const setPass = value => { if (value && value !== pass) { pass = value; ls.set(PASS, value); } };
@@ -331,7 +333,7 @@
       const on = !!alerts?.waters.some(w => w.key === id);
       slot.innerHTML = '<button type="button" class="follow-btn' + (on ? ' on' : '') + '" aria-pressed="' + on + '">' + icon(on ? 'check-circle-linear' : 'calendar-linear') + '<span>' + (on ? 'Following: alerts on' : 'Follow this water') + '</span></button>';
       if (!alerts) loadAlerts().then(() => { if (alerts.waters.some(w => w.key === id)) paintFollow(); }, () => {});
-    } else if (selling) {
+    } else if (selling && shown) {
       slot.innerHTML = '<button type="button" class="follow-btn" data-offer>' + icon('calendar-linear') + '<span>Get alerts for this water</span></button>';
     } else slot.innerHTML = '';
   }
@@ -547,14 +549,20 @@
       }
       return;
     }
+    // The public sees Eddy only when passes are on sale with a live Stripe key, never a test-mode checkout.
+    // Test shoppers (?eddy_shop=1) see it either way.
+    const onSale = s => shopTest || !!(s?.ok && s.billing && !s.test_mode);
     if (code || pass) {
       // Eddy appears for the owner or a pass holder only once the endpoint confirms, so a stale code shows nothing.
-      const s = await fetchStatus();
-      if (s?.ok && (s.access !== 'free' || selling)) show();
-      else if (selling) show();
+      let s = await fetchStatus();
+      if (!s && selling) s = await fetchStatus();   // a refused code was forgotten: ask again as a visitor
+      if (s?.ok && (s.access !== 'free' || (selling && onSale(s)))) show();
     } else if (selling) {
-      // Selling: the button shows for everyone; the endpoint is first contacted when the panel opens.
-      show();
+      // Selling: one status check (it never calls Claude), remembered for this tab for ten minutes.
+      const LIVE = 'orff-eddy.onsale', seen = (ss.get(LIVE) || '').split('|');
+      let ok = Date.now() - Number(seen[1] || 0) < 600000 ? seen[0] === '1' : null;
+      if (ok === null || shopTest) { ok = onSale(await fetchStatus()); ss.set(LIVE, (ok ? '1' : '0') + '|' + Date.now()); }
+      if (ok) show();
     }
     if (cancelled != null && shown) { open(); bubble('guide', '<p>Checkout was cancelled, and you weren’t charged.</p>'); }
     paintFollow();
