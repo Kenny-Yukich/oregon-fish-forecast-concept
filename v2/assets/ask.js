@@ -23,7 +23,10 @@
   'use strict';
   const config = window.ORFF_ASK || {};
   const endpoint = config.endpoint;
-  if (!endpoint) return;
+  // The homepage holds room for the "Ask Eddy" card from its first frame, so the page does not jump when it arrives.
+  // A visitor who will not see Eddy gets that room back.
+  const noEddy = () => document.documentElement.classList.add('no-eddy');
+  if (!endpoint) { noEddy(); return; }
   const billingBase = config.billing || endpoint.replace(/\/api\/ask$/, '/api/eddy');
   const CODE = 'orff-eddy.code', PASS = 'orff-eddy.pass', SHOP = 'orff-eddy.shop', PENDING = 'orff-eddy.pending';
   const ls = {
@@ -51,7 +54,7 @@
   let code = ls.get(CODE), pass = ls.get(PASS);
   const shopTest = ls.get(SHOP) === '1';
   const selling = !!config.sell || shopTest;
-  if (config.private && !code && !pass && !selling && !paidSession) return;
+  if (config.private && !code && !pass && !selling && !paidSession) { noEddy(); return; }
   const proof = () => ({...(code ? {'x-eddy-key': code} : {}), ...(pass ? {'x-eddy-pass': pass} : {})});
   const setPass = value => { if (value && value !== pass) { pass = value; ls.set(PASS, value); } };
 
@@ -68,6 +71,8 @@
   const pageWater = () => { const m = location.hash.match(/^#\/water\/([^?/]+)/); return m && byId.has(m[1]) ? m[1] : null; };
   const small = matchMedia('(max-width: 640px)');
   const pageAddress = () => location.origin + location.pathname;
+  // A sample question for first-time visitors, on the homepage card and first in the panel.
+  const SAMPLE = 'Where can I bank fish near Bend this weekend?';
 
   /* ---------- Answer formatting: paragraphs, "- " bullets, **bold** and safe links only ---------- */
   function linkHTML(label, href) {
@@ -352,8 +357,9 @@
     if (!slot.firstChild) slot.innerHTML =
       '<div class="eddy-card"><div class="eddy-card-head">' + icon('compass-linear') + '<div><h2>Ask Eddy</h2><p>AI fishing assistant</p></div></div>' +
       '<form novalidate><label class="sr-only" for="hero-eddy-q">Ask Eddy a question</label>' +
-      '<input id="hero-eddy-q" type="text" maxlength="' + MAX + '" placeholder="Where should I fish this weekend?" autocomplete="off" enterkeyhint="send">' +
-      '<button type="submit" aria-label="Ask Eddy">' + icon('arrow-right-linear') + '</button></form></div>';
+      '<input id="hero-eddy-q" type="text" maxlength="' + MAX + '" placeholder="Ask about any Oregon water" autocomplete="off" enterkeyhint="send">' +
+      '<button type="submit" aria-label="Ask Eddy">' + icon('arrow-right-linear') + '</button></form>' +
+      '<p class="eddy-try"><span>Try</span><button type="button" class="ask-chip" data-q="' + esc(SAMPLE) + '">' + esc(SAMPLE) + '</button></p></div>';
     // One way to reach Eddy at a time: the floating button waits until the card has scrolled away.
     if ('IntersectionObserver' in window) {
       heroWatch = new IntersectionObserver(([e]) => launch.classList.toggle('tucked', e.isIntersecting));
@@ -361,6 +367,13 @@
     }
   }
   document.addEventListener('orff:render', paintHero);
+  // The sample question on the homepage card asks it straight away.
+  document.addEventListener('click', e => {
+    const chip = e.target.closest('#hero-eddy .ask-chip');
+    if (!chip) return;
+    open();
+    ask(chip.dataset.q);
+  });
   document.addEventListener('submit', e => {
     const card = e.target.closest('#hero-eddy form');
     if (!card) return;
@@ -405,6 +418,7 @@
     const here = byId.get(pageWater());
     const qs = [
       here && 'How is ' + here.name + ' (' + here.reach + ') looking right now?',
+      !here && SAMPLE,
       'Where is the best trout fishing this week?',
       'Are coho still moving past Bonneville?',
       'Which waters have stocking coming up?',
@@ -535,6 +549,19 @@
   function show() { if (!shown) { shown = true; document.body.append(launch, panel); paintHero(); } }
 
   launch.addEventListener('click', open);
+  // On a phone the button steps aside while the visitor scrolls down through the page, so it never sits on what they
+  // are reading, and comes back when they scroll up or reach the end (the footer leaves room for it there).
+  let lastY = scrollY, moving = false;
+  addEventListener('scroll', () => {
+    if (moving) return;
+    moving = true;
+    requestAnimationFrame(() => {
+      const y = scrollY, end = y + innerHeight >= document.documentElement.scrollHeight - 160;
+      if (!small.matches || end || y < 200 || y < lastY - 4) launch.classList.remove('away');
+      else if (y > lastY + 4) launch.classList.add('away');
+      lastY = y; moving = false;
+    });
+  }, {passive: true});
   panel.querySelector('.ask-close').addEventListener('click', () => close());
   reset.addEventListener('click', () => { busy?.abort(); history = []; store.save(history); renderAll(); input.focus(); });
   form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
@@ -597,6 +624,7 @@
       if (ok === null || shopTest) { ok = onSale(await fetchStatus()); ss.set(LIVE, (ok ? '1' : '0') + '|' + Date.now()); }
       if (ok) show();
     }
+    if (!shown) noEddy();
     if (cancelled != null && shown) { open(); bubble('guide', '<p>Checkout was cancelled, and you weren’t charged.</p>'); }
     paintFollow();
   })();
