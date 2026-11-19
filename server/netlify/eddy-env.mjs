@@ -17,14 +17,16 @@ let eddy = null;
 
 // The settings eddyFromEnv reads, from a getter for the project's environment variables.
 export function netlifySettings(get, {launched = LAUNCHED} = {}) {
-  const live = /^(sk|rk)_live_/.test(get('STRIPE_SECRET_KEY') || '');
+  // The Stripe key, also under the name STRIP_SECRET_KEY (the Netlify project once had it saved that way).
+  const stripeKey = get('STRIPE_SECRET_KEY') || get('STRIP_SECRET_KEY');
+  const live = /^(sk|rk)_live_/.test(stripeKey || '');
   return {
     ANTHROPIC_API_KEY: get('ANTHROPIC_API_KEY'),
     ORFF_SITE_URL: get('ORFF_SITE_URL') || 'https://kenny-yukich.github.io/oregon-fish-forecast-concept/',
     ORFF_ALLOWED_ORIGINS: get('ORFF_ALLOWED_ORIGINS') || 'https://oregonfishforecast.com,https://www.oregonfishforecast.com,https://kenny-yukich.github.io',
     EDDY_ACCESS_CODE: get('EDDY_ACCESS_CODE'),
     EDDY_ACCESS_HASH: get('EDDY_ACCESS_HASH') || DEFAULT_ACCESS_HASH,
-    STRIPE_SECRET_KEY: get('STRIPE_SECRET_KEY'),
+    STRIPE_SECRET_KEY: stripeKey,
     STRIPE_PRICE_ID: get('STRIPE_PRICE_ID'),
     STRIPE_PRICE_ID_YEARLY: get('STRIPE_PRICE_ID_YEARLY'),
     EDDY_PASS_SECRET: get('EDDY_PASS_SECRET'),
