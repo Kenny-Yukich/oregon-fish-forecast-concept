@@ -14,16 +14,23 @@
 import {createHash, createHmac, timingSafeEqual} from 'node:crypto';
 
 export const PLAN = {
-  name: 'Eddy monthly pass',
-  price: '$4.99/month',
-  amountCents: 499,
+  name: 'Eddy pass',
+  price: '$4.99/month',          // the headline price; the yearly option is below
   currency: 'usd',
-  interval: 'month',
   paidPerDay: 50,
   freePerDay: 3,
-  freeSiteWidePerDay: 300
+  freeSiteWidePerDay: 300,
+  // What a guest can buy. Both give the same pass; only the billing period differs.
+  options: {
+    month: {name: 'Eddy monthly pass', price: '$4.99/month', amountCents: 499, interval: 'month'},
+    year: {name: 'Eddy yearly pass', price: '$39.99/year', amountCents: 3999, interval: 'year', note: 'save 33%'}
+  }
 };
+export const planOptions = plan => Object.entries(plan.options).map(([id, o]) => ({id, name: o.name, price: o.price, ...(o.note ? {note: o.note} : {})}));
 const GRACE_SECONDS = 3 * 24 * 3600;   // a pass stays good this long past the paid period while renewal settles
+// A pass is checked with Stripe at least this often, even on a yearly plan, so a refunded or cancelled
+// subscription stops working within a month.
+const RECHECK_SECONDS = 31 * 24 * 3600;
 const LIVE = new Set(['active', 'trialing']);
 
 export const sha256 = text => createHash('sha256').update(String(text)).digest('hex');
@@ -89,7 +96,8 @@ function form(obj, prefix = '', out = new URLSearchParams()) {
 }
 export class StripeError extends Error { constructor(status, message) { super(message); this.status = status; } }
 
-export function stripeClient(secretKey, {fetchImpl = (...a) => fetch(...a), plan = PLAN, priceId = null} = {}) {
+// priceIds: {month, year}, Stripe prices to sell instead of the built-in ones (optional).
+export function stripeClient(secretKey, {fetchImpl = (...a) => fetch(...a), plan = PLAN, priceIds = {}} = {}) {
   async function call(method, path, params) {
     const url = 'https://api.stripe.com/v1/' + path + (method === 'GET' && params ? '?' + form(params) : '');
     const res = await fetchImpl(url, {
@@ -103,19 +111,23 @@ export function stripeClient(secretKey, {fetchImpl = (...a) => fetch(...a), plan
   }
   return {
     testMode: secretKey.startsWith('sk_test_') || secretKey.startsWith('rk_test_'),
-    createCheckout: ({successUrl, cancelUrl}) => call('POST', 'checkout/sessions', {
-      mode: 'subscription',
-      line_items: [priceId ? {price: priceId, quantity: 1} : {quantity: 1, price_data: {
-        currency: plan.currency, unit_amount: plan.amountCents, recurring: {interval: plan.interval},
-        product_data: {name: plan.name, description: 'Ask Eddy, the AI fishing assistant on Oregon Fish Forecast. Up to ' + plan.paidPerDay + ' questions a day. Cancel anytime.'}
-      }}],
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      allow_promotion_codes: true,
-      metadata: {product: 'eddy'}
-    }),
+    createCheckout: ({successUrl, cancelUrl, option = 'month'}) => {
+      const o = plan.options[option] || plan.options.month, priceId = priceIds[option] || null;
+      return call('POST', 'checkout/sessions', {
+        mode: 'subscription',
+        line_items: [priceId ? {price: priceId, quantity: 1} : {quantity: 1, price_data: {
+          currency: plan.currency, unit_amount: o.amountCents, recurring: {interval: o.interval},
+          product_data: {name: o.name, description: 'Ask Eddy, the AI fishing assistant on Oregon Fish Forecast, up to ' + plan.paidPerDay + ' questions a day, and get email alerts for the waters you follow. Cancel anytime.'}
+        }}],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        allow_promotion_codes: true,
+        metadata: {product: 'eddy', option}
+      });
+    },
     getCheckout: id => call('GET', 'checkout/sessions/' + encodeURIComponent(id), {expand: ['subscription']}),
     getSubscription: id => call('GET', 'subscriptions/' + encodeURIComponent(id)),
+    getCustomer: id => call('GET', 'customers/' + encodeURIComponent(id)),
     createPortal: ({customer, returnUrl}) => call('POST', 'billing_portal/sessions', {customer, return_url: returnUrl})
   };
 }
@@ -129,7 +141,8 @@ export function createAccess({ownerHash = null, stripe = null, passSecret = null
   const day = () => pacificDay(now());
   const key = (kind, id) => day() + '/' + kind + '/' + id;
 
-  const passFor = sub => signPass({v: 1, sub: sub.id, cus: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id, exp: periodEnd(sub) + GRACE_SECONDS}, passSecret);
+  const passFor = sub => signPass({v: 1, sub: sub.id, cus: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
+    exp: Math.min(periodEnd(sub), Math.floor(now() / 1000) + RECHECK_SECONDS) + GRACE_SECONDS}, passSecret);
 
   async function check(request) {
     if (ownerHash && matchesHash(request.headers.get('x-eddy-key'), ownerHash)) return {kind: 'owner', billing, limit: null, remaining: null};
@@ -146,7 +159,9 @@ export function createAccess({ownerHash = null, stripe = null, passSecret = null
       }
       if (live) {
         const used = await usage.get(key('paid', p.sub));
-        return {kind: 'paid', billing, id: p.sub, customer: p.cus, limit: plan.paidPerDay, used, remaining: Math.max(0, plan.paidPerDay - used), pass};
+        // paidThrough: when this pass next needs a Stripe check (alerts use it the same way).
+        const paidThrough = (pass ? readPass(pass, passSecret).exp : p.exp) - GRACE_SECONDS;
+        return {kind: 'paid', billing, id: p.sub, customer: p.cus, limit: plan.paidPerDay, used, remaining: Math.max(0, plan.paidPerDay - used), pass, paidThrough};
       }
       expired = true;
     }
@@ -162,11 +177,11 @@ export function createAccess({ownerHash = null, stripe = null, passSecret = null
     else if (grant.kind === 'free' && grant.id) await Promise.all([usage.add(key('free', grant.id)), usage.add(key('free', 'all'))]);
   }
 
-  return {billing, plan, check, spend, passFor, testMode: !!stripe?.testMode};
+  return {billing, plan, check, spend, passFor, testMode: !!stripe?.testMode, LIVE, periodEnd};
 }
 
 // A fixed-window counter per key, in this process (a brake against bots, not an exact quota).
-function windowLimiter(limit, windowMs, now = () => Date.now()) {
+export function windowLimiter(limit, windowMs, now = () => Date.now()) {
   const hits = new Map();
   return key => {
     const t = now(), e = hits.get(key);
@@ -204,7 +219,8 @@ export function createBillingHandler({access, stripe, passSecret, allowedOrigins
     const route = new URL(request.url).pathname.replace(/^.*\/api\/eddy\//, '');
     try {
       if (route === 'checkout') {
-        const session = await stripe.createCheckout({successUrl: page + '?eddy_paid={CHECKOUT_SESSION_ID}', cancelUrl: page + '?eddy_cancel=1'});
+        const option = Object.hasOwn(access.plan.options, body.plan) ? body.plan : 'month';
+        const session = await stripe.createCheckout({successUrl: page + '?eddy_paid={CHECKOUT_SESSION_ID}', cancelUrl: page + '?eddy_cancel=1', option});
         return reply(200, {url: session.url}, headers);
       }
       if (route === 'redeem') {

@@ -15,15 +15,38 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
 
 ## Eddy passes (paid access)
 
-Guests can buy an Eddy pass: **$4.99 a month** through Stripe, up to **50 questions a day**. Visitors without a pass get **3 free questions a day** (and the whole site at most 300 free questions a day), then an offer of a pass. The owner's code stays free and unlimited. The rules live in `access.mjs`; the numbers are in its `PLAN`.
+Guests can buy an Eddy pass through Stripe: **$4.99 a month** or **$39.99 a year** (33% off). A pass gives up to **50 questions a day** and [water alerts](#water-alerts). Visitors without a pass get **3 free questions a day** (and the whole site at most 300 free questions a day), then an offer of a pass. The owner's code stays free and unlimited. The rules live in `access.mjs`; the numbers are in its `PLAN`.
 
-- **Free questions are off until launch.** `netlify/functions/eddy.mjs` has `LAUNCHED = false`, which sets free questions to 0: only the owner and pass holders can ask, and anyone else who opens Eddy is offered a pass straight away. Launch flips `LAUNCHED` to `true` (3 free a day) together with `sell: true`. A Netlify setting `EDDY_FREE_PER_DAY` overrides the number either way.
+- **Free questions are off until launch.** `netlify/eddy-env.mjs` has `LAUNCHED = false`, which sets free questions to 0: only the owner and pass holders can ask, and anyone else who opens Eddy is offered a pass straight away. Launch flips `LAUNCHED` to `true` (3 free a day) together with `sell: true`. A Netlify setting `EDDY_FREE_PER_DAY` overrides the number either way.
 - **Selling is off until you turn it on.** `assets/ask-config.js` has `sell: false`, so the public site looks as before. To test, open the site once with `?eddy_shop=1` in your browser (and `?eddy=off` first, so your owner code does not skip the paywall). `?eddy_shop=0` stops.
 - **Turning it on:** add `STRIPE_SECRET_KEY` to the Netlify project (an `sk_test_...` key while testing, with test card 4242 4242 4242 4242), redeploy, test, then switch to the live `sk_live_...` key and set `sell: true`.
-- **Buying:** "Get Eddy" calls `/api/eddy/checkout`, which opens Stripe Checkout for a monthly subscription. Stripe sends the guest back with `?eddy_paid=<checkout id>`; `/api/eddy/redeem` checks the payment with Stripe and returns a signed pass, saved in the browser. The welcome message offers a personal link (`?eddy_pass=<pass>`) to use Eddy on other devices.
-- **Renewal and cancelling:** a pass carries its paid-through date. After that, Eddy asks Stripe whether the subscription is still active and quietly renews the pass, or treats the guest as a free visitor once it has ended. "Manage subscription" opens Stripe's customer portal (`/api/eddy/portal`); turn the portal on once in the Stripe dashboard (Settings, Billing, Customer portal).
+- **Buying:** the offer shows both prices. Each button calls `/api/eddy/checkout` with `plan: "month"` or `"year"`, which opens Stripe Checkout for that subscription. Stripe sends the guest back with `?eddy_paid=<checkout id>`; `/api/eddy/redeem` checks the payment with Stripe and returns a signed pass, saved in the browser. The welcome message offers a personal link (`?eddy_pass=<pass>`) to use Eddy on other devices.
+- **Renewal and cancelling:** a pass carries its paid-through date, or a date a month out on a yearly plan, so a refunded yearly pass stops within a month. After that, Eddy asks Stripe whether the subscription is still active and quietly renews the pass, or treats the guest as a free visitor once it has ended. "Manage subscription" opens Stripe's customer portal (`/api/eddy/portal`); turn the portal on once in the Stripe dashboard (Settings, Billing, Customer portal).
 - **What is stored:** nothing about guests except daily question counts, in the `eddy-usage` Netlify Blobs store, keyed by subscription or by a hash of the connection's address. Stripe holds the customer and subscription.
-- **Settings:** `STRIPE_SECRET_KEY` (required to sell), `STRIPE_PRICE_ID` (optional, sell an existing Stripe price instead of the built-in one), `EDDY_PASS_SECRET` (optional, signs passes; defaults to a secret derived from the Stripe key, so changing the Stripe key signs guests out until their next visit renews them).
+- **Settings:** `STRIPE_SECRET_KEY` (required to sell), `STRIPE_PRICE_ID` and `STRIPE_PRICE_ID_YEARLY` (optional, sell existing Stripe prices instead of the built-in ones), `EDDY_PASS_SECRET` (optional, signs passes; defaults to a secret derived from the Stripe key, so changing the Stripe key signs guests out until their next visit renews them).
+
+## Water alerts
+
+Pass holders (and the owner) follow up to 20 waters and get **one email a morning** when something new happens on them. Nothing new, no email. The rules live in `alerts.mjs`.
+
+- **What can be followed:** the guide waters, from the "Follow this water" button in a water page's header or the Alerts view in the Eddy panel, and every other water on ODFW's stocking schedule (about 255), from the Alerts view.
+- **What counts as news** (each can be turned off in the Alerts view):
+  - ODFW plans trout for the water this week or next.
+  - The site's score turns Good, or Excellent.
+  - The NOAA river forecast shows a big rise coming (at least 1.5 times the current flow): a blowout heads-up.
+  - A new ODFW in-season rule, or a notice on the water's page.
+  - A National Weather Service alert covering the water.
+  - ODFW's weekly zone report has new text that names the water.
+- **Once only:** each follower keeps a list of what they were sent. Nothing is sent twice, and a fact that comes back (a score that slips under Good and climbs back) is sent again only after it has been gone a week. A newly followed water starts quiet: what is already true is not news. Turning a kind on later does not send old news either.
+- **When:** `netlify/functions/eddy-alerts.mjs` is a Netlify scheduled function at 16:05 UTC (8:05 am Pacific in winter, 9:05 am in summer), after the daily data job has published. It runs only on the published deploy; "Run now" in the Netlify dashboard (Functions, eddy-alerts) runs it by hand. A follower already handled that day is skipped, so a second run sends nothing twice. If sending fails, nothing is marked sent and the next run tries again.
+- **Where it goes:** pass holders get alerts at the email on their Stripe subscription (they change it under Manage subscription). The owner types an address in the Alerts view. "Email me a sample now" sends everything current on the followed waters, three times a day at most.
+- **Stopping:** every email has a "Stop these emails" link and a one-click unsubscribe header. The link opens a page with a button (a mail scanner opening the link stops nothing). Saving alerts again in Eddy turns them back on. Cancelled subscriptions stop getting alerts at their next Stripe check.
+- **What is stored:** one record per follower in the `eddy-alerts` Netlify Blobs store: the subscription id (or "owner"), the email address, the followed waters, the alert kinds and what was already sent.
+- **Email service:** alerts are sent through [Resend](https://resend.com) (free for up to 3,000 emails a month, 100 a day). Without `RESEND_API_KEY` everything works except sending: choices are saved and the Alerts view says emails are not switched on yet.
+  1. Create a Resend account and add the domain `oregonfishforecast.com` (Domains, Add domain). Resend lists a few DNS records; add them where the domain's DNS is managed, then press Verify.
+  2. Create an API key (API Keys, permission "Sending access") and add it to the Eddy Netlify project as `RESEND_API_KEY` (secret, scope Functions). Redeploy.
+  3. Alerts come from `Eddy at Oregon Fish Forecast <alerts@oregonfishforecast.com>`. `EDDY_ALERTS_FROM` changes the sender. Before the domain is verified, Resend only sends to your own Resend login address from `onboarding@resend.dev`, which is enough to try a sample.
+- **Settings:** `RESEND_API_KEY`, `EDDY_ALERTS_FROM` (optional), `ORFF_PUBLIC_URL` (optional, the site the emails link to; default `https://oregonfishforecast.com/`), `EDDY_STOP_URL` (optional, this endpoint's stop page).
 
 ## Private access
 
@@ -32,8 +55,8 @@ Eddy is private, so only people with the unlock link can use it:
 - **Unlock a browser:** open the site once with `?eddy=<access code>` added, for example `https://oregonfishforecast.com/?eddy=<code>`. The code is saved in that browser (each site address keeps its own copy), removed from the address bar, and Eddy appears. `?eddy=off` locks the browser again.
 - **Everyone else** sees no chat, and their browser never contacts Eddy (`assets/ask-config.js` sets `private: true`).
 - **The endpoint checks the code** on every request (`x-eddy-key` header) and answers 401 before reading the question, loading data or calling Claude, so a stranger or a bot costs nothing.
-- **Changing the code:** add a secret `EDDY_ACCESS_CODE` in the Netlify project's environment variables and redeploy. It replaces the default, whose SHA-256 is in `netlify/functions/eddy.mjs` (the repository holds only that hash, never the code). Browsers holding the old code forget it on their next visit.
-- The local server (`dev.mjs`) has no code, so the chat works there without one.
+- **Changing the code:** add a secret `EDDY_ACCESS_CODE` in the Netlify project's environment variables and redeploy. It replaces the default, whose SHA-256 is in `netlify/eddy-env.mjs` (the repository holds only that hash, never the code). Browsers holding the old code forget it on their next visit.
+- The local server (`dev.mjs`) has no code, so the chat and alerts work there without one (alert emails need `RESEND_API_KEY`).
 
 ## Run it locally
 
@@ -49,7 +72,7 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 
 ## Tests
 
-- `npm test`: offline tests with a stand-in client (no API calls).
+- `npm test`: offline tests with stand-ins for Claude, Stripe and the email service (no API calls).
 - `node try.mjs`: asks Haiku 5.5 twelve sample questions in eleven conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request, "Who are you?", Lava Lake (a new guide page) and Malheur Reservoir (ODFW zone report only)) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
@@ -69,7 +92,7 @@ Speed in that check: the first text appeared in about 0.4 seconds when the cache
 
 GitHub Pages only serves files, so Eddy's endpoint runs on its own Netlify project, **oregon-fish-forecast-eddy** (https://oregon-fish-forecast-eddy.netlify.app). It is separate from the oregonfishforecast.com project. The website itself stays on GitHub Pages and calls `https://oregon-fish-forecast-eddy.netlify.app/api/ask`.
 
-- `netlify.toml`, `netlify/functions/eddy.mjs` and `public/` (a placeholder page) are the Netlify project. Deploy with this folder (`server/`) as the base directory.
+- `netlify.toml`, `netlify/eddy-env.mjs` (settings), `netlify/functions/eddy.mjs` (the routes), `netlify/functions/eddy-alerts.mjs` (the morning alert run) and `public/` (a placeholder page) are the Netlify project. Deploy with this folder (`server/`) as the base directory.
 - Production deploys are public so site visitors can reach Eddy; deploy previews need a Netlify team login.
 - `assets/ask-config.js` already points at `https://oregon-fish-forecast-eddy.netlify.app/api/ask`. The chat appears by itself once that address is deployed and has its key.
 - To deploy: in the Netlify project, Project configuration, Build & deploy, link this GitHub repository with branch `main` and base directory `server`, and leave the build command empty. Netlify then redeploys whenever `main` changes.

@@ -279,6 +279,18 @@ export function buildContext(g, today = pacificToday()) {
   return {today, text, waters: waters.map(w => ({id: w.id, name: w.name, reach: w.reach}))};
 }
 
+// Caches the loaded site data itself (for alerts), reloading it when older than ttlMs. A failed reload keeps the last copy.
+export function siteCache(read, {ttlMs = 15 * 60 * 1000, now = () => Date.now()} = {}) {
+  let cached = null, at = 0, pending = null;
+  return async () => {
+    if (cached && now() - at < ttlMs) return cached;
+    pending ||= loadSite(read).then(g => { cached = g; at = now(); return g; })
+      .catch(e => { if (cached) { console.error('Site reload failed, keeping the last copy:', e.message); return cached; } throw e; })
+      .finally(() => { pending = null; });
+    return pending;
+  };
+}
+
 // Caches the built context and rebuilds it when it is older than ttlMs or the Pacific date changes.
 // A failed rebuild keeps serving the last good copy.
 export function contextCache(read, {ttlMs = 15 * 60 * 1000, now = () => Date.now()} = {}) {
