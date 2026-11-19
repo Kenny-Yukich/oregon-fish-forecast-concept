@@ -13,6 +13,17 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
   - A refusal or an API error becomes a short message in the chat; nothing is retried automatically except once by the SDK.
 - **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only.
 
+## Eddy passes (paid access)
+
+Guests can buy an Eddy pass: **$4.99 a month** through Stripe, up to **50 questions a day**. Visitors without a pass get **3 free questions a day** (and the whole site at most 300 free questions a day), then an offer of a pass. The owner's code stays free and unlimited. The rules live in `access.mjs`; the numbers are in its `PLAN`.
+
+- **Selling is off until you turn it on.** `assets/ask-config.js` has `sell: false`, so the public site looks as before. To test, open the site once with `?eddy_shop=1` in your browser (and `?eddy=off` first, so your owner code does not skip the paywall). `?eddy_shop=0` stops.
+- **Turning it on:** add `STRIPE_SECRET_KEY` to the Netlify project (an `sk_test_...` key while testing, with test card 4242 4242 4242 4242), redeploy, test, then switch to the live `sk_live_...` key and set `sell: true`.
+- **Buying:** "Get Eddy" calls `/api/eddy/checkout`, which opens Stripe Checkout for a monthly subscription. Stripe sends the guest back with `?eddy_paid=<checkout id>`; `/api/eddy/redeem` checks the payment with Stripe and returns a signed pass, saved in the browser. The welcome message offers a personal link (`?eddy_pass=<pass>`) to use Eddy on other devices.
+- **Renewal and cancelling:** a pass carries its paid-through date. After that, Eddy asks Stripe whether the subscription is still active and quietly renews the pass, or treats the guest as a free visitor once it has ended. "Manage subscription" opens Stripe's customer portal (`/api/eddy/portal`); turn the portal on once in the Stripe dashboard (Settings, Billing, Customer portal).
+- **What is stored:** nothing about guests except daily question counts, in the `eddy-usage` Netlify Blobs store, keyed by subscription or by a hash of the connection's address. Stripe holds the customer and subscription.
+- **Settings:** `STRIPE_SECRET_KEY` (required to sell), `STRIPE_PRICE_ID` (optional, sell an existing Stripe price instead of the built-in one), `EDDY_PASS_SECRET` (optional, signs passes; defaults to a secret derived from the Stripe key, so changing the Stripe key signs guests out until their next visit renews them).
+
 ## Private access
 
 Eddy is private, so only people with the unlock link can use it:
