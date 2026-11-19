@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200">
+<meta name="robots" content="noindex, nofollow">
+<title>Oregon Fish Forecast posters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..800,0..100;1,9..144,200..800,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@300..600&display=block">
+<style>
+/* Four 18 x 24 in posters (3:4). Each poster is laid out at 1200 x 1600 CSS px and printed at 1.44x,
+   so 1 CSS px is 0.015 in on paper. Tokens are the site's own (v2/assets/site.css). */
+:root {
+  --ink: oklch(30.56% 0.0641 163.5);
+  --ink-deep: oklch(21% 0.045 166);
+  --ink-soft: oklch(38% 0.06 163);
+  --paper: oklch(97.4% 0.012 95);
+  --paper-2: oklch(93.6% 0.018 95);
+  --paper-3: oklch(89% 0.022 95);
+  --text: oklch(24% 0.04 163);
+  --muted: oklch(46% 0.03 165);
+  --on-ink: oklch(95% 0.02 120);
+  --on-ink-muted: oklch(78% 0.035 150);
+  --river: oklch(60% 0.15 245);
+  --river-deep: oklch(42% 0.16 262);
+  --sun: oklch(91% 0.18 103);
+  --sun-deep: oklch(80% 0.17 92);
+  --line: color-mix(in oklch, var(--ink) 18%, transparent);
+  --line-strong: color-mix(in oklch, var(--ink) 55%, transparent);
+  --line-ink: color-mix(in oklch, var(--on-ink) 20%, transparent);
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Instrument Sans', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --mono: 'JetBrains Mono', Consolas, monospace;
+  --pad-x: 76px;
+}
+@page { size: 18in 24in; margin: 0; }
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin: 0; background: oklch(84% 0.015 95); color: var(--text); font: 400 20px/1.4 var(--sans); -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+.sheet { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 48px 0; }
+@media print { body { background: none; } .sheet { display: block; padding: 0; } }
+img { display: block; max-width: 100%; }
+p, h1, h2, h3, ol, ul, figure { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+
+.poster {
+  position: relative; width: 1200px; height: 1600px; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 58px var(--pad-x) 54px;
+  background: var(--paper); color: var(--text);
+  break-after: page; break-inside: avoid;
+}
+.poster:last-child { break-after: auto; }
+.poster.ink { background: var(--ink); color: var(--on-ink); }
+.poster.cream { background: var(--paper-2); }
+
+/* ---------- Shared: running head ---------- */
+.band { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 24px; padding-bottom: 15px; border-bottom: 1px solid var(--line-strong); font: 500 13px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.band span:nth-child(2) { text-align: center; }
+.band span:last-child { text-align: right; }
+.band b { font-weight: 500; color: var(--text); }
+.ink .band { border-bottom-color: color-mix(in oklch, var(--on-ink) 40%, transparent); color: var(--on-ink-muted); }
+.ink .band b { color: var(--on-ink); }
+
+/* ---------- Shared: headline voice ---------- */
+.hl { font-family: var(--display); font-weight: 350; font-variation-settings: 'opsz' 144, 'SOFT' 30; letter-spacing: -0.04em; word-spacing: .06em; line-height: .9; color: var(--ink); }
+.hl em { display: block; font-style: italic; font-weight: 290; letter-spacing: -0.035em; color: var(--river-deep); }
+.ink .hl { color: var(--on-ink); }
+.ink .hl em { color: var(--sun); }
+.lede { font: 400 27px/1.36 var(--sans); color: var(--muted); letter-spacing: -0.005em; }
+.ink .lede { color: var(--on-ink-muted); }
+.lede strong { font-weight: 600; color: var(--text); }
+.ink .lede strong { color: var(--on-ink); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.kicker { font: 500 13px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.ink .kicker { color: var(--on-ink-muted); }
+
+/* ---------- Shared: sign-off ---------- */
+.foot { margin-top: auto; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; padding-top: 26px; border-top: 1px solid var(--line-strong); }
+.ink .foot { border-top-color: color-mix(in oklch, var(--on-ink) 40%, transparent); }
+.sign { display: flex; align-items: center; gap: 26px; }
+.sign img { width: 168px; height: auto; }
+.word { font: 400 38px/1 var(--display); font-variation-settings: 'opsz' 72, 'SOFT' 30; letter-spacing: -0.02em; color: var(--ink); }
+.word em { font-style: italic; font-weight: 340; }
+.ink .word { color: var(--on-ink); }
+.url { margin-top: 12px; font: 500 25px/1 var(--mono); letter-spacing: -0.01em; color: var(--text); }
+.ink .url { color: var(--on-ink); }
+.fine { margin-top: 12px; font: 400 15px/1.3 var(--sans); color: var(--muted); }
+.ink .fine { color: var(--on-ink-muted); }
+.qr { display: grid; justify-items: center; gap: 10px; }
+.qr .tile { padding: 12px; border-radius: 12px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); }
+.qr img { width: 128px; height: 128px; image-rendering: pixelated; }
+.qr figcaption { font: 500 12px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.ink .qr figcaption { color: var(--on-ink-muted); }
+
+/* =========================================================
+   01  Read the river
+   ========================================================= */
+.p1 .head { margin-top: 58px; }
+.p1 .hl { font-size: 166px; }
+.p1 .lede { margin-top: 34px; max-width: 760px; }
+.p1 .plate { margin: 34px 40px 0; }
+.p1 .plate img { width: 100%; height: auto; }
+.plate figcaption { display: flex; align-items: center; gap: 18px; margin: 18px 10px 0; font: 500 13px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.p1 .plate figcaption { margin: 18px -40px 0; }
+.plate figcaption::before { content: ''; order: 1; flex: 1; height: 1px; background: var(--line); }
+.plate figcaption span:last-child { order: 2; }
+.ledger { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 36px; border-top: 1px solid var(--line-strong); }
+.ledger li { padding: 20px 22px 0 0; }
+.ledger li + li { padding-left: 22px; border-left: 1px solid var(--line); }
+.ledger .idx { display: block; font: 500 13px/1 var(--mono); letter-spacing: .12em; color: var(--river-deep); }
+.ledger h3 { margin-top: 14px; font: 400 33px/1 var(--display); font-variation-settings: 'opsz' 72, 'SOFT' 30; letter-spacing: -0.02em; color: var(--ink); }
+.ledger p { margin-top: 10px; font: 400 17px/1.4 var(--sans); color: var(--muted); }
+
+/* =========================================================
+   02  Are the fish in the system?
+   ========================================================= */
+.p2 .head { margin-top: 74px; }
+.p2 .hl { font-size: 158px; }
+.p2 .diagram { margin: 42px -14px 0; }
+.p2 .diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+.p2 .copy { display: grid; grid-template-columns: 1fr 300px; gap: 56px; align-items: end; margin-top: 30px; }
+.p2 .lede { max-width: 690px; }
+.p2 .note { padding-left: 22px; border-left: 2px solid var(--sun); font: 500 14px/1.55 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--on-ink-muted); }
+.dg-label { font: 400 29px var(--display); font-variation-settings: 'opsz' 72, 'SOFT' 30; letter-spacing: -0.015em; fill: var(--on-ink); }
+.dg-sub, .dg-mono { font: 500 12.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; fill: var(--on-ink-muted); }
+.dg-river { font: 500 13px var(--mono); letter-spacing: .42em; text-transform: uppercase; fill: color-mix(in oklch, var(--on-ink) 62%, transparent); }
+
+/* =========================================================
+   03  Ask Eddy
+   ========================================================= */
+.p3 .head { margin-top: 70px; display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 46px; }
+.p3 .hl { font-size: 232px; line-height: .8; }
+.p3 .hl em { display: inline; }
+.p3 .lede { max-width: 380px; padding-bottom: 14px; font-size: 24px; }
+.chat { margin-top: 76px; display: grid; gap: 30px; }
+.bubble-q { justify-self: end; width: fit-content; padding: 34px 44px 38px; border-radius: 40px 40px 10px 40px; background: var(--ink); color: var(--on-ink); }
+.bubble-q p { max-width: 540px; text-wrap: balance; font: italic 300 58px/1.06 var(--display); font-variation-settings: 'opsz' 96, 'SOFT' 50; letter-spacing: -0.02em; }
+.who { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font: 500 13px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--on-ink-muted); }
+.bubble-a { justify-self: start; width: 990px; padding: 32px 44px 36px; border-radius: 40px 40px 40px 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.bubble-a .who { color: var(--muted); }
+.bubble-a .who i { width: 14px; height: 14px; border-radius: 50%; background: var(--sun); box-shadow: 0 0 0 1.5px var(--ink); }
+.lines { display: grid; gap: 15px; }
+.lines i { display: block; height: 9px; border-radius: 5px; background: color-mix(in oklch, var(--ink) 11%, transparent); }
+.lines i.gap { margin-top: 10px; }
+.reads { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+.reads li { padding: 9px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-strong); font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.reads li.k { box-shadow: none; padding-left: 0; color: var(--muted); }
+.price { display: grid; grid-template-columns: 340px 1fr; margin-top: 64px; border-top: 1px solid var(--line-strong); }
+.price > div { padding-top: 24px; }
+.price > div + div { padding-left: 40px; border-left: 1px solid var(--line); }
+.price .big { display: block; font: 400 92px/.9 var(--mono); letter-spacing: -0.06em; color: var(--ink); }
+.price .big.sun { color: var(--river-deep); }
+.price p { margin-top: 14px; font: 400 19px/1.4 var(--sans); color: var(--muted); }
+.price p strong { font-weight: 600; color: var(--text); }
+
+/* =========================================================
+   04  Trout are coming
+   ========================================================= */
+.p4 .fishplate { margin: 70px auto 0; width: 860px; }
+.p4 .fishplate img { width: 100%; height: auto; }
+.p4 .fishplate figcaption { margin: 16px 0 0; }
+.p4 .hl { margin-top: 56px; font-size: 128px; text-align: center; }
+.p4 .stat { display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: end; margin-top: 62px; padding-top: 36px; border-top: 1px solid var(--line-strong); }
+.p4 .total { font: 300 214px/.74 var(--display); font-variation-settings: 'opsz' 144, 'SOFT' 30; font-variant-numeric: lining-nums; letter-spacing: -0.045em; color: var(--river-deep); }
+.p4 .stat .lede { max-width: 520px; font-size: 24px; padding-bottom: 4px; }
+.week { margin-top: 58px; }
+.week svg { display: block; width: 100%; height: auto; overflow: visible; }
+.wk-day { font: 500 13px var(--mono); letter-spacing: .16em; text-transform: uppercase; fill: var(--text); }
+.wk-cap { font: 500 12.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; fill: var(--muted); }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+<!-- ============================ 01 ============================ -->
+<section class="poster p1" id="p1" aria-label="Poster 1: Read the river before you drive">
+  <header class="band"><span><b>Oregon Fish Forecast</b></span><span>Field notes</span><span>No. 01 / 04</span></header>
+  <div class="head">
+    <h1 class="hl">Read the river<em>before you drive.</em></h1>
+    <p class="lede">Dated reports, river gauges, dam counts and trout stocking for <strong>28 Oregon reaches</strong>, refreshed every morning.</p>
+  </div>
+  <figure class="plate">
+    <img src="../../assets/river-country-landscape.webp" width="1280" height="683" data-up="3" alt="Illustration of a blue river winding between evergreen forest toward snowy mountains under a yellow sun.">
+    <figcaption><span>Plate I</span><span>River country</span></figcaption>
+  </figure>
+  <ol class="ledger">
+    <li><span class="idx">01</span><h3>Reports</h3><p>Every report dated, so you know how fresh the news is.</p></li>
+    <li><span class="idx">02</span><h3>Gauges</h3><p>This morning’s flow against its 7-day median.</p></li>
+    <li><span class="idx">03</span><h3>Dam counts</h3><p>Bonneville, The Dalles and Willamette Falls.</p></li>
+    <li><span class="idx">04</span><h3>Stocking</h3><p>ODFW’s trout plan, week by week.</p></li>
+  </ol>
+  <footer class="foot">
+    <div class="sign">
+      <img src="../../assets/weather-fish.webp" width="720" height="348" data-up="4" alt="">
+      <div><p class="word">Oregon <em>Fish Forecast</em></p><p class="url">oregonfishforecast.com</p><p class="fine">Check the exact reach and current rules before every trip.</p></div>
+    </div>
+    <figure class="qr"><div class="tile"><img src="qr/home.svg" alt="QR code for oregonfishforecast.com"></div><figcaption>Scan to open</figcaption></figure>
+  </footer>
+</section>
+
+<!-- ============================ 02 ============================ -->
+<section class="poster p2 ink" id="p2" aria-label="Poster 2: Are the fish in the system?">
+  <header class="band"><span><b>Oregon Fish Forecast</b></span><span>Field notes</span><span>No. 02 / 04</span></header>
+  <div class="head">
+    <h1 class="hl">Are the fish<em>in the system?</em></h1>
+  </div>
+  <figure class="diagram">
+    <!-- Schematic, west to the left. Positions along the Columbia follow river miles at 4.2 px a mile. -->
+    <svg id="dg" viewBox="0 0 1076 640" role="img" aria-label="Schematic of the lower Columbia and Willamette rivers with three fish count stations: Bonneville Dam at river mile 146, The Dalles Dam at river mile 192 and Willamette Falls at Willamette river mile 26.">
+      <defs>
+        <linearGradient id="fadeS" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".72" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <mask id="mWil" maskUnits="userSpaceOnUse" x="0" y="0" width="1076" height="640"><rect width="1076" height="640" fill="url(#fadeS)"/></mask>
+        <linearGradient id="fadeE" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".9" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <mask id="mCol" maskUnits="userSpaceOnUse" x="-20" y="0" width="1116" height="640"><rect x="-20" width="1116" height="640" fill="url(#fadeE)"/></mask>
+      </defs>
+      <!-- coast -->
+      <g class="coast">
+        <path d="M44 28 V612" stroke="var(--on-ink-muted)" stroke-width="1" stroke-dasharray="2 7" fill="none" opacity=".75"/>
+        <text class="dg-mono" transform="translate(22 470) rotate(-90)">Pacific Ocean</text>
+      </g>
+      <!-- rivers: a bank line and a water channel -->
+      <g mask="url(#mWil)">
+        <path id="wil" d="M468 224 C 472 262, 492 292, 492 336 S 462 430, 456 490 S 424 590, 414 660" fill="none" stroke="color-mix(in oklch, var(--on-ink) 42%, transparent)" stroke-width="19" stroke-linecap="round"/>
+        <path d="M468 224 C 472 262, 492 292, 492 336 S 462 430, 456 490 S 424 590, 414 660" fill="none" stroke="var(--ink-soft)" stroke-width="16.5" stroke-linecap="round"/>
+      </g>
+      <g mask="url(#mCol)">
+        <path id="col" d="M30 246 C 100 246, 140 200, 220 206 S 350 250, 468 224 S 590 184, 657 200 S 780 250, 850 224 S 980 192, 1090 204" fill="none" stroke="color-mix(in oklch, var(--on-ink) 42%, transparent)" stroke-width="27" stroke-linecap="round"/>
+        <path d="M30 246 C 100 246, 140 200, 220 206 S 350 250, 468 224 S 590 184, 657 200 S 780 250, 850 224 S 980 192, 1090 204" fill="none" stroke="var(--ink-soft)" stroke-width="24.5" stroke-linecap="round"/>
+      </g>
+      <!-- chevrons (fish heading upstream) are drawn here by the script below -->
+      <g id="chev"></g>
+      <!-- river names -->
+      <text class="dg-river" dy="-24"><textPath href="#col" startOffset="96">Columbia River</textPath></text>
+      <text class="dg-river" dy="-20"><textPath href="#wil" startOffset="250">Willamette</textPath></text>
+      <!-- stations are positioned on the river by the script below -->
+      <g id="stations"></g>
+      <!-- scale and north -->
+      <g transform="translate(834 560)">
+        <path d="M0 0 H210 M0 -7 V7 M105 -5 V5 M210 -7 V7" stroke="var(--on-ink-muted)" stroke-width="1.5" fill="none"/>
+        <text class="dg-mono" x="0" y="30">0</text>
+        <text class="dg-mono" x="210" y="30" text-anchor="end">50 river miles</text>
+      </g>
+      <g transform="translate(1030 452)">
+        <path d="M0 34 V-26 M-9 -12 L0 -28 L9 -12" stroke="var(--on-ink-muted)" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+        <text class="dg-mono" x="0" y="-40" text-anchor="middle">N</text>
+      </g>
+      <g transform="translate(74 44)">
+        <path d="M0 -5 L7 0 L0 5 M14 -5 L21 0 L14 5 M28 -5 L35 0 L28 5" stroke="var(--sun)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text class="dg-mono" x="52" y="5">Adult fish heading upstream</text>
+        <text class="dg-mono" x="52" y="30" opacity=".75">Illustrative, not actual counts</text>
+      </g>
+    </svg>
+  </figure>
+  <div class="copy">
+    <p class="lede">Chinook, coho and steelhead counted past <strong>Bonneville</strong>, <strong>The Dalles</strong> and <strong>Willamette Falls</strong>, set beside the same date last year. Updated every morning.</p>
+    <p class="note">Counts show run timing,<br>not catch rates.</p>
+  </div>
+  <footer class="foot">
+    <div class="sign">
+      <img src="../../assets/weather-fish.webp" width="720" height="348" data-up="4" alt="">
+      <div><p class="word">Oregon <em>Fish Forecast</em></p><p class="url">oregonfishforecast.com</p><p class="fine">Check the exact reach and current rules before every trip.</p></div>
+    </div>
+    <figure class="qr"><div class="tile"><img src="qr/counts.svg" alt="QR code for the fish counts page"></div><figcaption>Today’s counts</figcaption></figure>
+  </footer>
+</section>
+
+<!-- ============================ 03 ============================ -->
+<section class="poster p3 cream" id="p3" aria-label="Poster 3: Ask Eddy">
+  <header class="band"><span><b>Oregon Fish Forecast</b></span><span>Field notes</span><span>No. 03 / 04</span></header>
+  <div class="head">
+    <h1 class="hl">Ask <em>Eddy.</em></h1>
+    <p class="lede">The AI fishing assistant that answers from the reports, gauges, dam counts and stocking the site reads every morning.</p>
+  </div>
+  <div class="chat">
+    <div class="bubble-q"><span class="who">You</span><p>Where can I bank fish near Bend this weekend?</p></div>
+    <div class="bubble-a">
+      <span class="who"><i></i>Eddy</span>
+      <div class="lines" aria-hidden="true">
+        <i style="width:96%"></i><i style="width:88%"></i><i style="width:93%"></i><i style="width:54%"></i>
+        <i class="gap" style="width:91%"></i><i style="width:84%"></i><i style="width:38%"></i>
+      </div>
+      <ul class="reads"><li class="k">Reads</li><li>ODFW stocking</li><li>USGS gauges</li><li>Dam counts</li><li>NWS weather</li><li>Angler reports</li><li>ODFW rules</li></ul>
+    </div>
+  </div>
+  <div class="price">
+    <div><span class="big num">3</span><p><strong>free questions a day</strong> for everyone.</p></div>
+    <div><span class="big num sun">$4.99<small style="font-size:.38em;letter-spacing:-0.02em;color:var(--muted)"> /month</small></span><p>An Eddy pass, or <strong>$39.99 a year</strong>: 50 questions a day, and a morning email when a water you follow is due for trout, scores well or changes its rules.</p></div>
+  </div>
+  <footer class="foot">
+    <div class="sign">
+      <img src="../../assets/weather-fish.webp" width="720" height="348" data-up="4" alt="">
+      <div><p class="word">Oregon <em>Fish Forecast</em></p><p class="url">oregonfishforecast.com</p><p class="fine">Check the exact reach and current rules before every trip.</p></div>
+    </div>
+    <figure class="qr"><div class="tile"><img src="qr/home.svg" alt="QR code for oregonfishforecast.com"></div><figcaption>Ask Eddy</figcaption></figure>
+  </footer>
+</section>
+
+<!-- ============================ 04 ============================ -->
+<section class="poster p4" id="p4" aria-label="Poster 4: Trout are coming">
+  <header class="band"><span><b>Oregon Fish Forecast</b></span><span>Field notes</span><span>No. 04 / 04</span></header>
+  <figure class="fishplate plate">
+    <img src="../../assets/weather-fish.webp" width="720" height="348" data-up="4" alt="The Oregon Fish Forecast fish: a trout filled with forest, river, snowy peaks, rain and sun.">
+    <figcaption><span>Plate II</span><span>The forecast fish</span></figcaption>
+  </figure>
+  <h1 class="hl">Trout are coming.<em>Find out which week.</em></h1>
+  <div class="stat">
+    <span class="total">250+</span>
+    <p class="lede">Oregon waters on ODFW’s weekly trout stocking plan. Search by water or zone and see <strong>this week, next week</strong> and the months ahead.</p>
+  </div>
+  <div class="week">
+    <svg id="wk" viewBox="0 0 1048 96" aria-label="A ruler marking the five stocking days, Monday to Friday"></svg>
+  </div>
+  <footer class="foot">
+    <div class="sign">
+      <img src="../../assets/weather-fish.webp" width="720" height="348" data-up="4" alt="">
+      <div><p class="word">Oregon <em>Fish Forecast</em></p><p class="url">oregonfishforecast.com</p><p class="fine">Check the exact reach and current rules before every trip.</p></div>
+    </div>
+    <figure class="qr"><div class="tile"><img src="qr/stocking.svg" alt="QR code for the trout stocking page"></div><figcaption>This week’s trout</figcaption></figure>
+  </footer>
+</section>
+
+</main>
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (name, attrs, parent) => { const n = document.createElementNS(NS, name); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+
+  /* ---------- 02: chevrons and stations along the rivers ---------- */
+  const col = document.getElementById('col');
+  const wil = document.getElementById('wil');
+  // Length along a path where its x first reaches a value (the Columbia only runs west to east).
+  const atX = (path, x) => { let lo = 0, hi = path.getTotalLength(); for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (path.getPointAtLength(mid).x < x) lo = mid; else hi = mid; } return lo; };
+  const pt = (path, len) => path.getPointAtLength(len);
+  const angle = (path, len) => { const a = path.getPointAtLength(Math.max(0, len - 1)), b = path.getPointAtLength(len + 1); return Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI; };
+  const RM = m => 44 + m * 4.2;   // Columbia river mile to x
+  const lenBON = atX(col, RM(146)), lenTDA = atX(col, RM(192)), lenMouth = atX(col, RM(0)), lenEnd = atX(col, 1060);
+  const lenWFF = 26 * 4.2 + 4;    // Willamette river mile 26, measured from the confluence
+
+  const chev = document.getElementById('chev');
+  const mark = (path, len, op) => {
+    const p = pt(path, len), a = angle(path, len);
+    el('path', { d: 'M-3.2 -4.2 L1.8 0 L-3.2 4.2', fill: 'none', stroke: 'var(--sun)', 'stroke-width': 1.7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: op, transform: `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${a.toFixed(2)})` }, chev);
+  };
+  // Thinning upstream: every step below Bonneville, every second above it, every fourth above The Dalles.
+  const step = 9.5;
+  let i = 0;
+  for (let L = lenMouth + 8; L < lenEnd; L += step, i++) {
+    const near = s => Math.abs(L - s) < 15;
+    if (near(lenBON) || near(lenTDA)) continue;
+    if (L > lenTDA && i % 4) continue;
+    if (L > lenBON && L <= lenTDA && i % 2) continue;
+    const op = L < lenBON ? 1 : L < lenTDA ? .85 : .7;
+    mark(col, L, op);
+  }
+  // Willamette: from the confluence upstream (south), thinning above the falls.
+  i = 0;
+  for (let L = 14; L < 320; L += step, i++) {
+    if (Math.abs(L - lenWFF) < 15) continue;
+    if (L > lenWFF && i % 2) continue;
+    mark(wil, L, L < lenWFF ? 1 : .8);
+  }
+
+  const st = document.getElementById('stations');
+  const station = (p, dir, name, sub) => {
+    const g = el('g', {}, st);
+    if (dir === 'up' || dir === 'down') {
+      const y2 = dir === 'up' ? p.y - 96 : p.y + 96;
+      el('path', { d: `M${p.x} ${p.y} V${y2}`, stroke: 'var(--on-ink-muted)', 'stroke-width': 1.2 }, g);
+      el('circle', { cx: p.x, cy: y2, r: 2.6, fill: 'var(--on-ink-muted)' }, g);
+      const anchor = 'start';
+      const dx = 14;
+      const t = el('text', { class: 'dg-label', x: p.x + dx, y: dir === 'up' ? y2 + 10 : y2 + 10, 'text-anchor': anchor }, g); t.textContent = name;
+      const s = el('text', { class: 'dg-sub', x: p.x + dx, y: dir === 'up' ? y2 + 36 : y2 + 36, 'text-anchor': anchor }, g); s.textContent = sub;
+    } else {
+      const x2 = p.x - 92;
+      el('path', { d: `M${p.x} ${p.y} H${x2}`, stroke: 'var(--on-ink-muted)', 'stroke-width': 1.2 }, g);
+      el('circle', { cx: x2, cy: p.y, r: 2.6, fill: 'var(--on-ink-muted)' }, g);
+      const t = el('text', { class: 'dg-label', x: x2 - 14, y: p.y + 4, 'text-anchor': 'end' }, g); t.textContent = name;
+      const s = el('text', { class: 'dg-sub', x: x2 - 14, y: p.y + 30, 'text-anchor': 'end' }, g); s.textContent = sub;
+    }
+    el('circle', { cx: p.x, cy: p.y, r: 11, fill: 'var(--ink)', stroke: 'var(--sun)', 'stroke-width': 2.6 }, g);
+    el('circle', { cx: p.x, cy: p.y, r: 3.4, fill: 'var(--sun)' }, g);
+  };
+  station(pt(col, lenBON), 'down', 'Bonneville Dam', 'Columbia · RM 146');
+  station(pt(col, lenTDA), 'up', 'The Dalles Dam', 'Columbia · RM 192');
+  station(pt(wil, lenWFF), 'left', 'Willamette Falls', 'Willamette · RM 26');
+  // Portland, at the confluence
+  const pc = pt(col, atX(col, 468));
+  el('circle', { cx: pc.x, cy: pc.y, r: 4.2, fill: 'var(--on-ink)' }, st);
+  const tp = el('text', { class: 'dg-mono', x: pc.x - 6, y: pc.y - 34, 'text-anchor': 'end' }, st); tp.textContent = 'Portland';
+  el('path', { d: `M${pc.x} ${pc.y - 6} L${pc.x - 4} ${pc.y - 28}`, stroke: 'var(--on-ink-muted)', 'stroke-width': 1 }, st);
+
+  /* ---------- 04: the week ruler ---------- */
+  const wk = document.getElementById('wk');
+  if (wk) {
+    const W = 1048, days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], dw = W / 5, base = 64;
+    el('path', { d: `M0 ${base} H${W}`, stroke: 'var(--ink)', 'stroke-width': 1.5 }, wk);
+    days.forEach((d, k) => {
+      const x0 = k * dw;
+      const t = el('text', { class: 'wk-day', x: x0 + 2, y: 18 }, wk); t.textContent = d;
+      for (let h = 0; h <= 24; h++) {
+        if (k > 0 && h === 0) continue;
+        const x = x0 + h * dw / 24;
+        const tall = h === 0 || h === 24 ? 34 : h % 6 === 0 ? 18 : 9;
+        el('path', { d: `M${x.toFixed(2)} ${base} V${base - tall}`, stroke: 'var(--ink)', 'stroke-width': h % 24 === 0 ? 1.5 : 1, opacity: h % 6 === 0 ? 1 : .55 }, wk);
+      }
+    });
+    const c1 = el('text', { class: 'wk-cap', x: 0, y: base + 30 }, wk); c1.textContent = 'ODFW stocking weeks run Monday to Friday';
+    const c2 = el('text', { class: 'wk-cap', x: W, y: base + 30, 'text-anchor': 'end' }, wk); c2.textContent = 'Plans posted about a year ahead';
+  }
+
+  /* ---------- Print: smooth upscaling of the supplied artwork ---------- */
+  // The artwork is small (1280 and 720 px wide). Upscale it once with high-quality smoothing so print
+  // does not enlarge it pixel by pixel. Needs http(s): a file:// page cannot read canvas pixels back.
+  const up = async img => {
+    const k = +img.dataset.up || 1;
+    if (k <= 1 || !/^https?:/.test(location.protocol)) return;
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth * k; c.height = img.naturalHeight * k;
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+    g.drawImage(img, 0, 0, c.width, c.height);
+    try { const blob = await new Promise(r => c.toBlob(r, 'image/png')); img.src = URL.createObjectURL(blob); await img.decode(); } catch (e) { /* keep the original */ }
+  };
+  const cache = new Map();
+  const upAll = async () => {
+    for (const img of document.querySelectorAll('img[data-up]')) {
+      const key = img.getAttribute('src') + '@' + img.dataset.up;
+      if (cache.has(key)) { img.src = cache.get(key); await img.decode(); continue; }
+      await up(img); cache.set(key, img.src);
+    }
+  };
+  Promise.all([document.fonts.ready, upAll()]).then(() => { window.__postersReady = true; });
+})();
+</script>
+</body>
+</html>

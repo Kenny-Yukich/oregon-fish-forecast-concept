@@ -1,0 +1,13 @@
+# Field Ledger
+
+*A design philosophy for printed matter that treats attention as a form of craft.*
+
+Field Ledger begins from the quiet authority of the naturalist's notebook: the page where something fleeting (a river's mood, the passing of an animal, the turn of a season) is pinned down through patient, systematic looking. Its posters are not advertisements so much as plates torn from an almanac that was kept, morning after morning, by someone who cared. Every sheet should feel meticulously crafted, as if a master printer and a field scientist sat together for weeks deciding where one hairline should stop.
+
+Space is the first material. Paper is left open in wide, deliberate fields so that a single expressive image can breathe, and the eye is given somewhere to rest before it reads. Structure arrives as thin rules, ruled columns and indexed numerals (01, 02, 03) that divide the sheet the way a ledger divides a day. Nothing floats by accident: every margin is measured, every baseline is shared, and the grid is felt rather than seen. The composition should read as the product of deep expertise, a balance arrived at through countless small refinements.
+
+Color is held to a cultivated few: a deep forest ink that carries the voice, a warm cream paper that carries the light, and one cold river blue reserved for the moment a phrase turns italic. A single sun yellow appears only where something is alive or about to happen. Bright color is otherwise left to the illustration, which is treated as a precious plate, framed and captioned, never cropped into decoration. Restraint here is a form of painstaking attention: each hue earns its place.
+
+Type is a duet between a soft, high-contrast serif that speaks in large, unhurried gestures and a precise monospace that records. The serif makes the promise; the mono keeps the receipts. Words are sparse and essential, set large enough to be felt from across a room or small enough to reward someone who steps closer. Any figure that came from an instrument is set in mono, as an observation rather than a boast. Text is never a paragraph where a mark, a rule or a number could speak instead.
+
+Repetition is how Field Ledger proves care. Dense accumulations of small marks (tallies, chevrons, ruled lines, station ticks) build quietly across a surface, so that what is ephemeral looks studied, mapped and understood. Diagrams borrow the language of survey and hydrology: scale bars, north arrows, river miles, plate numbers. The finished piece should look labored over with master-level execution, pristine at arm's length and still rewarding under a loupe, an artifact that could hang in a museum of quiet instruments.
