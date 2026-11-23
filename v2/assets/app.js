@@ -374,6 +374,13 @@
     reports: {html: anglers, title: 'Angler reports', top: 'paper'},
     method: {html: () => method() + principles(), title: 'How scores work', top: 'paper'}
   };
+  // "Learn to fish" (v2/assets/learn.js): short lessons that end on a real stocked water. It borrows these helpers.
+  if (window.ORFF_LEARN) {
+    const learnCtx = {esc, icon, ext, num, today, fmtDate, mondayOf, guideFor, store, motionOK, gsap,
+      regsUrl: window.ORFF_AUTO?.sources?.odfw_regs?.url || 'https://myodfw.com/articles/regulation-updates',
+      scrollTo: el => scrollToEl(el, !motionOK(), 96)};
+    PAGES.learn = {html: () => window.ORFF_LEARN.html(learnCtx), bind: root => window.ORFF_LEARN.bind(root, learnCtx), title: 'Learn to fish', top: 'paper'};
+  }
 
   /* ---------- Water page ---------- */
   // NWS forecast from data/weather.js. Hidden when missing, over 48 hours old or every period has passed.
@@ -624,9 +631,9 @@
   }
 
   /* ---------- Router ---------- */
-  // #/ is the homepage. #/waters, #/counts, #/stocking, #/reports and #/method are pages; #/water/<id> is a water.
+  // #/ is the homepage. #/waters, #/counts, #/stocking, #/reports, #/method and #/learn are pages; #/water/<id> is a water.
   // #/anglers is the old address of #/reports, and #/shortlist still scrolls to the short list on the homepage.
-  const ROUTES = {waters: 'waters', counts: 'counts', stocking: 'stocking', reports: 'reports', anglers: 'reports', method: 'method'};
+  const ROUTES = {waters: 'waters', counts: 'counts', stocking: 'stocking', reports: 'reports', anglers: 'reports', method: 'method', ...(window.ORFF_LEARN ? {learn: 'learn'} : {})};
   let current = null, firstRender = true;
   const curtain = document.createElement('div');
   curtain.className = 'curtain'; curtain.setAttribute('aria-hidden', 'true');
@@ -684,6 +691,7 @@
       view.innerHTML = page.html();
       document.title = page.title + ' · Oregon Fish Forecast';
       if (route.view === 'waters') { renderRows(false); bindDirectory(); }
+      page.bind?.(view);
     } else {
       view.innerHTML = waterHTML(route.water);
       document.title = route.water.name + ', ' + route.water.reach + ' · Oregon Fish Forecast';
