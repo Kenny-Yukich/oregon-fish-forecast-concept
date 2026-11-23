@@ -13,6 +13,7 @@ on:
       - 'scripts/fetch-reports.mjs'
       - 'scripts/fetch-odfw-reports.mjs'
       - 'scripts/check-data.mjs'
+      - 'scripts/build-app-feed.mjs'
       - '.github/workflows/daily-data.yml'
 
 permissions:
@@ -62,10 +63,15 @@ jobs:
         run: node scripts/fetch-odfw-reports.mjs
       - name: Verify Oregon data relationships
         run: node scripts/check-data.mjs
+      # The iPhone app (ios/) reads one file built from all of the above with the website's own score formula.
+      # A failure keeps yesterday's file, so the website's data still commits.
+      - name: Build the iPhone app feed
+        continue-on-error: true
+        run: node scripts/build-app-feed.mjs
       - name: Commit updated data
         if: github.event_name != 'pull_request'
         run: |
-          files="data/counts.js data/stocking.js data/conditions.js data/weather.js data/auto-reports.js data/odfw-reports.js"
+          files="data/counts.js data/stocking.js data/conditions.js data/weather.js data/auto-reports.js data/odfw-reports.js data/app.json"
           if git diff --quiet -- $files; then echo "Data unchanged."; exit 0; fi
           git config user.name "daily-data bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

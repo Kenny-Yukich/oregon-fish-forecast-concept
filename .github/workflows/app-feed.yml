@@ -1,0 +1,35 @@
+name: iPhone app feed
+
+# The iPhone app (ios/) reads data/app.json with its own model code (ios/OregonFishForecast/Model). This builds the
+# feed from the pull request's data and has that same model code read it, on Linux, so a change to either side that
+# would leave the app unable to read the forecast fails here instead of on someone's phone.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/build-app-feed.mjs'
+      - 'server/context.mjs'
+      - 'assets/member-preview.js'
+      - 'data/**'
+      - 'ios/OregonFishForecast/Model/**'
+      - 'ios/FeedCheck/**'
+      - '.github/workflows/app-feed.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the app feed from this branch's data
+        run: node scripts/build-app-feed.mjs
+      - name: Read it with the app's model code
+        run: >
+          docker run --rm -v "$PWD":/src -w /src swift:6.1
+          bash -c 'swiftc ios/OregonFishForecast/Model/*.swift ios/FeedCheck/main.swift -o /tmp/feedcheck && /tmp/feedcheck data/app.json'

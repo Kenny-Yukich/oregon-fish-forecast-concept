@@ -11,3 +11,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 .social-refresh/
+
+# Xcode (ios/)
+xcuserdata/
+DerivedData/
+*.xcuserstate
+.build/

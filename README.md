@@ -7,6 +7,7 @@
 - **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
 - The old `/v2/` address forwards to the homepage.
 - **One address:** the site lives at **oregonfishforecast.com**. `orfishforecast.com` forwards there (`_redirects`, read by Netlify), keeping the path and any `#/water/…` route, so Eddy passes and saved settings stay in one place.
+- **iPhone app (`ios/`):** a native SwiftUI app with the same scores, water pages, map, fish counts and stocking. It reads one file, `data/app.json`, built every morning by `scripts/build-app-feed.mjs` from the site's data and score formula. See [ios/README.md](ios/README.md).
 - **Eddy, the AI fishing assistant (`server/`, `v2/assets/ask.js`):** an "Ask Eddy" chat panel where visitors ask about the guide waters and Claude Haiku 5.5 answers from the site's own data, plus water alerts by email for pass holders ("Follow this water" on a water page). It needs a small server endpoint, so it stays hidden on GitHub Pages until one is deployed. See [server/README.md](server/README.md).
 
 GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/** (classic: `/classic/`)
@@ -111,6 +112,13 @@ Open `#/stocking` from the main navigation.
 - **Reclamation Hydromet:** Haystack and Henry Hagg pool levels and the Bowman water temperature. Reclamation often refuses cloud requests, so this is optional.
 
 **How the score uses it.** Flow is checked against its 30-day median first: a river at less than half, or more than two and a half times, its recent normal reads as off normal even when the last week has been steady. A NOAA forecast that more than doubles the flow in three days also lowers the score.
+
+## iPhone app feed
+
+`scripts/build-app-feed.mjs` runs at the end of the daily data workflow and writes `data/app.json`, the only file the iPhone app (`ios/`) reads. It loads the same data files and score formula the pages load (through `server/context.mjs`), so the app's scores, inputs and notes match the website's for that morning. Field-check wording stays out, as on the site. The file is rewritten only when something besides its build time changes, and a failed build keeps yesterday's file without stopping the daily data commit.
+
+- **Contents:** every guide water (score, inputs, notes, latest report, notices and ODFW rules, gauge readings and NOAA forecast, NWS weather, stocking, count-site links, angler posts, access points, sources and map position), the six count sites with their numbers, and ODFW's planned stockings from last week through five weeks out.
+- **Checks:** `node scripts/build-app-feed.mjs --check` builds the feed and checks every field the app needs. The **iPhone app feed** workflow (`.github/workflows/app-feed.yml`) also compiles the app's model code on Linux and has it read the feed, on pull requests that touch the data, the formula, the script or the app's model.
 
 ## Automatic reports and rules
 
