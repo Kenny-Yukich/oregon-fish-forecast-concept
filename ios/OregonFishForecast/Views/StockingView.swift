@@ -26,7 +26,7 @@ struct StockingView: View {
                                 .font(.title3.weight(.semibold))
                                 .fontDesign(.serif)
                                 .foregroundStyle(.primary)
-                            Text("\(item.week.weekLabel) · \(FeedFormat.number(item.week.totalTrout)) trout at \(item.week.rows.count) waters")
+                            Text(item.week.weekLabel + " · " + FeedFormat.number(item.week.totalTrout) + " trout at " + FeedFormat.count(item.week.rows.count, "water", "waters"))
                                 .font(.caption)
                         }
                         .textCase(nil)

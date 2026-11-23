@@ -73,6 +73,7 @@ expect(FeedFormat.todayInOregon(FeedFormat.instant("2026-11-24T07:59:00Z")!) == 
 expect(FeedFormat.todayInOregon(FeedFormat.instant("2026-11-24T08:01:00Z")!) == "2026-11-24", "Oregon date after midnight Pacific")
 expect(FeedFormat.instant("2026-11-22T20:29:35.890Z") != nil, "timestamp with fractional seconds")
 expect(MapLinks.appleMaps("Fish & Game Lot #2")?.absoluteString == "https://maps.apple.com/?daddr=Fish%20%26%20Game%20Lot%20%232&dirflg=d", "Apple Maps link escapes & and #")
+expect(FeedFormat.count(1, "water", "waters") == "1 water" && FeedFormat.count(1500, "water", "waters") == "1,500 waters", "counted nouns")
 expect(Score.label(for: 80) == "Excellent" && Score.label(for: 79) == "Good" && Score.label(for: 45) == "Fair" && Score.label(for: 44) == "Slow", "score labels")
 
 let now = FeedFormat.instant(feed.generatedAt) ?? Date()

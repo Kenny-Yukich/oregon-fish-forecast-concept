@@ -96,6 +96,11 @@ enum FeedFormat {
         return f.string(from: NSNumber(value: n)) ?? String(n)
     }
 
+    /// "1 water", "4 waters", "1,500 trout".
+    static func count(_ n: Int, _ one: String, _ many: String) -> String {
+        "\(number(n)) \(n == 1 ? one : many)"
+    }
+
     /// "92%".
     static func percent(_ fraction: Double) -> String {
         "\(Int((fraction * 100).rounded()))%"

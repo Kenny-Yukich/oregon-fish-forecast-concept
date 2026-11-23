@@ -95,7 +95,7 @@ struct ForecastView: View {
                     } label: {
                         Label {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Stocked this week: \(thisWeek.rows.count) Oregon waters")
+                                Text("Stocked this week: " + FeedFormat.count(thisWeek.rows.count, "Oregon water", "Oregon waters"))
                                     .foregroundStyle(.primary)
                                 Text("\(FeedFormat.number(thisWeek.totalTrout)) trout planned by ODFW")
                                     .font(.footnote)
