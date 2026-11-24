@@ -25,5 +25,7 @@ window.ORFF_STOCKING_MATCH = {
   "alton-baker-canal": ["Alton Baker Canal"],
   "mckenzie-river-above-leaburg": ["above Leaburg Dam"],
   // ODFW lists the North Fork Santiam as "Santiam River (North Fork 2)".
-  "north-santiam-river-mehama": ["Santiam River (North Fork 2"]
+  "north-santiam-river-mehama": ["Santiam River (North Fork 2"],
+  "foster-reservoir": ["Foster Reservoir"],
+  "green-peter-reservoir": ["Green Peter Reservoir"]
 };

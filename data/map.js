@@ -50,5 +50,13 @@ window.ORFF_MAP = {
     "south-umpqua-river-roseburg": [43.210, -123.355],
     "coquille-river-tidewater": [43.183, -124.190],
     "coos-bay-boardwalk": [43.369, -124.214],
+    "nehalem-river-lower": [45.707, -123.889],
+    "trask-river-loren": [45.446, -123.710],
+    "nestucca-river-pacific-city": [45.266, -123.847],
+    "alsea-river-tidewater": [44.386, -123.832],
+    "siuslaw-river-florence": [44.062, -123.883],
+    "foster-reservoir": [44.415, -122.670],
+    "green-peter-reservoir": [44.450, -122.549],
+    "fern-ridge-reservoir": [44.121, -123.301],
   }
 };

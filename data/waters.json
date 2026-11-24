@@ -3750,6 +3750,776 @@
         "checked_on": "2026-11-24"
       },
       "readings": null
+    },
+    {
+      "id": "nehalem-river-lower",
+      "name": "Nehalem River",
+      "reach": "Lower river and bay: Nehalem and Roy Creek",
+      "kind": "river",
+      "region": "North coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "nehalem-river-lower",
+        "target_species": [
+          "Chinook salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Tillamook County ramps at Nehalem and Roy Creek",
+        "access_detail": "The Marine Board's Nov. 18 report lists the Nehalem H Street, Tohls Street and Roy Creek ramps open (Roy Creek and the Nehalem ramp were cleared of silt and mud) and says Tillamook County Parks put rock at the bottom of the Nehalem County Park ramp to fill a large drop-off; avoid power loading there.",
+        "access_point": {
+          "label": "Roy Creek ramp",
+          "map_query": "Roy Creek boat ramp Nehalem River Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Roy Creek ramp",
+            "type": "Boat ramp",
+            "note": "Open Nov. 18; cleared of silt and mud (Marine Board).",
+            "map_query": "Roy Creek boat ramp Nehalem River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Nehalem H Street ramp",
+            "type": "Boat ramp",
+            "note": "Open Nov. 18; cleared of silt and mud (Marine Board).",
+            "map_query": "H Street boat ramp Nehalem Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Nehalem County Park ramp",
+            "type": "Boat ramp",
+            "note": "Rock now fills the drop-off at the end; avoid power loading (Marine Board).",
+            "map_query": "Nehalem Bay boat ramp Nehalem Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Chinook closed Dec. 1 to 31; hatchery steelhead all year",
+        "seasonal_detail": "From the mouth to the Foss Road Bridge (river mile 15.1) the 2026 regulations open hatchery steelhead all year and Chinook Jan. 1 to Dec. 31. ODFW's 2026 rule allows 1 wild adult Chinook a day and 5 for Jul. 1 to Nov. 30 and closes all Chinook angling Dec. 1 to 31. From the Foss Road Bridge to the Highway 26 bridge at Elsie the river is open for hatchery steelhead all year and closed to all salmon. Bait is allowed in the bay and tidewater all year. Spawning Chinook are on redds in many coastal systems; ODFW asks anglers to watch for fish on redds.",
+        "methods": "Use the regulations for the section you fish; the Foss Road Bridge is the salmon boundary.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Nehalem was found. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says fall Chinook fishing has been slow to fair on the North Coast, with the bays slowed.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Northwest Zone report (first seen here Nov. 19), not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "All Chinook angling on the Nehalem is closed Dec. 1 to 31 (ODFW 2026 rule). Hatchery steelhead stay open all year below the Foss Road Bridge.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "Marine Board, Nov. 18: Nehalem H Street, Tohls Street and Roy Creek ramps are open; avoid power loading at the Nehalem County Park ramp.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "trask-river-loren",
+      "name": "Trask River",
+      "reach": "Highway 101 to the forks: Loren's Drift to Cedar Creek",
+      "kind": "river",
+      "region": "North coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "trask-river-loren",
+        "target_species": [
+          "Fall Chinook salmon",
+          "Hatchery coho salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Drift-boat launches and a city park along Trask River Road",
+        "access_detail": "The Marine Board's Nov. 18 report lists Carnahan City Park (trailered boats can launch), Steiner boat launch, Loren's Drift launch, the Cedar Creek boat slide (Nips Landing), Upper and Lower Peninsula and the Stones Road boat slide as open.",
+        "access_point": {
+          "label": "Loren's Drift",
+          "map_query": "Loren's Drift Trask River Tillamook Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Loren's Drift",
+            "type": "Boat launch",
+            "note": "Open Nov. 18 (Marine Board). A section marker at river mile 9.",
+            "map_query": "Loren's Drift Trask River Tillamook Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Cedar Creek boat slide (Nips Landing)",
+            "type": "Boat slide",
+            "note": "Open Nov. 18 (Marine Board). A section marker at river mile 10.9.",
+            "map_query": "Cedar Creek boat slide Trask River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Carnahan City Park",
+            "type": "Park and launch",
+            "note": "Open Nov. 18; trailered boats can launch (Marine Board).",
+            "map_query": "Carnahan Park Tillamook Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Stones Road boat slide",
+            "type": "Boat slide",
+            "note": "Open Nov. 18 (Marine Board).",
+            "map_query": "Stones Road boat slide Trask River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Fall Chinook through Nov. 30 (wild), closed Dec. 1 to 31; hatchery steelhead all year",
+        "seasonal_detail": "On the mainstem from the Highway 101 bridge to the forks the 2026 regulations open hatchery steelhead all year, hatchery spring Chinook Jan. 1 to Jul. 31 and fall Chinook Aug. 1 to Dec. 31, with bait allowed. ODFW's 2026 rule allows 1 wild adult Chinook a day and 5 for Aug. 1 to Nov. 30 across Tillamook Bay and its rivers, and closes all Chinook angling Dec. 1 to 31. The river is closed from the Dam Hole marker (mile 7 on Trask River Road) up to Blue Ridge Creek Sep. 1 to Nov. 30. Spawning Chinook are on redds in many coastal systems; ODFW asks anglers to watch for fish on redds.",
+        "methods": "ODFW says the Trask has hatchery coho runs too, with fishing slow so far. Fly-or-bobber-only rules for Loren's Drift to Cedar Creek ran May 1 to Jul. 31.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Trask was found. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says the Trask and Wilson have been the biggest fall Chinook producers on the North Coast, and that the Trask also has a hatchery coho run with slow fishing overall.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Northwest Zone report (first seen here Nov. 19), not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's 2026 rule: 1 wild adult Chinook a day, 5 for Aug. 1 to Nov. 30, and all Chinook closed Dec. 1 to 31. The Dam Hole to Blue Ridge Creek closure runs through Nov. 30.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "Marine Board, Nov. 18: the Trask launches and Carnahan City Park are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "nestucca-river-pacific-city",
+      "name": "Nestucca River",
+      "reach": "Pacific City to First Bridge: tidewater and lower river",
+      "kind": "river",
+      "region": "North coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "nestucca-river-pacific-city",
+        "target_species": [
+          "Fall Chinook salmon",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "Pacific City ramp and drift-boat ramps up to First Bridge",
+        "access_detail": "The Marine Board's Nov. 18 report says the Pacific City boat ramp has a drop-off at the end and a large sand bar partly blocking it, especially at low tide, so use caution. Fishers Point (the guardrail) is a primitive ramp, open, where larger boats can still launch. Drift-boat ramps at Cloverdale, Three Rivers, Farmer Creek, First Bridge, Fourth Bridge, Bixby and Borba Road are open.",
+        "access_point": {
+          "label": "Pacific City boat ramp",
+          "map_query": "Pacific City boat ramp Nestucca River Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Pacific City boat ramp",
+            "type": "Boat ramp",
+            "note": "Drop-off at the end and a sand bar partly blocking it, especially at low tide (Marine Board, Nov. 18).",
+            "map_query": "Pacific City boat ramp Nestucca River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Fishers Point",
+            "type": "Primitive ramp",
+            "note": "Open Nov. 18; larger boats can still launch (Marine Board).",
+            "map_query": "Fishers Point boat ramp Nestucca River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Cloverdale ramp",
+            "type": "Drift-boat ramp",
+            "note": "Open Nov. 18 (Marine Board).",
+            "map_query": "Cloverdale boat ramp Nestucca River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "First Bridge ramp",
+            "type": "Drift-boat ramp",
+            "note": "Open Nov. 18 (Marine Board). First Bridge near Beaver is the salmon boundary.",
+            "map_query": "First Bridge boat ramp Nestucca River Beaver Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Wild Chinook through Nov. 30, closed Dec. 1 to 31; hatchery steelhead all year",
+        "seasonal_detail": "Up to First Bridge near Beaver the 2026 regulations open hatchery steelhead all year, hatchery spring Chinook Jan. 1 to Jul. 31 and fall Chinook Aug. 1 to Dec. 31, with bait allowed. ODFW's 2026 rule cut the Nestucca to 1 wild adult Chinook a day and 2 for Aug. 1 to Nov. 30, and closes all Chinook angling Dec. 1 to 31. From First Bridge to Moon Creek the river is closed to salmon Aug. 1 to Dec. 31 (hatchery steelhead stay open all year). Spawning Chinook are on redds in many coastal systems; ODFW asks anglers to watch for fish on redds.",
+        "methods": "First Bridge is the line between the open and closed salmon water; check the section at your launch.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Nestucca was found. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says fall Chinook fishing has been slow to fair on the North Coast, with the bays slowed.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Northwest Zone report (first seen here Nov. 19), not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's 2026 rule: 1 wild adult Chinook a day and 2 for Aug. 1 to Nov. 30 on the Nestucca, and all Chinook closed Dec. 1 to 31. Above First Bridge the river is closed to salmon through Dec. 31.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "Marine Board, Nov. 18: a sand bar partly blocks the Pacific City ramp, especially at low tide. Drift-boat ramps from Cloverdale to Borba Road are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "alsea-river-tidewater",
+      "name": "Alsea River",
+      "reach": "Alsea Bay to River Edge: Port of Alsea, Salmonberry and Mill Creek",
+      "kind": "river",
+      "region": "Central coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "alsea-river-tidewater",
+        "target_species": [
+          "Fall Chinook salmon",
+          "Winter steelhead (hatchery)",
+          "Cutthroat trout"
+        ],
+        "access_summary": "County parks, a port ramp and USFS campgrounds along Highway 34",
+        "access_detail": "ODFW says Highway 34 parallels the river for most of its 55 miles, with good bank access through several parks and campgrounds. It lists Salmonberry County Park (campground, ramp), Campbell Boat Landing, Mill Creek County Park (ramp, picnic) and the USFS Rivers Edge and Blackberry campgrounds. The Marine Board's Nov. 18 report lists the Port of Alsea ramp, marina and paddle launch, Mike Bauer Wayside, Blackberry Campground, Ermie Walters, Missouri Bend, Salmonberry Park, Campbell Park and Mill Creek landing open, and the River Edge ramp and campground closed.",
+        "access_point": {
+          "label": "Port of Alsea",
+          "map_query": "Port of Alsea boat ramp Waldport Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Port of Alsea",
+            "type": "Boat ramp and marina",
+            "note": "Ramp, marina and paddle launch open Nov. 18 (Marine Board).",
+            "map_query": "Port of Alsea boat ramp Waldport Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Salmonberry County Park",
+            "type": "Campground and ramp",
+            "note": "Benton County park with a campground, accessible restrooms and ramp (ODFW). Open Nov. 18.",
+            "map_query": "Salmonberry County Park Alsea River Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          },
+          {
+            "label": "Mill Creek County Park",
+            "type": "Ramp and picnic",
+            "note": "Benton County park with restrooms, picnic area and ramp (ODFW). Landing open Nov. 18.",
+            "map_query": "Mill Creek County Park Alsea River Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          },
+          {
+            "label": "Blackberry Campground",
+            "type": "USFS campground and ramp",
+            "note": "Campground with a boat launch; day-use fee (ODFW). Open Nov. 18.",
+            "map_query": "Blackberry Campground Alsea River Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          }
+        ],
+        "seasonal_summary": "Chinook through Dec. 31; winter steelhead from late November",
+        "seasonal_detail": "On the mainstem and bay the 2026 regulations open hatchery steelhead Jan. 1 to Apr. 30 and Nov. 1 to Dec. 31 and Chinook Aug. 1 to Dec. 31 up to the USFS River Edge Boat Landing, with no angling from a floating device above Mill Creek. ODFW's 2026 limit is 2 wild adult Chinook a day and 10 for the season. The Alsea basin did not meet the criteria for a wild coho season in 2026. ODFW says Chinook fish best in October to early November, and winter steelhead enter in late November and fish well into March. Spawning Chinook are on redds in many coastal systems; ODFW asks anglers to watch for fish on redds.",
+        "methods": "ODFW: for Chinook, bank anglers use large salmon spinners or drift eggs or sand shrimp under a bobber; for steelhead, spinners or bobber and jig outfits work.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Alsea was found. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says fall Chinook fishing has been slow in the Alsea and that the rain should get fish moving.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Northwest Zone report (first seen here Nov. 19), not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "There is no wild coho season on the Alsea in 2026. Chinook stay open through Dec. 31, 2 wild adults a day and 10 for the season.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "summary": "Marine Board, Nov. 18: the River Edge ramp and campground are closed; the Port of Alsea ramp and the county and USFS landings are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Northwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-northwest-zone"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "siuslaw-river-florence",
+      "name": "Siuslaw River",
+      "reach": "Florence to Mapleton: Port of Siuslaw, Cushman and Whittaker Creek",
+      "kind": "river",
+      "region": "Central coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "siuslaw-river-florence",
+        "target_species": [
+          "Fall Chinook salmon",
+          "Winter steelhead (hatchery)",
+          "Cutthroat trout"
+        ],
+        "access_summary": "Port and county landings from Florence to Mapleton",
+        "access_detail": "ODFW's Lane County guide lists the Port of Siuslaw (full amenities, walking distance from Old Town Florence), Cushman (a paved public dock east of Florence), Rhododendron Drive (a riprapped bank above the mouth for Chinook and coho) and Whittaker Creek Boat Launch (boat and bank access at a BLM campground, in an area with a productive hatchery fishery). The Marine Board's Nov. 18 report lists the Austa, Bender, Tiernan, Mapleton, Farnham, Tide County Park and Linslaw landings open.",
+        "access_point": {
+          "label": "Port of Siuslaw",
+          "map_query": "Port of Siuslaw boat ramp Florence Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Port of Siuslaw",
+            "type": "Boat ramp and marina",
+            "note": "Full amenities near Old Town Florence (ODFW).",
+            "map_query": "Port of Siuslaw boat ramp Florence Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Cushman",
+            "type": "Public dock",
+            "note": "A paved public dock east of Florence with salmon and steelhead access (ODFW).",
+            "map_query": "Cushman boat ramp Siuslaw River Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Whittaker Creek Boat Launch",
+            "type": "Boat launch",
+            "note": "Boat and bank access at a BLM campground; amenities seasonal (ODFW).",
+            "map_query": "Whittaker Creek boat launch Siuslaw River Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Mapleton landing",
+            "type": "Boat landing",
+            "note": "Open Nov. 18 (Marine Board).",
+            "map_query": "Mapleton boat landing Siuslaw River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Chinook through Dec. 31 below Lake Creek; winter steelhead from December",
+        "seasonal_detail": "Up to Lake Creek the 2026 regulations open hatchery steelhead Jan. 1 to Mar. 31 and Aug. 1 to Dec. 31 and Chinook Aug. 1 to Dec. 31, and tidewater is open all year for other fish. From Lake Creek to Whittaker Creek, hatchery steelhead are open Jan. 1 to Mar. 31 and Dec. 1 to 31 and Chinook are closed; above Whittaker Creek the river is also closed Oct. 1 to Nov. 30. ODFW's 2026 limit is 1 wild adult Chinook a day and 5 for Aug. 1 to Dec. 31. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says wild coho retention has closed on the Siuslaw for the year. ODFW's Lane County guide suggests the Whittaker Creek to Lake Creek drift for winter steelhead from January to March. Spawning Chinook are on redds in many coastal systems; ODFW asks anglers to watch for fish on redds.",
+        "methods": "ODFW: bobber and jig is effective for boat and bank anglers at Whittaker Creek; a motorized boat is recommended for fall salmon from Cushman or the Port of Siuslaw.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Siuslaw was found. ODFW's Northwest Zone report (undated; first seen here Nov. 19) says fall Chinook fishing has been slow in the Siuslaw and that wild coho retention has closed there for the year.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Northwest Zone report (first seen here Nov. 19), not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's Northwest Zone report says wild coho retention has closed on the Siuslaw for the year. Chinook stay open below Lake Creek through Dec. 31: 1 wild adult a day, 5 for the season.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "summary": "Marine Board, Nov. 18: the Austa, Bender, Tiernan, Mapleton, Farnham, Tide County Park and Linslaw landings are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Northwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/northwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "foster-reservoir",
+      "name": "Foster Reservoir",
+      "reach": "Sunnyside Park and the south shore",
+      "kind": "reservoir",
+      "region": "Western Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "foster-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Bass",
+          "Kokanee"
+        ],
+        "access_summary": "Linn County parks and ramps; bank access near the dam",
+        "access_detail": "ODFW lists four Linn County sites: Sunnyside Park (campground, ramp, picnic), Gedney Creek and Calkins boat ramps, and Lewis Park (ramp, picnic, day-use fee), plus bank fishing near the dam at the Army Corps park, along the flat south shore, and on the quieter north shore and Middle Fork arm. At low water the Marine Board's Nov. 18 report has Gedney Creek, Lewis and Calkins closed and Sunnyside open with about 2 feet of water over the bottom of its ramp.",
+        "access_point": {
+          "label": "Sunnyside County Park",
+          "map_query": "Sunnyside County Park Foster Reservoir Sweet Home Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Sunnyside County Park",
+            "type": "Campground and ramp",
+            "note": "Campground, restrooms, picnic area and ramp (ODFW). Open Nov. 18 with about 2 feet of water over the bottom of the ramp; paddlecraft can carry in.",
+            "map_query": "Sunnyside County Park Foster Reservoir Sweet Home Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Gedney Creek boat ramp",
+            "type": "Boat ramp",
+            "note": "Linn County ramp with restrooms (ODFW). Closed for low water Nov. 18.",
+            "map_query": "Gedney Creek boat ramp Foster Reservoir Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Calkins boat ramp",
+            "type": "Boat ramp",
+            "note": "Linn County ramp with restrooms (ODFW). Closed for low water Nov. 18.",
+            "map_query": "Calkins boat ramp Foster Reservoir Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year; heavily stocked April to June",
+        "seasonal_detail": "The 2026 regulations allow 5 hatchery trout a day with an 8 inch minimum, zone rules for kokanee, and no limit on size or number of bass. ODFW says the lake is heavily stocked with rainbow trout from April to June, and boat fishing is best from April 1 to mid-June, trolling spinners. Its schedule lists 3,000 trout for the week of Sep. 21, 2026 and about 28,100 more from March to May 2027, plus 6,000 in September 2027 (planned, not confirmed).",
+        "methods": "ODFW: standard lake techniques work for bank fishing; a small lake at Sunnyside Park has stocked trout, bass, bullhead and bluegill and suits young anglers.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Foster was found. ODFW's Willamette Zone guide says it is heavily stocked with rainbow trout from April to June.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Foster at 11% storage. The Gedney Creek, Lewis and Calkins ramps are closed for low water; Sunnyside is open with about 2 feet of water over its ramp.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Willamette Zone",
+            "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "green-peter-reservoir",
+      "name": "Green Peter Reservoir",
+      "reach": "North shore: Thistle Creek, Whitcomb Creek and Quartzville Drive",
+      "kind": "reservoir",
+      "region": "Western Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "green-peter-reservoir",
+        "target_species": [
+          "Kokanee",
+          "Rainbow trout",
+          "Largemouth bass"
+        ],
+        "access_summary": "Two north-shore ramps and bank access from Forest Service roads",
+        "access_detail": "ODFW calls Green Peter best known for kokanee, with stocked rainbow trout and largemouth bass, about four miles northeast of Foster on Quartzville Road. Bank access runs along logging and Forest Service roads, starting at the Thistle Creek and Whitcomb Creek parks or along Quartzville Drive, and there are two boat ramps on the north shore. The Marine Board lists both ramps, Thistle Creek and Whitcomb, closed on Nov. 18.",
+        "access_point": {
+          "label": "Thistle Creek",
+          "map_query": "Thistle Creek boat ramp Green Peter Reservoir Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Thistle Creek",
+            "type": "Park and boat ramp",
+            "note": "North-shore park and ramp (ODFW). Ramp closed Nov. 18 (Marine Board).",
+            "map_query": "Thistle Creek boat ramp Green Peter Reservoir Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Whitcomb Creek",
+            "type": "Park and boat ramp",
+            "note": "North-shore park and ramp (ODFW). Ramp closed Nov. 18 (Marine Board).",
+            "map_query": "Whitcomb Creek boat ramp Green Peter Reservoir Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year; 25 kokanee a day; trout stocked March to June",
+        "seasonal_detail": "The 2026 regulations allow 25 kokanee a day with no size limit, and the zone's lake rules otherwise (5 trout a day, 8 inch minimum). ODFW's schedule lists about 29,500 trout in 2027 from the week of Mar. 29 to the week of Jun. 28 (planned, not confirmed), and nothing before then.",
+        "methods": "ODFW: kokanee are the draw. For trout and bass, bank anglers start at the Thistle Creek and Whitcomb Creek parks or along Quartzville Drive.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Green Peter was found. ODFW's Willamette Zone guide describes it as best known for kokanee, with stocked rainbow trout and largemouth bass.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report lists Green Peter at negative 56% of capacity, with the Thistle Creek and Whitcomb boat ramps closed. Use extreme caution around the shore.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Willamette Zone",
+            "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "fern-ridge-reservoir",
+      "name": "Fern Ridge Reservoir",
+      "reach": "Orchard Point, Richardson and Perkins Peninsula",
+      "kind": "reservoir",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "fern-ridge-reservoir",
+        "target_species": [
+          "Largemouth bass",
+          "Panfish",
+          "Bullhead catfish",
+          "Carp"
+        ],
+        "access_summary": "County and Corps parks with ramps, docks and dam-face bank access",
+        "access_detail": "ODFW calls Fern Ridge the Willamette Valley's largest waterbody by surface area, with excellent warmwater fishing for largemouth bass and panfish, good bank access at several parks, docks and along the dam face, and shallow lagoons at the south end suited to a canoe or kayak. At very low water the Marine Board's Nov. 18 report has Orchard Point Marina closed, and Richardson, Fern Ridge Shores and Perkins Peninsula open with the water below the bottom of their ramps (paddlecraft can carry in).",
+        "access_point": {
+          "label": "Richardson Marina",
+          "map_query": "Richardson Park marina Fern Ridge Reservoir Eugene Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Orchard Point Park",
+            "type": "Park and ramp",
+            "note": "Restrooms, boat launch, picnic area and day-use fee (ODFW). Marina closed Nov. 18; water below the ramp.",
+            "map_query": "Orchard Point Park Fern Ridge Reservoir Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Richardson Marina",
+            "type": "Marina and ramp",
+            "note": "Open year round Nov. 18; water below the bottom of the ramp (Marine Board).",
+            "map_query": "Richardson Park marina Fern Ridge Reservoir Eugene Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Perkins Peninsula Park",
+            "type": "Park and ramp",
+            "note": "Open Nov. 18; water below the bottom of the ramp (Marine Board).",
+            "map_query": "Perkins Peninsula Park Fern Ridge Reservoir Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Open all year; warmwater fishing; no trout stocking scheduled",
+        "seasonal_detail": "Willamette Zone lakes are open all year in the 2026 regulations: bass 5 a day with no more than 3 over 15 inches, no limit on panfish, and 5 trout a day. Fern Ridge is not on ODFW's trout stocking schedule. ODFW's Lane County guide lists bass, panfish, bullhead, warmouth and carp.",
+        "methods": "ODFW points to bank fishing at the parks and docks and along the dam face, and to the south-end lagoons by canoe or kayak.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Fern Ridge was found. ODFW's Lane County guide describes excellent warmwater fishing for largemouth bass and panfish.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Fern Ridge at about 1% of capacity: Orchard Point Marina is closed, and the water is below the bottom of the Richardson, Fern Ridge Shores and Perkins Peninsula ramps.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
     }
   ]
 }
