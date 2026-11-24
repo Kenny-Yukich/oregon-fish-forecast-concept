@@ -133,7 +133,7 @@
       '<textarea id="ask-input" rows="1" maxlength="' + MAX + '" placeholder="Ask Eddy about a river or lake" autocomplete="off"></textarea>' +
       '<button type="submit" class="ask-send" aria-label="Send question">' + icon('arrow-right-linear') + '</button>' +
     '</form>' +
-    '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site, and it can be wrong. Check ODFW’s current rules before you fish.</p>';
+    '<p class="ask-note">Eddy is an AI built on Claude. It answers from this morning’s reports, gauges, counts and stocking on this site. When those do not have the answer it may check official sites such as ODFW and USGS, and it says so. It can be wrong. Check ODFW’s current rules before you fish.</p>';
 
   const log = panel.querySelector('.ask-log'), form = panel.querySelector('form'), input = panel.querySelector('textarea');
   const reset = panel.querySelector('.ask-new'), status = panel.querySelector('[data-ask-status]'), planLine = panel.querySelector('.ask-plan');
@@ -428,7 +428,7 @@
   }
   function renderAll() {
     log.innerHTML = '';
-    const intro = bubble('guide', '<p>I’m Eddy. Ask me how a river looks this morning, where fish are moving or what ODFW is stocking. I know the ' + waters.length + ' guide waters in detail, plus ODFW’s stocking schedule and weekly reports for the rest of Oregon. I answer only from that data and say when something is missing.</p>');
+    const intro = bubble('guide', '<p>I’m Eddy. Ask me how a river looks this morning, where fish are moving or what ODFW is stocking. I know the ' + waters.length + ' guide waters in detail, plus ODFW’s stocking schedule and weekly reports for the rest of Oregon. I answer from that data and say when something is missing. If it is not there I may check official sites like ODFW, and I will tell you what came from the web.</p>');
     intro.classList.add('ask-intro');
     if (!history.length) intro.insertAdjacentHTML('beforeend', suggestions());
     for (const m of history) bubble(m.role, m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : format(m.content));
@@ -438,6 +438,12 @@
   const scrollDown = () => { if (log.scrollHeight - log.scrollTop - log.clientHeight < 140) log.scrollTop = log.scrollHeight; };
 
   /* ---------- Asking ---------- */
+  // "From the web: [title](address) · ..." for the pages a search cited. Only plain https addresses; labels lose brackets.
+  function webSources(list) {
+    const links = list.filter(s => s && /^https:\/\/[^\s()<>"'\[\]]+$/.test(String(s.url))).slice(0, 5)
+      .map(s => '[' + String(s.title || s.url).replace(/[\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90) + '](' + s.url + ')');
+    return links.length ? 'From the web: ' + links.join(' · ') : '';
+  }
   async function ask(question) {
     question = question.trim().slice(0, MAX);
     if (!question || busy) return;
@@ -452,7 +458,7 @@
     form.setAttribute('aria-busy', 'true');
     status.textContent = 'Eddy is answering.';
     reset.hidden = false;
-    let text = '', end = null;
+    let text = '', end = null, sources = [];
     try {
       const res = await fetch(endpoint, {method: 'POST', headers: {'content-type': 'application/json', ...proof()}, body: JSON.stringify({messages: history, page: pageWater()}), signal: busy.signal});
       setPass(res.headers.get('x-eddy-pass'));
@@ -473,6 +479,8 @@
             if (!line.trim()) continue;
             let msg; try { msg = JSON.parse(line); } catch { continue; }
             if (msg.type === 'text') { text += msg.text; out.classList.remove('pending'); body.innerHTML = format(text); scrollDown(); }
+            else if (msg.type === 'search') { if (!text) { out.classList.remove('pending'); body.innerHTML = '<p class="ask-searching">Checking official sites…</p>'; status.textContent = 'Eddy is checking official sites.'; } }
+            else if (msg.type === 'sources') sources = Array.isArray(msg.sources) ? msg.sources : [];
             else end = msg;
           }
         }
@@ -485,7 +493,10 @@
     form.removeAttribute('aria-busy');
     if (end?.type === 'done' && text.trim()) {
       if (end.stop === 'max_tokens') { text += '\n\n(The answer was cut short. Ask a narrower question for the rest.)'; body.innerHTML = format(text); }
-      history.push({role: 'assistant', content: text});
+      // The pages a web search drew on, as links under the answer (kept with it unless it would be too long to send back).
+      const web = webSources(sources);
+      if (web) { text += '\n\n' + web; body.innerHTML = format(text); scrollDown(); }
+      history.push({role: 'assistant', content: text.length <= 3900 ? text : text.slice(0, text.length - web.length - 2)});
       store.save(history);
       status.textContent = 'Eddy answered: ' + body.innerText;
     } else {

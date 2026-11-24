@@ -35,6 +35,9 @@ window.ORFF_COUNT_STATIONS = {
     ],
     "umpqua-river-elkton": [
       {station: "WINCHESTER", relation: "On the North Umpqua, upstream of Elkton. Counts cover only fish entering the North Umpqua."}
+    ],
+    "north-umpqua-river-glide": [
+      {station: "WINCHESTER", relation: "Downstream of Glide. Fish counted at the ladder are headed up the North Umpqua toward this reach."}
     ]
   }
 };

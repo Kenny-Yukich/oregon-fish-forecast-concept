@@ -36,6 +36,9 @@ export function netlifySettings(get, {launched = LAUNCHED} = {}) {
     EDDY_PASS_SECRET: get('EDDY_PASS_SECRET'),
     // 3 free questions a day once launched with a live Stripe key; 0 otherwise.
     EDDY_FREE_PER_DAY: get('EDDY_FREE_PER_DAY') ?? String(launched && live ? 3 : 0),
+    EDDY_WEB_SEARCH: get('EDDY_WEB_SEARCH'),
+    EDDY_SEARCH_DOMAINS: get('EDDY_SEARCH_DOMAINS'),
+    EDDY_SEARCHES_PER_DAY: get('EDDY_SEARCHES_PER_DAY'),
     RESEND_API_KEY: get('RESEND_API_KEY'),
     EDDY_ALERTS_FROM: get('EDDY_ALERTS_FROM'),
     ORFF_PUBLIC_URL: get('ORFF_PUBLIC_URL'),

@@ -1,10 +1,13 @@
 # Eddy, the AI fishing assistant
 
-An "Ask Eddy" chat panel on the homepage and water pages where visitors ask about the 24 guide waters. Eddy runs on Claude Haiku 5.5 and answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts.
+An "Ask Eddy" chat panel on the homepage and water pages where visitors ask about the guide waters (62 as of Nov. 24, 2026). Eddy runs on Claude Haiku 5.5 and answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts. When that data has no answer (a water the guide does not cover in full, a rule or closure it does not list, a ramp or road status), Eddy can run a [limited web search of official sites](#web-search) and says which part of an answer came from the web.
 
 ## How it fits together
 
-- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 110K characters of plain text (about 47K tokens for Haiku 5.5): one block per guide water, statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
+- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as plain text in two levels:
+  - **Cached for every question:** a short summary of each guide water (score and its biggest input, latest report, first notice, in-season rules, gauge, stocking, angler posts, season, access), statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". About 72K characters with 37 guide waters on Nov 24, 2026 (roughly 30K tokens); each guide water adds about 1,000 characters, so the guide can grow well past 100 waters and stay under Haiku 5.5's 100K-token price step.
+  - **Sent with a question:** the full block (every notice, season rules, methods, access points, gauge, counts, weather) for the water page the visitor is on and the guide waters their latest two questions name, at most 4 (`detailIds` in `ask.mjs`). It goes in the visitor's turn inside `<site_detail>` tags, so the cached part stays the same for everyone; visitor text cannot add those tags.
+  - Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
 - **`ask.mjs`** is the endpoint: `POST` a conversation, get the answer streamed back as newline-delimited JSON. It is a web-standard `(Request) => Response` handler.
   - Model `claude-haiku-5-5`, effort `low`, adaptive thinking (the model's default), up to 3,000 output tokens.
   - The instructions and site data go in the system prompt and are cached, so repeat questions within five minutes read the data at a tenth of the price.
@@ -12,6 +15,18 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
   - Limits: 20 questions per visitor per 10 minutes and 600 an hour overall, per server instance. Requests from other websites are refused unless listed.
   - A refusal or an API error becomes a short message in the chat; nothing is retried automatically except once by the SDK.
 - **`v2/assets/ask.js`** is the chat panel. On page load it sends a `GET` to the endpoint named in `assets/ask-config.js` and shows the "Ask Eddy" button only when the endpoint answers that it is ready (deployed, with an API key). Until then the site shows no chat at all. The readiness check never calls Claude. The conversation is kept for the browser tab only. On the homepage the same check also fills the "Ask Eddy" card on the hero artwork; a question typed there opens the panel and asks it.
+
+## Web search
+
+Eddy's own data is the answer; the web is the fallback. `ask.mjs` offers Claude the server-side `web_search_20250305` tool (the basic version, with no dynamic filtering and no code execution), which Haiku 5.5 supports.
+
+- **Official sites only.** The search is limited to `SEARCH_DOMAINS` (subdomains are covered): myodfw.com, dfw.state.or.us, oregon.gov (which includes Oregon State Parks), eregulations.com, usgs.gov, weather.gov, noaa.gov, fs.usda.gov, blm.gov, usace.army.mil, usbr.gov, nps.gov and recreation.gov. County and city park sites are not on the list; add them with `EDDY_SEARCH_DOMAINS`. Results are also biased to Oregon.
+- **Two searches a question,** and a paused search turn is resumed at most twice. A **site-wide daily cap** (default 300 searches per Pacific day, `EDDY_SEARCHES_PER_DAY`) is checked before each question; once it is spent, questions are answered without the tool and nobody is turned away. The count lives in the same usage store as question counts (Netlify Blobs on the Eddy project), so it holds across server instances.
+- **When it searches** is set in `SEARCH_INSTRUCTIONS`: only when the site data does not answer, never for a score, gauge reading, dam count, stocking or angler post, with web facts kept apart from the site's scores and dated reports, a named source site and the page date when it has one, and the usual "check ODFW's current regulations" line. Web pages are treated as untrusted text, so an instruction inside one is ignored.
+- **In the panel.** A short "Checking official sites..." shows while a search runs. The pages an answer cited appear under it as "From the web: ..." links (https only, up to five, once each) and stay with the answer in the saved conversation. A visitor sees nothing of the search except those links.
+- **Cost.** $10 per 1,000 searches, plus the tokens of the results Claude reads (the basic tool loads every result into context, a few thousand tokens a search, about a tenth of a cent at Haiku prices). A question that searches twice costs roughly $0.02 to $0.03; at the default cap the most search costs in a day is about $3 plus tokens. Set a spend limit on the API key's workspace as a backstop.
+- **Settings:** `EDDY_WEB_SEARCH=off` turns it off (on by default), `EDDY_SEARCH_DOMAINS` (comma-separated bare domains, optionally with a path such as `oregon.gov/fishing`) replaces the list, `EDDY_SEARCHES_PER_DAY` sets the cap (0 = off).
+- **Not changed:** the cached site data, the question limits and the two-level data (summary plus detail). Search results never enter the saved conversation, only Eddy's answer and its source links do.
 
 ## Eddy passes (paid access)
 
@@ -74,12 +89,13 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 ## Tests
 
 - `npm test`: offline tests with stand-ins for Claude, Stripe and the email service (no API calls).
+- `TRY_SEARCH=1 node try.mjs` adds the limited web search and three more questions: a rule the data lacks (should search and cite), and two that must not search (one the data answers, one asking for a score "from the web"). It fails the run if either of those searches. Off by default, so CI never spends on searches. Needs a key; I could not run it in the environment where the search was written, so the first live run is the real test of the search path.
 - `node try.mjs`: asks Haiku 5.5 twelve sample questions in eleven conversations (trout this week, a water page, counts with a follow-up, stocking, a bag-limit question it should not answer, a drive time it should not estimate, a Washington river, an off-topic request, "Who are you?", Lava Lake (a new guide page) and Malheur Reservoir (ODFW zone report only)) and prints the answers, timings, token use and cost. Needs `ANTHROPIC_API_KEY`.
 - `.github/workflows/ask-guide.yml` runs both. The live questions run on pushes to branches other than `main` and on manual runs, using the `ANTHROPIC_API_KEY` repository secret; the answers appear in the run summary. Pull requests run offline only.
 
 ## Cost
 
-Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens; cached reads cost a tenth and cache writes 1.25 times the input price. Each question reads about 32K tokens of instructions and site data:
+Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens, and five times that ($0.50 / $2.50) above it; cached reads cost a tenth and cache writes 1.25 times the input price. Each question reads about 32K tokens of cached instructions and site data, plus up to a few thousand uncached tokens of detail for the waters it is about (figures below are from the Nov 18 check, before the two-level split):
 
 - The first question in a five-minute window writes the cache: about $0.004.
 - Questions within five minutes of another read the cache: about $0.0003.
