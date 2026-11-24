@@ -58,5 +58,13 @@ window.ORFF_MAP = {
     "foster-reservoir": [44.415, -122.670],
     "green-peter-reservoir": [44.450, -122.549],
     "fern-ridge-reservoir": [44.121, -123.301],
+    "crane-prairie-reservoir": [43.814, -121.777],
+    "wickiup-reservoir": [43.684, -121.690],
+    "davis-lake": [43.640, -121.846],
+    "east-lake-newberry": [43.720, -121.200],
+    "paulina-lake-newberry": [43.713, -121.277],
+    "cultus-lake": [43.821, -121.824],
+    "crescent-lake": [43.501, -121.973],
+    "lake-of-the-woods": [42.375, -122.208],
   }
 };

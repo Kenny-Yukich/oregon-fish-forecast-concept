@@ -27,5 +27,11 @@ window.ORFF_STOCKING_MATCH = {
   // ODFW lists the North Fork Santiam as "Santiam River (North Fork 2)".
   "north-santiam-river-mehama": ["Santiam River (North Fork 2"],
   "foster-reservoir": ["Foster Reservoir"],
-  "green-peter-reservoir": ["Green Peter Reservoir"]
+  "green-peter-reservoir": ["Green Peter Reservoir"],
+  "east-lake-newberry": ["East Lake"],
+  "paulina-lake-newberry": ["Paulina Lake"],
+  // ODFW lists Big Cultus Lake as "CULTUS LK, B", shown as "Cultus Lake (B)".
+  "cultus-lake": ["Cultus Lake (B"],
+  // "Lake In The Woods" is a different water on ODFW's schedule.
+  "lake-of-the-woods": ["Lake of the Woods"]
 };

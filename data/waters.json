@@ -4520,6 +4520,756 @@
         "checked_on": "2026-11-24"
       },
       "readings": null
+    },
+    {
+      "id": "crane-prairie-reservoir",
+      "name": "Crane Prairie Reservoir",
+      "reach": "Crane Prairie and Rock Creek",
+      "kind": "reservoir",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "crane-prairie-reservoir",
+        "target_species": [
+          "Redband rainbow trout",
+          "Hatchery rainbow trout",
+          "Brook trout",
+          "Largemouth bass",
+          "Kokanee"
+        ],
+        "access_summary": "Two Forest Service campgrounds; limited bank access",
+        "access_detail": "ODFW lists Crane Prairie Campground (boat ramp, accessible campgrounds, vault toilets, fee) and Rock Creek Campground (some bank fishing, picnic area, fish cleaning station, vault toilets, fee), and calls the reservoir spectacular for boat fishing with large rainbow and brook trout and limited bank access. The Marine Board's Nov. 18 report has Rock Creek Day Use and its ramp closed, Crane Prairie Day Use open with docks in place year-round, and Browns Mountain, a shallow-sloped unimproved access with calmer water, open to paddlers.",
+        "access_point": {
+          "label": "Crane Prairie Campground",
+          "map_query": "Crane Prairie Campground Crane Prairie Reservoir Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Crane Prairie Campground",
+            "type": "Boat ramp and campground",
+            "note": "Boat ramp, accessible campgrounds, vault toilets; fee (ODFW). Crane Prairie Day Use open with docks in place Nov. 18 (Marine Board).",
+            "map_query": "Crane Prairie Campground Crane Prairie Reservoir Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Rock Creek Campground",
+            "type": "Campground and bank fishing",
+            "note": "Some bank fishing, picnic area, fish cleaning station; fee (ODFW). Rock Creek Day Use and ramp closed Nov. 18.",
+            "map_query": "Rock Creek Campground Crane Prairie Reservoir Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Closed to angling until Apr. 22; open Apr. 22 to Oct. 31",
+        "seasonal_detail": "The 2026 regulations open Crane Prairie Apr. 22 to Oct. 31 and require wild rainbow trout to be released, so the reservoir is closed to fishing now and reopens Apr. 22. Central Zone lake rules otherwise: 5 trout a day, 8 inch minimum, only 1 over 20 inches; bass 5 a day. ODFW's trout stocking schedule lists no releases here.",
+        "methods": "ODFW: the draw is boat fishing for large redband rainbow and brook trout, with largemouth bass and kokanee. Bank access is limited.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Crane Prairie was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Crane Prairie is closed to fishing until Apr. 22 (2026 regulations: open Apr. 22 to Oct. 31). Wild rainbow trout must be released.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Crane Prairie at 64% of capacity, with Rock Creek Day Use and its ramp closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "wickiup-reservoir",
+      "name": "Wickiup Reservoir",
+      "reach": "Reservoir Campground and Wickiup Butte",
+      "kind": "reservoir",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "wickiup-reservoir",
+        "target_species": [
+          "Kokanee",
+          "Brown trout",
+          "Coho salmon",
+          "Rainbow trout",
+          "Largemouth bass"
+        ],
+        "access_summary": "Boat ramps; bank fishing near the dam",
+        "access_detail": "ODFW calls Wickiup challenging fishing for abundant kokanee and for brown trout up to 20 inches, best from a boat, with trophy largemouth bass. It lists Reservoir Campground (boat ramp) and Wickiup Butte (some bank fishing near the dam, camping nearby, day-use fee, boat ramp, vault toilet). The Marine Board's Nov. 18 report has the reservoir at 26% full, the Reservoir and Gull Point boating sites and campgrounds closed, and North Davis Creek Campground and boating access closed for hazard-tree work with no opening date.",
+        "access_point": {
+          "label": "Wickiup Butte",
+          "map_query": "Wickiup Butte boat ramp Wickiup Reservoir Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Wickiup Butte",
+            "type": "Boat ramp and bank access",
+            "note": "Some bank fishing near the dam; day-use fee, boat ramp, vault toilet (ODFW).",
+            "map_query": "Wickiup Butte boat ramp Wickiup Reservoir Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Reservoir Campground",
+            "type": "Boat ramp and campground",
+            "note": "Boat ramp (ODFW). The boating site and campground were closed Nov. 18 (Marine Board).",
+            "map_query": "Reservoir Campground Wickiup Reservoir Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Closed to angling until Apr. 22; open Apr. 22 to Oct. 31",
+        "seasonal_detail": "The 2026 regulations open Wickiup Apr. 22 to Oct. 31, so the reservoir is closed to fishing now and reopens Apr. 22. The Deschutes River arm is also closed from the boat ramp at Gull Point Campground to the ODFW markers near Sheeps Bridge Sep. 1 to Apr. 21. Central Zone lake rules otherwise: 5 trout a day, 8 inch minimum, 10 kokanee a day. ODFW's trout stocking schedule lists no releases here.",
+        "methods": "ODFW: best fished from a boat. The fishery is kokanee and brown trout, with trophy largemouth bass.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Wickiup was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Wickiup is closed to fishing until Apr. 22 (2026 regulations: open Apr. 22 to Oct. 31).",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Wickiup at 26% full, with the Reservoir and Gull Point boating sites closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "davis-lake",
+      "name": "Davis Lake",
+      "reach": "East Davis and Lava Flow",
+      "kind": "lake",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "davis-lake",
+        "target_species": [
+          "Rainbow trout",
+          "Largemouth bass"
+        ],
+        "access_summary": "Two campground accesses; an unimproved boat launch",
+        "access_detail": "ODFW calls Davis a very productive lake with good trout and bass populations, fly fishing only for both. It lists Lava Flow Campground (unimproved boat launch, picnic area, restroom) and East Davis Campground (vault toilet). The Marine Board's Nov. 18 report has the East Davis boating access open, its campground closed and its water shut off for the season, so bring what you need.",
+        "access_point": {
+          "label": "East Davis boating access",
+          "map_query": "East Davis Campground Davis Lake Oregon"
+        },
+        "access_points": [
+          {
+            "label": "East Davis boating access",
+            "type": "Boating access",
+            "note": "Open Nov. 18; the campground is closed and its water is shut off for the season (Marine Board).",
+            "map_query": "East Davis Campground Davis Lake Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Lava Flow Campground",
+            "type": "Unimproved boat launch",
+            "note": "Unimproved launch, campground, picnic area, restroom (ODFW).",
+            "map_query": "Lava Flow Campground Davis Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Open all year; fly fishing only, trout catch and release",
+        "seasonal_detail": "The 2026 regulations make Davis Lake and the Odell Creek channel (upstream to the boat ramp at West Davis Lake Campground) catch-and-release for trout, with no limit on the size or number of bass, fly fishing only and barbless hooks required. Lakes are open all year; ODFW's Central Zone report says snow limits access to many Central Zone lakes. ODFW's trout stocking schedule lists no releases here.",
+        "methods": "Fly fishing only, barbless hooks, for both trout and bass.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Davis Lake was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Fly fishing only with barbless hooks at Davis Lake; trout are catch and release, and there is no limit on bass (2026 regulations).",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report has the East Davis boating access open, the campground closed and its water shut off for the season.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Snow and road conditions on the forest roads to this lake were not verified. ODFW's Central Zone report (undated; first seen here Nov. 19) says road closures and snow have limited access to many Central Zone lakes, and points winter anglers to lower-elevation waters such as Lake Billy Chinook and Haystack.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "east-lake-newberry",
+      "name": "East Lake",
+      "reach": "East Lake boating site and Hot Springs, Newberry Monument",
+      "kind": "lake",
+      "region": "Central Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "east-lake-newberry",
+        "target_species": [
+          "Rainbow trout",
+          "Brown trout",
+          "Kokanee",
+          "Tiger trout (catch and release)"
+        ],
+        "access_summary": "Boating sites on the Paulina Lake Road; closed by snow in winter",
+        "access_detail": "ODFW calls East Lake a large, deep lake in Newberry Volcanic National Monument, popular with fly fishers and best from a boat, pontoon or float tube; the road usually opens in early June. It lists the East Lake boating site (boat ramp, picnic area, vault toilet, fee) and the Hot Springs boating site (boat ramp, flush toilets, picnic area). The Marine Board's Nov. 18 report says Paulina Lake Road is closed for the winter and East Lake is no longer accessible by that route; Cinder Hill, Hot Springs and East Lake Resort are closed, and the East Lake boating site is open without docks.",
+        "access_point": {
+          "label": "East Lake boating site",
+          "map_query": "East Lake boating site Newberry Volcanic National Monument Oregon"
+        },
+        "access_points": [
+          {
+            "label": "East Lake boating site",
+            "type": "Boat ramp",
+            "note": "Boat ramp, picnic area, vault toilet; fee (ODFW). Open without docks Nov. 18, but the road is closed for winter (Marine Board).",
+            "map_query": "East Lake boating site Newberry Volcanic National Monument Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Hot Springs boating site",
+            "type": "Boat ramp",
+            "note": "Boat ramp, flush toilets, picnic area (ODFW). Closed Nov. 18.",
+            "map_query": "Hot Springs boating site East Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Open all year by the rules; road closed by snow until about June",
+        "seasonal_detail": "The 2026 regulations keep Central Zone lakes open all year (5 trout a day, 8 inch minimum, 10 kokanee a day) and make tiger trout catch and release at East Lake. ODFW says the road usually opens in early June, and its schedule lists 2,500 trout in June 2027 and 2,500 in July 2027 (planned, not confirmed).",
+        "methods": "ODFW: popular with fly fishers; the best fishing is from a boat, pontoon or float tube.",
+        "report": {
+          "summary": "No dated ODFW fishing report for East Lake was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report says Paulina Lake Road is closed for the winter and East Lake is no longer accessible by that route.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Tiger trout are catch and release at East Lake (2026 regulations).",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "paulina-lake-newberry",
+      "name": "Paulina Lake",
+      "reach": "Paulina Lake day use and Little Crater, Newberry Monument",
+      "kind": "lake",
+      "region": "Central Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "paulina-lake-newberry",
+        "target_species": [
+          "Brown trout",
+          "Rainbow trout",
+          "Kokanee",
+          "Tiger trout (catch and release)"
+        ],
+        "access_summary": "Day-use area and a boat ramp; road closed by snow in winter",
+        "access_detail": "ODFW says Paulina, also in Newberry Volcanic National Monument, is managed for trophy brown trout, and the road usually opens in early June. It lists the Paulina Lake Day Use Area (picnic area, vault toilet, fee) and the Little Crater boating site (boat ramp, fee). The Marine Board's Nov. 18 report has Paulina Lake boating access and day use open with docks in place year-round, Little Crater open with its campground closed, and Paulina Lake Resort closed until mid-December, reachable then only by SnoBus. Check snow and road conditions before you go.",
+        "access_point": {
+          "label": "Paulina Lake Day Use Area",
+          "map_query": "Paulina Lake Day Use Area Newberry Volcanic National Monument Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Paulina Lake Day Use Area",
+            "type": "Day use and boating access",
+            "note": "Picnic area, vault toilet; fee (ODFW). Open with docks in place year-round Nov. 18 (Marine Board).",
+            "map_query": "Paulina Lake Day Use Area Newberry Volcanic National Monument Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Little Crater boating site",
+            "type": "Boat ramp",
+            "note": "Boat ramp; fee (ODFW). Open Nov. 18; its campground is closed.",
+            "map_query": "Little Crater boating site Paulina Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Open all year by the rules; road closed by snow until about June",
+        "seasonal_detail": "The 2026 regulations keep Central Zone lakes open all year (5 trout a day, 8 inch minimum, 10 kokanee a day) and make tiger trout catch and release at Paulina Lake. ODFW says the road usually opens in early June, and its schedule lists 2,500 trout in June 2027 and 2,500 in July 2027 (planned, not confirmed).",
+        "methods": "ODFW manages the lake for trophy brown trout. Boat rentals and other services are available at Paulina Lake Lodge in season.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Paulina Lake was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report has Paulina Lake boating access open, but Paulina Lake Resort is closed until mid-December and then reachable only by SnoBus. Snow and road conditions were not verified.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Tiger trout are catch and release at Paulina Lake (2026 regulations).",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "cultus-lake",
+      "name": "Cultus Lake",
+      "reach": "Cultus Lake day use and campground",
+      "kind": "lake",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "cultus-lake",
+        "target_species": [
+          "Rainbow trout",
+          "Lake trout",
+          "Brook trout"
+        ],
+        "access_summary": "Boating site and campground with a ramp; resort rentals in season",
+        "access_detail": "ODFW calls Cultus a large lake popular for fishing, boating and swimming, with rainbow and lake trout at the boating site (vault toilet, boat ramp, fee) and naturally reproducing rainbow and brook trout at Cultus Lake Campground, where bank access is good (boat ramp, picnic area, vault toilet, fee, primitive camping only). The Marine Board's Nov. 18 report has Cultus Lake Day Use open with docks installed year-round, and the campgrounds and the resort closed for the season.",
+        "access_point": {
+          "label": "Cultus Lake Day Use",
+          "map_query": "Cultus Lake boating site Cultus Lake Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Cultus Lake Day Use",
+            "type": "Boating site",
+            "note": "Vault toilet, boat ramp; fee (ODFW). Open with docks installed year-round Nov. 18 (Marine Board).",
+            "map_query": "Cultus Lake boating site Cultus Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Cultus Lake Campground",
+            "type": "Campground and bank access",
+            "note": "Good bank access, boat ramp, picnic area, vault toilet; fee, primitive camping only (ODFW). Closed Nov. 18.",
+            "map_query": "Cultus Lake Campground Cultus Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          }
+        ],
+        "seasonal_summary": "Open all year by the rules; stocked in June and August",
+        "seasonal_detail": "The 2026 regulations list no exception for Cultus Lake, so Central Zone lake rules apply: open all year, 5 trout a day, 8 inch minimum, only 1 over 20 inches, and 10 kokanee a day. ODFW's schedule lists 2,500 trout in June 2027 and 2,500 in August 2027 (planned, not confirmed).",
+        "methods": "ODFW points to fishing for naturally reproducing rainbow and brook trout from the bank at the campground, and boat fishing for rainbow and lake trout.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Cultus Lake was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report has Cultus Lake Day Use open with docks installed, the campgrounds closed and the resort closed for the season.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Snow and road conditions on the forest roads to this lake were not verified. ODFW's Central Zone report (undated; first seen here Nov. 19) says road closures and snow have limited access to many Central Zone lakes, and points winter anglers to lower-elevation waters such as Lake Billy Chinook and Haystack.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "crescent-lake",
+      "name": "Crescent Lake",
+      "reach": "Crescent Boat Launch and Spring Campground",
+      "kind": "lake",
+      "region": "Central Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "crescent-lake",
+        "target_species": [
+          "Kokanee",
+          "Rainbow trout",
+          "Brown trout",
+          "Lake trout",
+          "Mountain whitefish"
+        ],
+        "access_summary": "Forest Service boat launch and campgrounds near Highway 58",
+        "access_detail": "ODFW calls Crescent a large, pristine lake popular for fishing and other water sports. Recreation.gov describes a 4,000-acre natural lake with kokanee, rainbow trout, brown trout and mountain whitefish. The Marine Board's Nov. 18 report has the Crescent boat launch open without docks, the lake at 9% full, and Spring Campground and its ramp, Crescent Lake campgrounds and Windy Group Campground closed.",
+        "access_point": {
+          "label": "Crescent Boat Launch",
+          "map_query": "Crescent Lake boat launch Crescent Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Crescent Boat Launch",
+            "type": "Boat launch",
+            "note": "Open Nov. 18 without docks, because of low water (Marine Board).",
+            "map_query": "Crescent Lake boat launch Crescent Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Spring Campground",
+            "type": "Campground and ramp",
+            "note": "Campground and its boat ramp closed Nov. 18 (Marine Board).",
+            "map_query": "Spring Campground Crescent Lake Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Lake trout limit of 1; low water and snow limit winter access",
+        "seasonal_detail": "The 2026 regulations list one exception for Crescent Lake: 1 lake trout a day, 24 inch minimum length. They list no season exception, so Central Zone lake rules apply (open all year, 5 trout a day, 8 inch minimum), but Recreation.gov says the fishing season runs late April through October, so confirm before you go. ODFW's trout stocking schedule lists no releases here.",
+        "methods": "Check the lake trout rule: only 1 a day, and it must be 24 inches or longer.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Crescent Lake was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Crescent Lake at 9% full, with the boat launch open but no docks, and Spring Campground and its ramp closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Lake trout: 1 a day, 24 inch minimum (2026 regulations). Recreation.gov lists a late-April-to-October fishing season; confirm the season before you go.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.recreation.gov/camping/gateways/1143"
+          },
+          {
+            "summary": "Snow and road conditions on the forest roads to this lake were not verified. ODFW's Central Zone report (undated; first seen here Nov. 19) says road closures and snow have limited access to many Central Zone lakes, and points winter anglers to lower-elevation waters such as Lake Billy Chinook and Haystack.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "Recreation.gov: Crescent Lake",
+            "url": "https://www.recreation.gov/camping/gateways/1143"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing within 90 minutes of Bend",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-90-minutes-bend"
+          },
+          {
+            "label": "ODFW Central Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/central-zone"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "lake-of-the-woods",
+      "name": "Lake of the Woods",
+      "reach": "Resort, Aspen Point and Sunset",
+      "kind": "lake",
+      "region": "Southern Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "lake-of-the-woods",
+        "target_species": [
+          "Rainbow trout",
+          "Brown trout",
+          "Kokanee",
+          "Yellow perch",
+          "Largemouth bass"
+        ],
+        "access_summary": "Resort ramp and Forest Service campgrounds off Highway 140",
+        "access_detail": "ODFW says the lake is ringed by cabins, Forest Service campgrounds and a resort, with good bank fishing for trout around most of it, especially near the boat ramps. It lists Lake of the Woods Resort (campground, restrooms, boat launch, rentals), USFS Aspen Point (campground, picnic) and USFS Sunset (campground, boat launch, day-use fee). The Marine Board's Nov. 18 report has Rainbow Bay and the resort open and the Aspen Point Day Use and Sunset boat launches closed. Lake of the Woods is off Highway 140, midway between Medford and Klamath Falls.",
+        "access_point": {
+          "label": "Lake of the Woods Resort",
+          "map_query": "Lake of the Woods Resort Highway 140 Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Lake of the Woods Resort",
+            "type": "Resort, boat launch and rentals",
+            "note": "Campground, picnic area, restrooms, boat launch, boat rentals (ODFW). Resort and Rainbow Bay open Nov. 18 (Marine Board).",
+            "map_query": "Lake of the Woods Resort Highway 140 Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          },
+          {
+            "label": "USFS Sunset",
+            "type": "Campground and boat launch",
+            "note": "Campground, boat launch, day-use fee (ODFW). Boat launch closed Nov. 18.",
+            "map_query": "Sunset Campground Lake of the Woods Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          },
+          {
+            "label": "USFS Aspen Point",
+            "type": "Campground and day use",
+            "note": "Campground and picnic area (ODFW). Day use closed Nov. 18.",
+            "map_query": "Aspen Point Campground Lake of the Woods Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year, 24 hours a day; stocked March to June and September",
+        "seasonal_detail": "The 2026 regulations allow fishing 24 hours a day for all species at Lake of the Woods, with 5 bass a day and only 1 over 15 inches; Southeast Zone lakes otherwise allow 5 trout a day (8 inch minimum, only 1 over 20 inches) and 10 kokanee, with no limit on panfish and perch. ODFW says ice fishing for yellow perch is popular, and its Southeast Zone report (undated; first seen here Nov. 19) says perch fishing may still be good here. Its schedule lists about 9,850 trout from March to June 2027 and 1,500 in September 2027 (planned, not confirmed).",
+        "methods": "ODFW: target kokanee and brown trout early in the season, jigging or trolling for kokanee; troll silver, rainbow, or black and gold lures off shore in 10 to 20 feet for large brown trout, with long leaders and electric motors.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Lake of the Woods was found. ODFW's Southeast Zone report (undated; first seen here Nov. 19) says yellow perch fishing may still be good at Lake of the Woods.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW Southeast Zone report, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report has the resort and Rainbow Bay open and the Aspen Point Day Use and Sunset Campground boat launches closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Ice, snow and road conditions on Highway 140 were not verified. The resort's live camera shows lake conditions.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Southeast Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southeast-zone"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Southeast Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southeast-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
     }
   ]
 }
