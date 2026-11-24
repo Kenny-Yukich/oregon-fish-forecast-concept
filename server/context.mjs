@@ -196,15 +196,21 @@ function summaryBlock(g, w, today) {
 
 // Words in a visitor's question that name a guide water: its name, its name without the kind word or a
 // Lower/Middle/North Fork style prefix ("Rogue", "Santiam", "Alton Baker"), its ODFW stocking names and its page id.
-// Short stems such as "Fall" are left out because they are ordinary words. Pages that share a name (two
-// McKenzie reaches) are all matched.
-const KIND_WORD = /\s+(?:River|Lake|Reservoir|Creek|Canoe Canal|Canal)$/i, PREFIX = /^(?:Lower|Middle|Upper|North Fork|South Fork|North|South)\s+/i;
+// Stems that are ordinary words ("Fall", "Lava") are left out. Pages that share a name (two McKenzie reaches,
+// several Rogue reaches) are all matched; words from a page's reach ("Grants Pass", "Glide") rank it first.
+const KIND_WORD = /\s+(?:River|Lake|Reservoir|Creek|Canoe Canal|Canal|Bay)$/i, PREFIX = /^(?:Lower|Middle|Upper|North Fork|South Fork|North|South)\s+/i;
+const COMMON = new Set(['fall', 'lava', 'clear', 'big', 'little', 'rock', 'long', 'blue', 'green', 'east', 'west', 'lost', 'bear', 'deer', 'hood', 'trout', 'salmon', 'silver', 'eagle', 'fish']);
+const REACH_STOP = new Set(['river', 'rivers', 'creek', 'park', 'parks', 'state', 'recreation', 'site', 'sites', 'area', 'landing', 'lower', 'upper', 'middle', 'above', 'below', 'north', 'south', 'mouth', 'county', 'launch', 'ramps', 'campground', 'reach', 'tidewater', 'shore', 'access']);
 function mentionPatterns(g, w) {
   const names = new Set([w.name]);
   const stem = w.name.replace(KIND_WORD, ''), bare = stem.replace(PREFIX, '');
-  for (const n of [stem, bare]) if (n !== w.name && n.length >= 5) names.add(n);
+  for (const n of [stem, bare]) if (n !== w.name && n.length >= 3 && !COMMON.has(n.toLowerCase())) names.add(n);
   for (const n of g.ORFF_STOCKING_MATCH?.[w.id] || []) if (n.length > 4 && !/[()]/.test(n)) names.add(n);
   return [...nameRes([...names]), new RegExp('#/water/' + w.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b')];
+}
+function reachPatterns(w) {
+  const words = String(w.reach).match(/[A-Za-z']{5,}/g) || [];
+  return nameRes([...new Set(words.filter(x => !REACH_STOP.has(x.toLowerCase())))]);
 }
 
 /* ---------- Statewide ---------- */
@@ -304,7 +310,7 @@ export function buildContext(g, today = pacificToday()) {
   const byId = new Map(waters.map(w => [w.id, w]));
   const detail = new Map(waters.map(w => [w.id, waterBlock(g, w, today)]));
   // Array.from: the waters list comes from the sandbox, and arrays mapped from it would carry its Array prototype.
-  const patterns = Array.from(waters, w => [w.id, mentionPatterns(g, w)]);
+  const patterns = Array.from(waters, w => [w.id, mentionPatterns(g, w), reachPatterns(w)]);
   const text = [
     '# Oregon Fish Forecast site data, built ' + today + ' (Pacific)',
     'Data files refresh every morning. Angler posts were last read ' + (g.ORFF_ANGLER?.checked_on || 'unknown') + '. Gauges were read ' + (g.ORFF_CONDITIONS?.fetched_at || 'unknown').slice(0, 16).replace('T', ' ') + ' UTC.',
@@ -322,8 +328,13 @@ export function buildContext(g, today = pacificToday()) {
     '',
     elsewhereBlock(g)
   ].join('\n');
-  // Guide waters a piece of visitor text names, in guide order.
-  const mentions = s => patterns.filter(([, res]) => res.some(re => re.test(String(s || '')))).map(([id]) => id);
+  // Guide waters a piece of visitor text names: those whose reach words also appear first, then guide order.
+  const mentions = s => {
+    const text = String(s || '');
+    return patterns.filter(([, res]) => res.some(re => re.test(text)))
+      .map(([id, , reach], i) => ({id, i, hits: reach.filter(re => re.test(text)).length}))
+      .sort((a, b) => b.hits - a.hits || a.i - b.i).map(x => x.id);
+  };
   return {today, text, detail, mentions, waters: waters.map(w => ({id: w.id, name: w.name, reach: w.reach}))};
 }
 

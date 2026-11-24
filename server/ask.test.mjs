@@ -103,6 +103,8 @@ test('the cached data holds a summary of each water; full detail goes only with 
   assert.ok(context.mentions('Is the McKenzie fishing?').includes('mckenzie-river-above-leaburg'));
   assert.deepEqual(context.mentions('Lost Creek this weekend?'), ['lost-creek-reservoir'], 'the lake, not the Rogue above it');
   assert.deepEqual(context.mentions('good fall fishing near Bend for trout?'), [], 'ordinary words such as "fall" name nothing');
+  assert.equal(context.mentions('the rogue at grants pass')[0], 'rogue-river-grants-pass', 'reach words rank a page first');
+  assert.ok(context.mentions('Elk or Sixes this weekend?').includes('elk-river-port-orford'), 'short names count');
   // A question names a water; a follow-up keeps it; no page and no name sends no detail.
   const plain = buildParams(context, validateBody({messages: [{role: 'user', content: 'Where should I fish for trout this week?'}]}, ids));
   assert.equal(typeof plain.messages.at(-1).content, 'string');
