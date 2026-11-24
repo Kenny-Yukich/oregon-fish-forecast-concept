@@ -7,11 +7,11 @@
    - Posts stay for 30 days. `elsewhere` lists waters anglers talked about that are not in the guide yet.
    - `read_log` counts the posts read, by the day they were posted; `reviewed` is the total for the last 30 days. */
 window.ORFF_ANGLER = {
-  "checked_on": "2026-11-16",
-  "window_start": "2026-10-17",
+  "checked_on": "2026-11-23",
+  "window_start": "2026-10-24",
   "reviewed": {
-    "facebook_posts": 380,
-    "tiktok_videos": 25
+    "facebook_posts": 358,
+    "tiktok_videos": 29
   },
   "sources": [
     {
@@ -32,29 +32,17 @@ window.ORFF_ANGLER = {
     }
   ],
   "waters": {
-    "rogue-river-touvelle": [
+    "detroit-lake-mongold": [
       {
-        "date": "2026-10-23",
+        "date": "2026-11-23",
         "platform": "Facebook",
         "kind": "catch",
-        "where": "Rogue, section not stated",
-        "note": "Angler landed a personal-best fish just over 40 inches on the Rogue, apparently a wild late-run fish.",
+        "where": "Detroit Lake, area not stated",
+        "note": "Final trip before the drawdown produced 20 kokanee and a released 21-inch Chinook on a cold, gray day; fishing strong all month.",
         "signal": "positive",
         "scoring": true,
-        "url": "https://www.facebook.com/groups/672427923442117/permalink/2067777697240459/"
+        "url": "https://www.facebook.com/groups/474041098053000/permalink/1422273929896374/"
       },
-      {
-        "date": "2026-10-19",
-        "platform": "Facebook",
-        "kind": "guide",
-        "where": "Lower Rogue at Gold Beach, well below this reach",
-        "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
-        "signal": "positive",
-        "scoring": false,
-        "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/"
-      }
-    ],
-    "detroit-lake-mongold": [
       {
         "date": "2026-11-01",
         "platform": "Facebook",
@@ -189,6 +177,18 @@ window.ORFF_ANGLER = {
         "scoring": true,
         "url": "https://www.facebook.com/groups/474041098053000/permalink/1394962185960882/"
       }
+    ],
+    "crooked-river-opal-springs": [
+      {
+        "date": "2026-11-21",
+        "platform": "TikTok",
+        "kind": "mention",
+        "where": "Crooked River Ranch area, exact section not stated",
+        "note": "Angler fly fished the Crooked River near Crooked River Ranch and called it a great spot.",
+        "signal": "positive",
+        "scoring": false,
+        "url": "https://www.tiktok.com/@kennyyukich/video/7710835770822626591"
+      }
     ]
   },
   "elsewhere": [
@@ -215,12 +215,6 @@ window.ORFF_ANGLER = {
       "note": "Angler caught and released a brightly colored trout on the fly during fall fishing.",
       "posts": 1,
       "latest": "2026-11-01"
-    },
-    {
-      "water": "Lower Rogue (Gold Beach)",
-      "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
-      "posts": 1,
-      "latest": "2026-10-19"
     }
   ],
   "elsewhere_posts": [
@@ -265,51 +259,9 @@ window.ORFF_ANGLER = {
       "note": "Angler caught and released a brightly colored trout on the fly during fall fishing.",
       "url": "https://www.tiktok.com/@outdoorguy35/video/7703260227830828302",
       "state": "OR"
-    },
-    {
-      "date": "2026-10-19",
-      "water": "Lower Rogue (Gold Beach)",
-      "note": "Guide boat had a big salmon day near Gold Beach, with fish still moving through on the southern coast.",
-      "url": "https://www.facebook.com/groups/672427923442117/permalink/2064288160922746/",
-      "state": "OR"
     }
   ],
   "read_log": [
-    {
-      "date": "2026-10-17",
-      "facebook_posts": 18,
-      "tiktok_videos": 0
-    },
-    {
-      "date": "2026-10-18",
-      "facebook_posts": 13,
-      "tiktok_videos": 0
-    },
-    {
-      "date": "2026-10-19",
-      "facebook_posts": 13,
-      "tiktok_videos": 0
-    },
-    {
-      "date": "2026-10-20",
-      "facebook_posts": 15,
-      "tiktok_videos": 2
-    },
-    {
-      "date": "2026-10-21",
-      "facebook_posts": 17,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-22",
-      "facebook_posts": 12,
-      "tiktok_videos": 1
-    },
-    {
-      "date": "2026-10-23",
-      "facebook_posts": 15,
-      "tiktok_videos": 0
-    },
     {
       "date": "2026-10-24",
       "facebook_posts": 18,
@@ -428,7 +380,42 @@ window.ORFF_ANGLER = {
     {
       "date": "2026-11-16",
       "facebook_posts": 9,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-17",
+      "facebook_posts": 10,
+      "tiktok_videos": 3
+    },
+    {
+      "date": "2026-11-18",
+      "facebook_posts": 19,
+      "tiktok_videos": 1
+    },
+    {
+      "date": "2026-11-19",
+      "facebook_posts": 7,
       "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-20",
+      "facebook_posts": 8,
+      "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-21",
+      "facebook_posts": 14,
+      "tiktok_videos": 2
+    },
+    {
+      "date": "2026-11-22",
+      "facebook_posts": 12,
+      "tiktok_videos": 0
+    },
+    {
+      "date": "2026-11-23",
+      "facebook_posts": 11,
+      "tiktok_videos": 1
     }
   ]
 };
