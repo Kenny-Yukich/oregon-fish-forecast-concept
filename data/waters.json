@@ -2979,6 +2979,777 @@
         ]
       },
       "readings": null
+    },
+    {
+      "id": "rogue-river-grants-pass",
+      "name": "Rogue River",
+      "reach": "Grants Pass city parks: Baker, Riverside and Schroeder",
+      "kind": "river",
+      "region": "Southwest Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "rogue-river-grants-pass",
+        "target_species": [
+          "Steelhead",
+          "Chinook salmon",
+          "Coho salmon (hatchery)",
+          "Rainbow trout (hatchery)"
+        ],
+        "access_summary": "City and county parks with ramps and bank access",
+        "access_detail": "ODFW lists Baker Park, a City of Grants Pass park with a boat ramp and restrooms, and Schroeder Park, a Josephine County campground and day-use fee park with river access, a beach and a boat ramp with an ADA fishing platform. The Marine Board's Nov. 18 report lists Baker Park and Riverside Park open and warns that Rogue launches face very low water.",
+        "access_point": {
+          "label": "Baker Park",
+          "map_query": "Baker Park boat ramp Grants Pass Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Baker Park",
+            "type": "Boat ramp",
+            "note": "City park with a boat ramp and restrooms. Open Nov. 18 per the Marine Board.",
+            "map_query": "Baker Park boat ramp Grants Pass Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Riverside Park",
+            "type": "City park",
+            "note": "Grants Pass city park on the river. Open Nov. 18 per the Marine Board.",
+            "map_query": "Riverside Park Grants Pass Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Schroeder Park",
+            "type": "Boat ramp and campground",
+            "note": "County campground and day-use fee park: river access, beach, boat ramp with an ADA fishing platform.",
+            "map_query": "Schroeder Park Grants Pass Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          }
+        ],
+        "seasonal_summary": "Winter steelhead from December; Chinook closed Oct. 1 to Dec. 31",
+        "seasonal_detail": "Grants Pass is in the 2026 regulations' Hog Creek to Fishers Ferry section: hatchery Chinook Jan. 1 to May 31, any Chinook Jun. 1 to Sep. 30, Chinook closed Oct. 1 to Dec. 31, bait allowed. On the whole river below Cole Rivers Hatchery, hatchery steelhead and hatchery coho are open all year, hatchery rainbow trout Jan. 1 to Mar. 31 and May 22 to Dec. 31 (5 a day), wild rainbow and cutthroat must be released, and a wild steelhead over 24 inches may be kept Feb. 1 to Apr. 30. From Dec. 1 to Apr. 30 every steelhead angler here needs the Rogue-South Coast Steelhead Validation, and a wild steelhead may be kept only on the Rogue-South Coast wild harvest tag: 1 a day, 3 a season.",
+        "methods": "Rogue rules limit any attached weight to 6 feet above the lowest hook. Bait is allowed in this section.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Rogue at Grants Pass was found. ODFW's Southwest Zone report reminds anglers to buy the 2027 Rogue-South Coast validation and harvest tag for winter steelhead.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW zone report, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Chinook are closed in this section Oct. 1 to Dec. 31. From Dec. 1, steelhead anglers need the Rogue-South Coast Steelhead Validation.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report says Rogue launches face very low water; launch with caution. Baker Park and Riverside Park are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Medford",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "rogue-river-gold-beach",
+      "name": "Rogue River",
+      "reach": "Lower river: Lobster Creek and Quosatana, above Gold Beach",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "rogue-river-gold-beach",
+        "target_species": [
+          "Chinook salmon",
+          "Steelhead",
+          "Coho salmon (hatchery)",
+          "Cutthroat trout"
+        ],
+        "access_summary": "Forest Service campground ramps and the Port of Gold Beach",
+        "access_detail": "ODFW lists improved boat ramps and ADA restrooms at the Port of Gold Beach and the Lobster Creek and Quosatana campgrounds, with other access along Jerry's Flat Road (South Bank Rogue River Road), which leaves Highway 101 about 1.5 miles north of Gold Beach. Rogue Bay at the mouth is a separate bank fishery off the south jetty and sand spit. The Marine Board lists the Port of Gold Beach launch and the Quosatana ramp open on Nov. 18.",
+        "access_point": {
+          "label": "Lobster Creek Campground",
+          "map_query": "Lobster Creek Campground Rogue River Gold Beach Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Lobster Creek Campground",
+            "type": "Boat ramp and campground",
+            "note": "Improved boat ramp and ADA restrooms (ODFW).",
+            "map_query": "Lobster Creek Campground Rogue River Gold Beach Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Quosatana Campground",
+            "type": "Boat ramp and campground",
+            "note": "Improved boat ramp and ADA restrooms (ODFW). Ramp open Nov. 18 per the Marine Board.",
+            "map_query": "Quosatana Campground Rogue River Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Port of Gold Beach",
+            "type": "Boat ramp",
+            "note": "Improved ramp and ADA restrooms at the mouth. Open Nov. 18 per the Marine Board.",
+            "map_query": "Port of Gold Beach boat ramp Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Chinook through Dec. 31; winter steelhead from December",
+        "seasonal_detail": "From the mouth to Hog Creek the 2026 regulations open Chinook Jun. 1 to Dec. 31 (hatchery Chinook Jan. 1 to May 31) and hatchery steelhead and hatchery coho all year, and a wild steelhead over 24 inches may be kept Jan. 1 to Apr. 30 and Dec. 1 to 31. Bait is allowed, except flies and lures only Sep. 1 to Oct. 31 from Foster Creek to Whisky Creek. ODFW says Rogue Bay fishes for fall Chinook July through October. From Dec. 1 to Apr. 30 every steelhead angler here needs the Rogue-South Coast Steelhead Validation, and a wild steelhead may be kept only on the Rogue-South Coast wild harvest tag: 1 a day, 3 a season.",
+        "methods": "ODFW notes special trout rules on the lower river: wild rainbow and cutthroat must be released. Any attached weight may be no more than 6 feet above the lowest hook.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the lower Rogue was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Chinook stay open here through Dec. 31. From Dec. 1, steelhead anglers need the Rogue-South Coast Steelhead Validation, and wild steelhead go on the wild harvest tag.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report lists the Port of Gold Beach launch and the Quosatana ramp open, and warns that Rogue launches face very low water.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "chetco-river-loeb",
+      "name": "Chetco River",
+      "reach": "North Bank gravel bars and Alfred A. Loeb State Park",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "chetco-river-loeb",
+        "target_species": [
+          "Chinook salmon",
+          "Steelhead",
+          "Cutthroat trout"
+        ],
+        "access_summary": "Gravel bar access along North Bank Chetco River Road",
+        "access_detail": "ODFW lists several gravel bar access points for fishing and boat launching along the north bank east of Brookings, with camping, picnic sites and restrooms at nearby Loeb State Park. The Marine Board's Nov. 18 report lists the Loeb gravel bar access open with a drop-off, and large drop-offs at the Miller Bar, Nook Bar, Redwood Bar and South Fork accesses. The Port of Brookings Harbor ramp serves the estuary.",
+        "access_point": {
+          "label": "Alfred A. Loeb State Park",
+          "map_query": "Alfred A. Loeb State Park Brookings Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Alfred A. Loeb State Park",
+            "type": "Gravel bar access and campground",
+            "note": "Camping, picnic sites and restrooms (ODFW). Gravel bar access open with a drop-off on Nov. 18.",
+            "map_query": "Alfred A. Loeb State Park Brookings Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Port of Brookings Harbor",
+            "type": "Boat ramp (estuary)",
+            "note": "ADA boat ramp, picnic area and restrooms at the mouth. Open Nov. 18 per the Marine Board.",
+            "map_query": "Port of Brookings Harbor boat ramp Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Wild Chinook Sep. 1 to Dec. 31; steelhead from Dec. 1",
+        "seasonal_detail": "From the mouth to Nook Creek the 2026 regulations open steelhead Jan. 1 to Mar. 31 and Dec. 1 to 31 and Chinook Jan. 1 to Mar. 31 and May 22 to Dec. 31. ODFW's 2026 wild fall Chinook rule allows 1 wild adult Chinook a day and 5 for Sep. 1 to Dec. 31. From Sep. 1 to Nov. 3, river mile 2.2 to Nook Creek was limited to fly fishing with a strike indicator or bobber fishing; that window has ended. From Dec. 1 to Apr. 30 every steelhead angler here needs the Rogue-South Coast Steelhead Validation, and a wild steelhead may be kept only on the Rogue-South Coast wild harvest tag: 1 a day, 3 a season.",
+        "methods": "Check the gear rules for your section; the fall bobber-or-fly rule applied through Nov. 3.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Chetco was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's 2026 rule: 1 wild adult Chinook a day and 5 from Sep. 1 to Dec. 31. Steelhead open Dec. 1 with the Rogue-South Coast validation.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "The Marine Board's Nov. 18 report lists the Loeb gravel bar access open with a drop-off, and large drop-offs at Miller Bar, Nook Bar, Redwood Bar and South Fork.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "elk-river-port-orford",
+      "name": "Elk River",
+      "reach": "Elk River Hatchery to Iron Head Boat Launch",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "elk-river-port-orford",
+        "target_species": [
+          "Chinook salmon (hatchery only in 2026)",
+          "Steelhead",
+          "Cutthroat trout"
+        ],
+        "access_summary": "Drift boat float; mostly private land",
+        "access_detail": "ODFW says the river runs mostly through private land. The drift boat float puts in at Elk River Hatchery, about 8 miles up Elk River Road, and takes out at the Iron Head Boat Launch, about 1 mile up. Elk River Road leaves Highway 101 about 3 miles north of Port Orford. ODFW's Southwest Zone report suggests visiting the hatchery while fall Chinook return to it daily.",
+        "access_point": {
+          "label": "Iron Head Boat Launch",
+          "map_query": "Iron Head Boat Launch Elk River Port Orford Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Elk River Hatchery",
+            "type": "Drift boat put-in",
+            "note": "About 8 miles up Elk River Road (ODFW).",
+            "map_query": "Elk River Hatchery Port Orford Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Iron Head Boat Launch",
+            "type": "Drift boat take-out",
+            "note": "About 1 mile up Elk River Road, with restrooms (ODFW).",
+            "map_query": "Iron Head Boat Launch Elk River Port Orford Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Hatchery Chinook only through Dec. 31; steelhead from Dec. 1",
+        "seasonal_detail": "From the mouth to Bald Mountain Creek the 2026 regulations open steelhead Jan. 1 to Mar. 31 and Dec. 1 to 31 and hatchery Chinook Jan. 1 to Mar. 31 and Jul. 1 to Dec. 31. ODFW closed wild fall Chinook harvest on the Elk for 2026; only hatchery Chinook may be kept. From Dec. 1 to Apr. 30 every steelhead angler here needs the Rogue-South Coast Steelhead Validation, and a wild steelhead may be kept only on the Rogue-South Coast wild harvest tag: 1 a day, 3 a season.",
+        "methods": "ODFW's Southwest Zone report says to fish as flows drop after a rain.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Elk was found. ODFW's Southwest Zone report (undated; first seen here Nov. 19) says recent rains kick-started fall Chinook fishing in the Elk and Sixes, best as flows drop after a rain.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW zone report, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Wild fall Chinook harvest is closed on the Elk in 2026; only hatchery Chinook may be kept.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "summary": "No live gauge is connected, and the river rises fast after rain. Check conditions before you go.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "sixes-river-cape-blanco",
+      "name": "Sixes River",
+      "reach": "Mouth to Edson Creek: Cape Blanco and Edson Creek",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "sixes-river-cape-blanco",
+        "target_species": [
+          "Chinook salmon",
+          "Steelhead",
+          "Cutthroat trout"
+        ],
+        "access_summary": "State park and BLM recreation area; drift boat and bank access",
+        "access_detail": "ODFW says the Sixes has good access for drift boats and bank anglers, with camping, picnicking, ADA restrooms and fishing access at Cape Blanco State Park and the BLM Sixes River Recreation Area, about 6 miles north of Port Orford off Highway 101.",
+        "access_point": {
+          "label": "Sixes River Recreation Area",
+          "map_query": "Sixes River Recreation Area Edson Creek Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Sixes River Recreation Area",
+            "type": "BLM campground and access",
+            "note": "Camping, picnicking, ADA restrooms and river access (ODFW).",
+            "map_query": "Sixes River Recreation Area Edson Creek Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Cape Blanco State Park",
+            "type": "State park access",
+            "note": "Camping, picnicking and river access (ODFW).",
+            "map_query": "Cape Blanco State Park Port Orford Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Wild Chinook through Dec. 31; steelhead from Dec. 1",
+        "seasonal_detail": "From the mouth to Edson Creek the 2026 regulations open steelhead Jan. 1 to Mar. 31 and Dec. 1 to 31 and Chinook May 22 to Dec. 31. ODFW's in-season rule allows 1 wild adult Chinook a day and 10 for Jul. 1 to Dec. 31. The river was closed for low flow from the Hughes House Boat Ramp up to Crystal Creek from Oct. 1 to Nov. 3. From Edson Creek up to the South Fork, steelhead are open Jan. 1 to Mar. 31 and all angling is closed Oct. 1 to Dec. 31. From Dec. 1 to Apr. 30 every steelhead angler here needs the Rogue-South Coast Steelhead Validation, and a wild steelhead may be kept only on the Rogue-South Coast wild harvest tag: 1 a day, 3 a season.",
+        "methods": "ODFW's Southwest Zone report says to fish as flows drop after a rain.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Sixes was found. ODFW's Southwest Zone report (undated; first seen here Nov. 19) says recent rains kick-started fall Chinook fishing in the Elk and Sixes, best as flows drop after a rain.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Undated ODFW zone report, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's in-season rule: 1 wild adult Chinook a day and 10 from Jul. 1 to Dec. 31 below Edson Creek. Above Edson Creek the river is closed Oct. 1 to Dec. 31.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "north-umpqua-river-glide",
+      "name": "North Umpqua River",
+      "reach": "Glide: Whistler's Bend and Colliding Rivers",
+      "kind": "river",
+      "region": "Southwest Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "north-umpqua-river-glide",
+        "target_species": [
+          "Steelhead",
+          "Chinook salmon",
+          "Coho salmon (hatchery)",
+          "Trout (catch and release)"
+        ],
+        "access_summary": "County parks with ramps and bank access along Highway 138",
+        "access_detail": "ODFW lists Whistler's Bend Park, a Douglas County park with a boat ramp, camping and trails about 15 miles east of Roseburg, and the Colliding Rivers boat ramp at Glide, both with a parking fee. Farther up Highway 138, Swiftwater Recreation Area and the Narrows are popular bank sites, and Cable Crossing is fly fishing only. The Marine Board's Nov. 18 report lists the Amacher Park, Whistlers Bend, Colliding Rivers, Lone Rock and Susan Creek launches open.",
+        "access_point": {
+          "label": "Whistler's Bend Park",
+          "map_query": "Whistlers Bend Park Glide Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Whistler's Bend Park",
+            "type": "Boat ramp and campground",
+            "note": "Douglas County park; boat ramp, camping, trails; parking fee (ODFW).",
+            "map_query": "Whistlers Bend Park Glide Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "Colliding Rivers Boat Ramp",
+            "type": "Boat ramp",
+            "note": "At Glide, just before Little River Road; parking fee (ODFW).",
+            "map_query": "Colliding Rivers Boat Ramp Glide Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "Swiftwater Recreation Area",
+            "type": "Day use and bank access",
+            "note": "Day-use area with a pavilion and trails, about 23 miles east of Roseburg (ODFW).",
+            "map_query": "Swiftwater Recreation Area Idleyld Park Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          }
+        ],
+        "seasonal_summary": "Steelhead closed through Nov. 30, 2026; Chinook Feb. 1 to Jun. 30",
+        "seasonal_detail": "From the mouth to the marker below Soda Springs Dam the 2026 regulations open hatchery steelhead and hatchery coho all year and catch-and-release rainbow and cutthroat trout May 22 to Oct. 31. ODFW's in-season rule closes angling for and keeping steelhead Aug. 10 to Nov. 30, 2026. Chinook are open Feb. 1 to Jun. 30 between Winchester Dam and the Rock Creek markers, with bait allowed. The river is closed from the Old Highway 99 bridge to 200 feet above Winchester Dam and from the Rock Creek markers to Deadline Falls, and fly-only rules apply from Deadline Falls up to Soda Springs Dam. Check which section your access point is in.",
+        "methods": "From the Lone Rock slide put-in up to the Rock Creek markers there is no angling from a floating device, and an 18 to 36 inch leader rule applies Mar. 1 to Jul. 31.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the North Umpqua was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's in-season rule closes angling for and keeping steelhead on the North Umpqua through Nov. 30, 2026.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "The Marine Board warns of two sweeper trees blocking the channel at Boulder Hole, about half a mile south of the Boulder Flat put-in, and lists the Bogus Creek raft launch closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Roseburg",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW: Winchester Dam fish counts",
+            "url": "https://myodfw.com/winchester-dam-fish-counts"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "south-umpqua-river-roseburg",
+      "name": "South Umpqua River",
+      "reach": "Roseburg: Templin Beach and Stewart Park",
+      "kind": "river",
+      "region": "Southwest Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "south-umpqua-river-roseburg",
+        "target_species": [
+          "Steelhead",
+          "Smallmouth bass",
+          "Coho salmon (hatchery)"
+        ],
+        "access_summary": "Roseburg parks with a ramp and bank access",
+        "access_detail": "ODFW lists Templin Beach Park, a day-use area with a boat ramp and dog park, Stewart Park, a large family park with bank access, and the Douglas County Fairgrounds boat ramp with bank fishing, all in Roseburg. River Forks Park, at the confluence with the North Umpqua, has a ramp and bank access (parking fee).",
+        "access_point": {
+          "label": "Templin Beach Park",
+          "map_query": "Templin Beach Park Roseburg Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Templin Beach Park",
+            "type": "Boat ramp",
+            "note": "Day-use area with a boat ramp and restroom (ODFW).",
+            "map_query": "Templin Beach Park Roseburg Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "Stewart Park",
+            "type": "Bank access",
+            "note": "Large family park with bank access, picnic area and restrooms (ODFW).",
+            "map_query": "Stewart Park Roseburg Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "Douglas County Fairgrounds Boat Ramp",
+            "type": "Boat ramp",
+            "note": "Boat ramp and bank fishing near the horse barns (ODFW).",
+            "map_query": "Douglas County Fairgrounds boat ramp Roseburg Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          }
+        ],
+        "seasonal_summary": "Closed until Dec. 1; winter steelhead December to April",
+        "seasonal_detail": "From the mouth to the Jackson Creek Bridge the 2026 regulations close the South Umpqua May 1 to 21 and Sep. 16 to Nov. 30. It is open for hatchery steelhead and hatchery coho Jan. 1 to Apr. 30 and Dec. 1 to 31, and for catch-and-release trout May 22 to Sep. 15, with bait allowed. Bass have no limit and no minimum length in Southwest Zone streams.",
+        "methods": "Bait is allowed in this section while it is open.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the South Umpqua was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The South Umpqua is closed to angling Sep. 16 to Nov. 30 and reopens Dec. 1 for hatchery steelhead and hatchery coho.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Roseburg",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-roseburg"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "coquille-river-tidewater",
+      "name": "Coquille River",
+      "reach": "Tidewater: Sturdivant Park to Rocky Point",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "coquille-river-tidewater",
+        "target_species": [
+          "Chinook salmon (hatchery, fall)",
+          "Steelhead (hatchery)",
+          "Striped bass",
+          "Smallmouth bass"
+        ],
+        "access_summary": "Tidewater ramps and a park dock from Coquille to Bandon",
+        "access_detail": "ODFW lists Sturdivant Park at Coquille, with a boat ramp, fishing dock and fish cleaning station, and the Riverton and Rocky Point boat ramps on the tidewater between Coquille and Bandon for fall salmon. The Marine Board's Nov. 18 report lists Sturdivant Park's ramp and tie-up dock open (restrooms may close at times from November to March, and winter floods can close the park) and the Rocky Point ramp open with its docks removed for maintenance.",
+        "access_point": {
+          "label": "Sturdivant Park",
+          "map_query": "Sturdivant Park Coquille Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Sturdivant Park",
+            "type": "Boat ramp and fishing dock",
+            "note": "Boat ramp, fishing dock and fish cleaning station (ODFW). Open Nov. 18; may flood in winter.",
+            "map_query": "Sturdivant Park Coquille Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Riverton Boat Ramp",
+            "type": "Boat ramp",
+            "note": "Fall salmon in tidewater, about 10 miles up from Bandon on Highway 42S (ODFW).",
+            "map_query": "Riverton Boat Ramp Coquille River Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Rocky Point Boat Ramp",
+            "type": "Boat ramp",
+            "note": "Off North Bank Road near Bandon (ODFW). Open Nov. 18 with docks removed.",
+            "map_query": "Rocky Point Boat Ramp Bandon Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Hatchery Chinook Sep. 19 to Oct. 18; hatchery steelhead all year",
+        "seasonal_detail": "ODFW closed wild fall Chinook harvest on the Coquille for 2026 and opened hatchery Chinook only from Sep. 19 to Oct. 18. The mainstem is open all year for hatchery steelhead, with bait allowed Jun. 1 to Oct. 31 under its exception. Bass and striped bass have no limit in Southwest Zone streams and tidewater.",
+        "methods": "ODFW lists fall salmon, striped bass, smallmouth bass and shad at the tidewater parks.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the Coquille was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Wild fall Chinook harvest is closed on the Coquille in 2026, and the hatchery Chinook window ended Oct. 18.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "summary": "Sturdivant Park may close in winter floods; its restrooms may be closed at times from November to March (Marine Board, Nov. 18).",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
+    },
+    {
+      "id": "coos-bay-boardwalk",
+      "name": "Coos Bay",
+      "reach": "Coos Bay Boardwalk and Coos River tidewater",
+      "kind": "river",
+      "region": "South coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "coos-bay-boardwalk",
+        "target_species": [
+          "Chinook salmon",
+          "Coho salmon",
+          "Steelhead (hatchery)",
+          "Shad"
+        ],
+        "access_summary": "Downtown boardwalk bank fishing and Coos River boat ramps",
+        "access_detail": "ODFW lists the Coos Bay Boardwalk in downtown Coos Bay, at the foot of Anderson Street and Central Avenue, for relatively easy bank fishing for fall Chinook and coho; the Empire boat ramp and pier at the west end of Newmark Avenue, with a fish cleaning station; and the Myrtle Tree, Dora's Place and Rooke-Higgins ramps up the Coos and Millicoma rivers off Coos River Highway 241.",
+        "access_point": {
+          "label": "Coos Bay Boardwalk",
+          "map_query": "Coos Bay Boardwalk Anderson Avenue Coos Bay Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Coos Bay Boardwalk",
+            "type": "Bank fishing",
+            "note": "Fall Chinook and coho from the downtown boardwalk; picnic area (ODFW).",
+            "map_query": "Coos Bay Boardwalk Anderson Avenue Coos Bay Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Empire Boat Ramp & Pier",
+            "type": "Boat ramp and pier",
+            "note": "Fishing and crabbing pier, ramp and fish cleaning station (ODFW).",
+            "map_query": "Empire Boat Ramp Newmark Avenue Coos Bay Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "Myrtle Tree Boat Ramp",
+            "type": "Boat ramp",
+            "note": "About 4 miles up Coos River Highway 241; salmon and shad (ODFW).",
+            "map_query": "Myrtle Tree Boat Ramp Coos River Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          }
+        ],
+        "seasonal_summary": "Chinook open all year with a 2026 wild limit; hatchery steelhead all year",
+        "seasonal_detail": "The 2026 regulations open Coos Bay and the Coos River mainstem all year for Chinook and hatchery steelhead, and bait is allowed in Southwest Zone bays and tidewater all year. ODFW's in-season rule limits wild adult Chinook to 10 for Jul. 1 to Dec. 31 across the bay, Coos River, South Fork and Millicoma, and from Oct. 19 to Dec. 31 the daily adult salmon limit is 3, no more than 2 of them wild Chinook.",
+        "methods": "ODFW points bank anglers to the boardwalk for fall Chinook and coho.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Coos Bay was found.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "No dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's in-season rule: from Oct. 19 to Dec. 31, 3 adult salmon a day, no more than 2 wild Chinook, and no more than 10 wild adult Chinook for Jul. 1 to Dec. 31.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          }
+        ],
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing on the south coast",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-south-coast"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW: Fall coastal salmon management (2026 seasons)",
+            "url": "https://myodfw.com/articles/fall-coastal-salmon-management"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24"
+      },
+      "readings": null
     }
   ]
 }

@@ -41,5 +41,14 @@ window.ORFF_MAP = {
     "mckenzie-river-above-leaburg": [44.128, -122.380],
     "north-santiam-river-mehama": [44.789, -122.619],
     "columbia-river-buoy-10": [46.189, -123.859],
+    "rogue-river-grants-pass": [42.430, -123.318],
+    "rogue-river-gold-beach": [42.505, -124.300],
+    "chetco-river-loeb": [42.123, -124.187],
+    "elk-river-port-orford": [42.789, -124.484],
+    "sixes-river-cape-blanco": [42.817, -124.483],
+    "north-umpqua-river-glide": [43.307, -123.124],
+    "south-umpqua-river-roseburg": [43.210, -123.355],
+    "coquille-river-tidewater": [43.183, -124.190],
+    "coos-bay-boardwalk": [43.369, -124.214],
   }
 };
