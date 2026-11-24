@@ -1,7 +1,8 @@
 /* Which ODFW stocking-schedule names belong to which guide water, added 2026-10-14.
    A schedule row matches when its waterbody contains one of the names (case-insensitive, whole words).
    Rivers are listed only where the guide's reach is the stocked section: ODFW splits the McKenzie into
-   "R-1 (below Leaburg Dam)" and "R-2 (above Leaburg Dam)", and the guide's reach is below the dam. */
+   "R-1 (below Leaburg Dam)" and "R-2 (above Leaburg Dam)", and the guide has a page for each. The two
+   Lost Creek names cannot collide: "Lost Creek Reservoir" and "Rogue River above Lost Creek" are different rows. */
 window.ORFF_STOCKING_MATCH = {
   "haystack-reservoir": ["Haystack Reservoir"],
   "lake-billy-chinook-crooked-arm": ["Billy Chinook"],
@@ -15,5 +16,14 @@ window.ORFF_STOCKING_MATCH = {
   // ODFW lists Big Lava Lake as "LAVA LK, B", shown as "Lava Lake (B)"; "Lava Lake (L)" is Little Lava Lake.
   "lava-lake-campground": ["Lava Lake (B"],
   "howard-prairie-reservoir": ["Howard Prairie"],
-  "fourmile-lake-campground": ["Fourmile Lake"]
+  "fourmile-lake-campground": ["Fourmile Lake"],
+  "lost-creek-reservoir": ["Lost Creek Reservoir"],
+  "rogue-river-above-lost-creek": ["Rogue River above Lost Creek"],
+  "dexter-reservoir": ["Dexter Reservoir"],
+  "dorena-reservoir": ["Dorena Reservoir"],
+  "applegate-reservoir": ["Applegate Reservoir"],
+  "alton-baker-canal": ["Alton Baker Canal"],
+  "mckenzie-river-above-leaburg": ["above Leaburg Dam"],
+  // ODFW lists the North Fork Santiam as "Santiam River (North Fork 2)".
+  "north-santiam-river-mehama": ["Santiam River (North Fork 2"]
 };

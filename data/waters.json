@@ -2092,6 +2092,893 @@
         ]
       },
       "readings": null
+    },
+    {
+      "id": "lost-creek-reservoir",
+      "name": "Lost Creek Reservoir",
+      "reach": "Takelma Park and Joseph Stewart Park",
+      "kind": "reservoir",
+      "region": "Southwest Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "lost-creek-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Spring Chinook (counted as trout)",
+          "Smallmouth bass",
+          "Largemouth bass",
+          "Black crappie",
+          "Bluegill"
+        ],
+        "access_summary": "Two county-park ramps, bank access, camping",
+        "access_detail": "ODFW lists two ramps on Lost Creek: Takelma Park, with a boat launch, accessible restrooms, parking and a day-use fee, and Joseph Stewart Park, with a campground, ramp, restrooms and showers, plus a marina and plenty of bank fishing at campgrounds and picnic areas. Jackson County has run Joseph Stewart Park since April 2021: day use is 7 am to 8 pm at $6 a vehicle, a fish cleaning station sits next to the launch, and the 200-plus campsites stay open all year. The lake is low right now, so check which ramp reaches the water before you tow.",
+        "access_point": {
+          "label": "Takelma Park",
+          "map_query": "Takelma Park Lost Creek Lake Trail Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Takelma Park",
+            "type": "Boat ramp and day use",
+            "note": "County park near the dam with a boat launch, accessible restrooms and parking; a day-use fee applies. The Marine Board put 24 feet of water over the end of the ramp on Nov. 18.",
+            "map_query": "Takelma Park Lost Creek Lake Trail Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "Joseph Stewart Park",
+            "type": "Boat ramp, marina and campground",
+            "note": "Jackson County park on Highway 62 with a ramp, fish cleaning station, swim beach and year-round camping. Day use $6 a vehicle, 7 am to 8 pm. The ramp, marina, store and cafe were closed for low water on Nov. 18.",
+            "map_query": "Joseph Stewart Park 35211 Highway 62 Trail Oregon",
+            "source": "https://www.jacksoncountyor.gov/departments/parks/day_use/joseph_stewart_county_park/index.php"
+          }
+        ],
+        "seasonal_summary": "Open all year; trout stocked March to June",
+        "seasonal_detail": "The 2026 regulations keep Southwest Zone lakes open all year: 5 trout a day, 8 inch minimum, and only 1 over 20 inches. All landlocked salmon count as trout, so the stocked spring Chinook count against that limit. ODFW says trout are stocked March through early June, trout fishing stays very good into fall and winter, and smallmouth bass fish best in summer. ODFW's schedule lists 7,300 trout for the week of Oct. 5, 2026 and about 58,800 more from March to June 2027 (planned, not confirmed).",
+        "methods": "ODFW: bank anglers use floating bait such as PowerBait or worms; boat anglers troll wedding ring and night crawler combinations behind a weight; fly anglers catch fish both trolling and casting.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Lost Creek was found. ODFW's Southwest Zone guide says trout fishing stays very good into fall and winter, with spring Chinook stocked to add to the trout fishery.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Lost Creek at 16% of capacity. Joseph Stewart's ramp is closed for low water and its marina, store and cafe are closed for 2026. Takelma's ramp has 24 feet of water over its end.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Southwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Medford",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Jackson County Parks: Joseph Stewart Day Use, Store & Marina",
+            "url": "https://www.jacksoncountyor.gov/departments/parks/day_use/joseph_stewart_county_park/index.php"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "rogue-river-above-lost-creek",
+      "name": "Rogue River",
+      "reach": "Above Lost Creek Reservoir: Union Creek and Natural Bridge",
+      "kind": "river",
+      "region": "Southern Cascades",
+      "gauge": null,
+      "planning": {
+        "water_id": "rogue-river-above-lost-creek",
+        "target_species": [
+          "Rainbow trout",
+          "Brook trout",
+          "Brown trout",
+          "Cutthroat trout"
+        ],
+        "access_summary": "Forest Service campgrounds along Highway 62",
+        "access_detail": "ODFW says to focus on the campgrounds and other public access sites where the trout are stocked. It names four Forest Service campgrounds with restrooms, Natural Bridge, Union Creek, Farewell Bend and River Bridge, and notes that Highway 62 parallels the river above the lake with several campgrounds and pullouts. Campground seasons and winter road conditions were not verified.",
+        "access_point": {
+          "label": "Union Creek Campground",
+          "map_query": "Union Creek Campground Highway 62 Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Natural Bridge",
+            "type": "Campground",
+            "note": "Forest Service campground with restrooms, listed by ODFW as a stocked-trout access.",
+            "map_query": "Natural Bridge Campground Highway 62 Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "Union Creek Campground",
+            "type": "Campground",
+            "note": "Forest Service campground with restrooms, listed by ODFW as a stocked-trout access.",
+            "map_query": "Union Creek Campground Highway 62 Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "Farewell Bend",
+            "type": "Campground",
+            "note": "Forest Service campground with restrooms, listed by ODFW as a stocked-trout access.",
+            "map_query": "Farewell Bend Campground Highway 62 Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "River Bridge",
+            "type": "Campground",
+            "note": "Forest Service campground with restrooms, listed by ODFW as a stocked-trout access.",
+            "map_query": "River Bridge Campground Highway 62 Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year; stocked weekly late May to early September",
+        "seasonal_detail": "The 2026 regulations open the Rogue and its tributaries above Lost Creek Dam all year for trout: 5 a day (brook and brown trout are not part of the limit), only 1 over 20 inches, and bait allowed. There are no steelhead above the dam, so every rainbow counts as a trout. ODFW stocks the river weekly between Memorial Day and Labor Day, and its schedule lists 15 weekly stockings from the week of May 17 to the week of Aug. 30, 2027, about 40,000 trout in all (planned, not confirmed). Nothing is scheduled before then.",
+        "methods": "ODFW: use light gear with night crawlers, salmon eggs, small spinners or flies. Stocked rainbows are in the mainstem; the tributaries hold naturally reproducing brook, rainbow, brown and some cutthroat trout.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the upper Rogue was found. ODFW describes a swift, cascading, clear stream that stays cool in summer, stocked with rainbow trout every week from late May to early September.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Snow and road conditions on Highway 62 above Prospect, and campground seasons, were not verified. Stocking does not begin until May 2027, so check conditions before driving up.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://tripcheck.com/"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Southwest Zone",
+            "url": "https://myodfw.com/articles/easy-angling-southwest-zone"
+          },
+          {
+            "label": "ODFW Southwest Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/southwest-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "dexter-reservoir",
+      "name": "Dexter Reservoir",
+      "reach": "Dexter and Lowell State Recreation Sites",
+      "kind": "reservoir",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "dexter-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Bass",
+          "Warmwater fish"
+        ],
+        "access_summary": "State park ramps and shore access, day-use permit",
+        "access_detail": "Oregon State Parks runs both ramps. Dexter State Recreation Site, at the dam end, has a two-lane ramp, a courtesy dock and shore access for fishing, and is day use only. Lowell State Recreation Site is on the other side of the reservoir. Both became fee parks in October 2025, with a day-use permit bought on site. The Middle Fork Willamette below the dam, where ODFW lists a ramp and bank access for salmon and steelhead, is a separate water.",
+        "access_point": {
+          "label": "Dexter State Recreation Site",
+          "map_query": "Dexter State Recreation Site Dexter Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Dexter State Recreation Site",
+            "type": "Boat ramp and shore access",
+            "note": "Two-lane launch ramp, courtesy dock, shore fishing access. Day use only; day-use permit bought on site.",
+            "map_query": "Dexter State Recreation Site Dexter Oregon",
+            "source": "https://stateparks.oregon.gov/park_244.php"
+          },
+          {
+            "label": "Lowell State Recreation Site",
+            "type": "Boat ramp",
+            "note": "State park on the far side of the reservoir; Oregon State Parks names it the alternative access to Dexter Lake. Day-use permit since October 2025.",
+            "map_query": "Lowell State Recreation Site Lowell Oregon",
+            "source": "https://stateparks.oregon.gov/park_244.php"
+          }
+        ],
+        "seasonal_summary": "Open all year; trout stocked in fall and late winter",
+        "seasonal_detail": "Willamette Zone lakes are open all year in the 2026 regulations: 5 trout a day, 8 inch minimum, and only 1 over 20 inches. Oregon State Parks says the lake level moves only a few feet, so fishing and boating run all year. ODFW calls the reservoir mainly a trout and warmwater fishery. Its schedule lists 5,060 trout for the week of Oct. 5, 2026 and 14,500 more from February to April 2027 (planned, not confirmed).",
+        "methods": "Oregon State Parks says most anglers use the launch ramp and fish the reservoir from boats, with shore access in the park. ODFW lists trout and bass.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Dexter was found. ODFW's Lane County guide describes a reservoir that is primarily a trout and warmwater fishery, with a boat launch, dock and bank access.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report lists the Lowell and Dexter ramps as open with floating docks and park facilities open 7 am to 5 pm. The water sits 8 to 10 feet over the bottom of the ramps; avoid power loading.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Oregon State Parks will close Dexter State Recreation Site for tree work on Nov. 30 and Dec. 1, 2026. Lowell State Recreation Site stays open as the alternative.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://stateparks.oregon.gov/park_244.php"
+          },
+          {
+            "summary": "OHA statewide mercury advisory applies to bass. Review species-specific consumption guidance before keeping fish.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Oregon State Parks: Dexter State Recreation Site",
+            "url": "https://stateparks.oregon.gov/park_244.php"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW: Easy angling in the Willamette Zone",
+            "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "dorena-reservoir",
+      "name": "Dorena Reservoir",
+      "reach": "Baker Bay County Park",
+      "kind": "reservoir",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "dorena-reservoir",
+        "target_species": [
+          "Rainbow trout",
+          "Bass",
+          "Bluegill",
+          "Catfish",
+          "Crappie"
+        ],
+        "access_summary": "County park ramp, campground and day use",
+        "access_detail": "ODFW lists Baker Bay County Park on Dorena Reservoir with a boat launch, restrooms, picnic area, campground and a day-use fee, and describes diverse fishing on a lake that boaters and swimmers also use. The Row River at Schwarz Park below the dam is a separate river fishery. The lake is nearly empty in the Marine Board's Nov. 18 report, so check the ramp before you tow.",
+        "access_point": {
+          "label": "Baker Bay County Park",
+          "map_query": "Baker Bay County Park Dorena Lake Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Baker Bay County Park",
+            "type": "Boat ramp and campground",
+            "note": "Lane County park with a boat launch, restrooms, picnic area, campground and day-use fee. The Marine Board lists the ramp open on Nov. 18 and the marina closed.",
+            "map_query": "Baker Bay County Park Dorena Lake Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          }
+        ],
+        "seasonal_summary": "Open all year; trout stocked in fall and spring",
+        "seasonal_detail": "Willamette Zone lakes are open all year in the 2026 regulations: 5 trout a day, 8 inch minimum, and only 1 over 20 inches. ODFW's schedule lists 2,700 trout for the week of Oct. 5, 2026 and about 16,000 more in March and April 2027 (planned, not confirmed).",
+        "methods": "ODFW lists trout, bass, bluegill, catfish and crappie. Standard lake-fishing techniques apply.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Dorena was found. ODFW's Lane County guide describes diverse fishing for trout, bass, bluegill, catfish and crappie, with a mercury advisory for eating the fish.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report lists Dorena at 0% of capacity. Baker Bay Marina is closed and the Baker Bay ramp is open with about 5 feet of water over its bottom. The Army Corps' Harms ramp is gated closed, though paddlecraft can still be carried to the water.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA lists a mercury advisory for the Dorena reservoirs. Stocked, fin-clipped rainbow trout 12 inches or less are the exception; check OHA's meals-per-month guidance for other fish before keeping any.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "OHA: Oregon fish advisories",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "applegate-reservoir",
+      "name": "Applegate Reservoir",
+      "reach": "Hart-Tish Park, Copper and French Gulch ramps",
+      "kind": "reservoir",
+      "region": "Southwest Oregon",
+      "gauge": null,
+      "planning": {
+        "water_id": "applegate-reservoir",
+        "target_species": [
+          "Bass",
+          "Rainbow trout",
+          "Landlocked Chinook salmon"
+        ],
+        "access_summary": "Forest Service ramps; low-water ramp at French Gulch",
+        "access_detail": "ODFW lists spring and summer boat access at the Copper and Hart-tish ramps, with French Gulch usable in low water, fees at some locations and a private concessionaire in season. The lake is behind Applegate Dam, 15 miles up Applegate Road from Ruch. At low water in the Marine Board's Nov. 18 report only French Gulch reaches the water, and Hart-Tish is closed.",
+        "access_point": {
+          "label": "French Gulch boat ramp",
+          "map_query": "French Gulch Boat Ramp Applegate Lake Oregon"
+        },
+        "access_points": [
+          {
+            "label": "French Gulch boat ramp",
+            "type": "Low-water boat ramp",
+            "note": "The ramp ODFW says is usable in low water. The Marine Board put 14 feet of water over its bottom on Nov. 18.",
+            "map_query": "French Gulch Boat Ramp Applegate Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Hart-Tish Park",
+            "type": "Boat ramp, campground and day use",
+            "note": "Forest Service park with a boat ramp and fish cleaning station, run by a concessionaire in season. Closed on Nov. 18.",
+            "map_query": "Hart-Tish Park Applegate Lake Oregon",
+            "source": "https://www.recreation.gov/camping/campgrounds/233186"
+          },
+          {
+            "label": "Copper boat ramp",
+            "type": "Boat ramp",
+            "note": "Spring and summer ramp per ODFW. The water was below the bottom of the ramp on Nov. 18; paddlecraft can be carried down.",
+            "map_query": "Copper Boat Ramp Applegate Lake Oregon",
+            "source": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          }
+        ],
+        "seasonal_summary": "Open all year; ramps depend on lake level",
+        "seasonal_detail": "The 2026 regulations keep Southwest Zone lakes open all year (5 trout a day, 8 inch minimum, only 1 over 20 inches) and count all landlocked salmon as trout. ODFW calls the reservoir good warmwater fishing, occasionally stocked with rainbow trout and juvenile Chinook. Its schedule lists about 26,300 trout over three stockings from April 12 to May 17, 2027 (planned, not confirmed); nothing is scheduled before then.",
+        "methods": "ODFW points to warmwater fishing as the main draw, with trout and juvenile Chinook stocked only occasionally.",
+        "report": {
+          "summary": "No dated ODFW fishing report for Applegate was found. ODFW's Medford guide calls it good warmwater fishing, occasionally stocked with rainbow trout and juvenile Chinook salmon.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report puts Applegate at 5% of capacity. The French Gulch ramp is open with 14 feet of water over its bottom, the Copper ramp is open but the water is below it, and Hart-Tish Campground and Day Use are closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "OHA lists a mercury advisory for Applegate Lake: bass and yellow perch, 2 meals a month for vulnerable groups and 5 for the general population; bluegill and crappie, 4 and 13.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Local bloom conditions are unverified. Check current notices; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: 50 places to go fishing within 60 minutes of Medford",
+            "url": "https://myodfw.com/articles/50-places-go-fishing-within-60-minutes-medford"
+          },
+          {
+            "label": "Recreation.gov: Hart-Tish Park at Applegate Lake",
+            "url": "https://www.recreation.gov/camping/campgrounds/233186"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "OHA: Oregon fish advisories",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "alton-baker-canal",
+      "name": "Alton Baker Canoe Canal",
+      "reach": "Alton Baker Park, Eugene",
+      "kind": "lake",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "alton-baker-canal",
+        "target_species": [
+          "Rainbow trout",
+          "Hatchery steelhead"
+        ],
+        "access_summary": "City park trail and bank fishing, three entry points",
+        "access_detail": "ODFW describes a 2-mile canal along an old Willamette River meander, with easy, safe access and a large unobstructed casting area. A trail runs nearly its whole length through Alton Baker Park. In Springfield the canal is reached from Eastgate Woodlands Park; in Eugene from Leo Harris Parkway and at the west end near the Day Island Road parking lot, off Club Road. ODFW also lists a midpoint pond with good fishing.",
+        "access_point": {
+          "label": "Alton Baker Park",
+          "map_query": "Alton Baker Park Eugene Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Alton Baker Park",
+            "type": "City park and trail",
+            "note": "Restrooms and picnic area, with a trail beside the canal for nearly its whole length.",
+            "map_query": "Alton Baker Park Eugene Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Eastgate Woodlands Park",
+            "type": "Park, Springfield end",
+            "note": "Where ODFW says the canal is reached in Springfield, east of Interstate 5.",
+            "map_query": "Eastgate Woodlands Park Springfield Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "Day Island Road parking lot",
+            "type": "Parking, west end",
+            "note": "Off Club Road, near where the canal rejoins the Willamette by the Ferry Street Bridge.",
+            "map_query": "Day Island Road Eugene Oregon",
+            "source": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          }
+        ],
+        "seasonal_summary": "Open all year; stocked February to mid-November",
+        "seasonal_detail": "The 2026 regulations open the canal all year for trout and hatchery steelhead: 5 trout a day, no minimum length for hatchery trout, bait allowed, and a Two Rod Validation may be used. ODFW stocks legal-size rainbow trout at several points from February through mid-November, and an occasional steelhead comes in from the river. The schedule lists 1,350 trout for the week of Nov. 9, 2026 and the next release in February 2027, 2,500 that month (planned, not confirmed).",
+        "methods": "ODFW: standard trout-fishing methods work here. It calls the canal an excellent place to introduce young anglers.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the canal was found. ODFW's Willamette Zone guide says legal-size trout are released at several points along its length and that it is a good in-town fishery.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description, not a dated catch report.",
+          "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Canal water levels, any closures and local bloom conditions were not verified. Check the City of Eugene's park notices before you go; an absent advisory does not establish safety.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.oregon.gov/oha/ph/HealthyEnvironments/Recreation/HarmfulAlgaeBlooms/Pages/Blue-GreenAlgaeAdvisories.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: Easy angling in the Willamette Zone",
+            "url": "https://myodfw.com/articles/easy-angling-willamette-zone"
+          },
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "mckenzie-river-above-leaburg",
+      "name": "McKenzie River",
+      "reach": "Above Leaburg Dam: Silver Creek and Finn Rock",
+      "kind": "river",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "mckenzie-river-above-leaburg",
+        "target_species": [
+          "Rainbow trout"
+        ],
+        "access_summary": "Boat launches and bank access along Highway 126",
+        "access_detail": "ODFW's Lane County guide lists Silver Creek Landing, an unimproved launch 3 miles west of Nimrod with bank and boat access, Finn Rock Landing, a popular day-trip launch with good bank access on the upstream side, and a launch inside Paradise Campground. The same guide lists trout and steelhead at these landings; check the section rules before keeping anything. The Marine Board's Nov. 18 report lists Silver Creek, Finn Rock, Forest Glen, Hamlin Park, Helfrich, Goodpasture and Bruckart landings and Ben and Kay Dorris State Park as open, and Paradise Campground as closed.",
+        "access_point": {
+          "label": "Silver Creek Landing",
+          "map_query": "Silver Creek Landing McKenzie River Blue River Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Silver Creek Landing",
+            "type": "Unimproved launch",
+            "note": "About 3 miles west of Nimrod; bank and boat access, stocked trout (ODFW). Open on Nov. 18 per the Marine Board.",
+            "map_query": "Silver Creek Landing McKenzie River Blue River Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Finn Rock Landing",
+            "type": "Boat launch",
+            "note": "A popular launch for a day trip, with good bank access on the upstream side (ODFW). Open on Nov. 18 per the Marine Board.",
+            "map_query": "Finn Rock Landing McKenzie River Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Forest Glen Landing",
+            "type": "Boat launch",
+            "note": "Forest Glen boat ramp is where the 2026 regulations change sections above Leaburg Dam. Open on Nov. 18 per the Marine Board.",
+            "map_query": "Forest Glen Landing McKenzie River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Paradise Campground",
+            "type": "Campground launch",
+            "note": "A launch in the campground on a stretch of the upper river (ODFW). The Marine Board listed it closed on Nov. 18.",
+            "map_query": "Paradise Campground McKenzie River Oregon",
+            "source": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          }
+        ],
+        "seasonal_summary": "Open all year; hatchery trout stocked April to September",
+        "seasonal_detail": "The 2026 regulations open the McKenzie all year for trout: 5 hatchery trout a day with no minimum length, and wild trout, brook trout included, must be released. From Leaburg Dam to the Forest Glen boat ramp bait is allowed Apr. 22 to Oct. 31 in the mainstem. Above Forest Glen the river is closed within the Carmen Spawning Channel and from Trail Bridge Dam to 200 feet below the channel entrance. The regulations list no salmon season above Leaburg Dam. ODFW's schedule lists 15 weekly stockings at McKenzie River 2 (above Leaburg Dam) from the week of April 26 to the week of Sept. 6, 2027, about 49,300 trout (planned, not confirmed).",
+        "methods": "Hatchery trout are the ones you can keep. Check the bait window before choosing tackle, and use the regulations for any gear rules at your launch.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the McKenzie above Leaburg Dam was found. ODFW's schedule shows hatchery trout stocked here weekly from late April to early September.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Standing ODFW description and stocking plan, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "The Marine Board's Nov. 18 report lists Paradise Campground and McKenzie Bridge Campground and day use as closed. Silver Creek, Finn Rock, Forest Glen, Hamlin Park, Helfrich and Bruckart landings are open.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "summary": "Section boundaries matter here: the rules change at the Forest Glen boat ramp, and the river is closed near the Carmen Spawning Channel. Confirm the section and any dam, canal or powerhouse closures before you fish.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: 65 places to go fishing in Lane County",
+            "url": "https://myodfw.com/articles/65-places-go-fishing-lane-county"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "north-santiam-river-mehama",
+      "name": "North Santiam River",
+      "reach": "Stayton Bridge to Lyons-Mehama, below Packsaddle Park",
+      "kind": "river",
+      "region": "Willamette Valley",
+      "gauge": null,
+      "planning": {
+        "water_id": "north-santiam-river-mehama",
+        "target_species": [
+          "Hatchery steelhead",
+          "Coho salmon",
+          "Hatchery Chinook salmon",
+          "Hatchery rainbow trout"
+        ],
+        "access_summary": "Public boating accesses at Stayton and Lyons-Mehama",
+        "access_detail": "The Marine Board's Nov. 18 report lists the Stayton Bridge, Lyons-Mehama and Buell Miller boating accesses on the North Santiam as open all year. Fishermen's Bend Recreation Site, near Mill City, has limited day use and no camping. The 2026 regulations close the river from the ODFW markers at Packsaddle Park up to Minto Dam, and which section Fishermen's Bend falls in was not confirmed, so check the markers before you fish near Mill City.",
+        "access_point": {
+          "label": "Lyons-Mehama boating access",
+          "map_query": "Lyons Mehama boat ramp North Santiam River Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Lyons-Mehama boating access",
+            "type": "Boating access",
+            "note": "Open all year per the Marine Board, Nov. 18.",
+            "map_query": "Lyons Mehama boat ramp North Santiam River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Stayton Bridge boating access",
+            "type": "Boating access",
+            "note": "Open all year per the Marine Board, Nov. 18.",
+            "map_query": "Stayton Bridge boat ramp North Santiam River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Buell Miller boating access",
+            "type": "Boating access",
+            "note": "Open all year per the Marine Board, Nov. 18.",
+            "map_query": "Buell Miller boat ramp North Santiam River Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "Fishermen's Bend Recreation Site",
+            "type": "BLM recreation site",
+            "note": "Limited day use; no camping or dump station on Nov. 18. Check the section markers before you fish.",
+            "map_query": "Fishermen's Bend Recreation Site Mill City Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Hatchery trout May 22 to Oct. 31; steelhead and salmon run later",
+        "seasonal_detail": "From the mouth to Big Cliff Dam the 2026 regulations open hatchery trout May 22 to Oct. 31 (5 hatchery trout a day, no minimum length), hatchery steelhead all year, and hatchery Chinook Jan. 1 to Aug. 31 and Oct. 15 to Dec. 31. Coho are open all year below the Stayton-Scio Bridge and Jan. 1 to Aug. 31 and Oct. 15 to Dec. 31 from there up to the Packsaddle Park markers. So the trout season is over until May 22, and what is open now is hatchery steelhead, hatchery Chinook and coho. ODFW's schedule lists 12 weekly trout stockings at Santiam River (North Fork 2) from the week of May 17 to the week of Aug. 9, 2027, 24,000 trout (planned, not confirmed).",
+        "methods": "Bait is allowed Apr. 22 to Oct. 31; outside that window Willamette Zone streams are artificial flies and lures only. Check the regulations for your section.",
+        "report": {
+          "summary": "No dated ODFW fishing report for the North Santiam was found. The 2026 regulations and ODFW's stocking schedule are the only current sources used here.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Rules and stocking plan, not a dated catch report.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+        },
+        "alerts": [
+          {
+            "summary": "Hatchery trout season on the North Santiam ended Oct. 31 and returns May 22. The river is closed to angling from the ODFW markers at Packsaddle Park up to Minto Dam all year.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "summary": "The Marine Board lists Stayton Bridge, Lyons-Mehama and Buell Miller accesses open all year as of Nov. 18. Fishermen's Bend has limited day use and no camping.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "ODFW trout stocking schedule",
+            "url": "https://myodfw.com/fishing/species/trout/stocking-schedule"
+          },
+          {
+            "label": "ODFW Willamette Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/willamette-zone"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          }
+        ]
+      },
+      "readings": null
+    },
+    {
+      "id": "columbia-river-buoy-10",
+      "name": "Columbia River",
+      "reach": "Buoy 10 to Tongue Point, from Hammond and Astoria",
+      "kind": "river",
+      "region": "North coast",
+      "gauge": null,
+      "planning": {
+        "water_id": "columbia-river-buoy-10",
+        "target_species": [
+          "Coho salmon",
+          "Hatchery steelhead",
+          "Chinook salmon (release only through Dec. 31)",
+          "White sturgeon (catch and release)"
+        ],
+        "access_summary": "Marina launches at Hammond, Warrenton and Astoria",
+        "access_detail": "The Marine Board's lower Columbia guide describes Hammond, now part of Warrenton, as a protected mooring basin with a launching ramp, fuel and overnight moorage, and a launching ramp in Astoria's East Mooring Basin, 2 miles upstream from the Astoria-Megler Bridge. The Marine Board's Nov. 18 report lists Hammond Marina and the Warrenton Marina boat launch on the Skipanon River as open. ODFW calls Buoy 10 a big-water fishery: wear a life jacket, and avoid Clatsop Spit and the Astoria shipping channel during the tide runout. This guide covers Oregon waters only.",
+        "access_point": {
+          "label": "Hammond Marina",
+          "map_query": "Hammond Marina Warrenton Oregon"
+        },
+        "access_points": [
+          {
+            "label": "Hammond Marina",
+            "type": "Boat ramp and marina",
+            "note": "Protected mooring basin with a launching ramp, fuel and overnight moorage. Open on Nov. 18 per the Marine Board.",
+            "map_query": "Hammond Marina Warrenton Oregon",
+            "source": "https://www.oregon.gov/osmb/forms-library/Documents/Publications/LowerColumbiaGuide.pdf"
+          },
+          {
+            "label": "Astoria East Mooring Basin",
+            "type": "Boat ramp",
+            "note": "Launching ramp about 2 miles upstream from the Astoria-Megler Bridge, per the Marine Board guide.",
+            "map_query": "Astoria East Mooring Basin boat ramp Oregon",
+            "source": "https://www.oregon.gov/osmb/forms-library/Documents/Publications/LowerColumbiaGuide.pdf"
+          },
+          {
+            "label": "Warrenton Marina",
+            "type": "Boat ramp and marina",
+            "note": "On the Skipanon River. Marina and boat launch open on Nov. 18 per the Marine Board.",
+            "map_query": "Warrenton Marina boat launch Oregon",
+            "source": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          }
+        ],
+        "seasonal_summary": "Fall season Aug. 1 to Dec. 31; salmon peak August to mid-September",
+        "seasonal_detail": "ODFW says the Buoy 10 salmon fishery opens Aug. 1, with good Chinook fishing through late August and good coho through at least mid-September. In ODFW's Nov. 3 update, from Nov. 1 to Dec. 31 between Buoy 10 and Bonneville Dam, hatchery coho and hatchery steelhead may be kept, all Chinook must be released, and the daily adult limit is two hatchery salmon or steelhead (coho and steelhead only). Sturgeon retention is closed; catch-and-release fishing is allowed. The 2026 regulations for the Buoy 10 line up to the Rocky Point to Tongue Point line also list hatchery steelhead Jan. 1 to Mar. 31 and Nov. 1 to Dec. 31 and hatchery Chinook Jan. 1 to Mar. 31, with other seasons set each year.",
+        "methods": "ODFW: fish suspended on the incoming tide and near the bottom on the outgoing tide, and carry both bait and hardware. Barbless hooks are required from Buoy 10 upstream, and a Columbia River Basin Endorsement is required to fish for salmon, steelhead or sturgeon.",
+        "report": {
+          "summary": "No dated catch report for the Buoy 10 reach is available now. ODFW's Nov. 19 Columbia report says the lower Columbia creel program has ended for the year and resumes in February 2027.",
+          "reported_on": null,
+          "checked_on": "2026-11-24",
+          "coverage": "Columbia-wide ODFW report, not specific to Buoy 10.",
+          "url": "https://myodfw.com/recreation-report/fishing-report/columbia-zone"
+        },
+        "alerts": [
+          {
+            "summary": "ODFW's Nov. 3 update: from Nov. 1 to Dec. 31 between Buoy 10 and Bonneville Dam, hatchery coho and hatchery steelhead may be kept and all Chinook must be released. Sturgeon retention is closed.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "summary": "OHA lists a PCB and mercury advisory for the lower Columbia from the mouth to Bonneville Dam: sturgeon, 4 meals a month for vulnerable groups and 6 for the general population.",
+            "status": "advisory",
+            "checked_on": "2026-11-24",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "summary": "Bar, tide and wind conditions at the river mouth change fast and are not measured here. Check the marine forecast and the tide before you launch.",
+            "status": "unverified",
+            "checked_on": null,
+            "url": "https://myodfw.com/articles/10-tips-buoy-10-fishing"
+          }
+        ],
+        "checked_on": "2026-11-24",
+        "sources": [
+          {
+            "label": "ODFW: 10 tips for Buoy 10 fishing",
+            "url": "https://myodfw.com/articles/10-tips-buoy-10-fishing"
+          },
+          {
+            "label": "ODFW fishing regulation updates",
+            "url": "https://myodfw.com/articles/regulation-updates"
+          },
+          {
+            "label": "ODFW Columbia Zone fishing report",
+            "url": "https://myodfw.com/recreation-report/fishing-report/columbia-zone"
+          },
+          {
+            "label": "Oregon State Marine Board: Lower Columbia and Willamette Rivers boating guide",
+            "url": "https://www.oregon.gov/osmb/forms-library/Documents/Publications/LowerColumbiaGuide.pdf"
+          },
+          {
+            "label": "Oregon State Marine Board: Opportunities and Access Report",
+            "url": "https://www.oregon.gov/osmb/boater-info/pages/opportunities-and-access.aspx"
+          },
+          {
+            "label": "OHA: Oregon fish advisories",
+            "url": "https://healthoregon.org/fishadv"
+          },
+          {
+            "label": "ODFW 2026 Oregon Sport Fishing Regulations",
+            "url": "https://www.eregulations.com/assets/docs/resources/OR/26ORFW_LR_2025-12-01-160331_robo.pdf"
+          }
+        ]
+      },
+      "readings": null
     }
   ]
 }

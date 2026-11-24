@@ -1,6 +1,6 @@
 # Eddy, the AI fishing assistant
 
-An "Ask Eddy" chat panel on the homepage and water pages where visitors ask about the 24 guide waters. Eddy runs on Claude Haiku 5.5 and answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts.
+An "Ask Eddy" chat panel on the homepage and water pages where visitors ask about the guide waters (37 as of Nov. 24, 2026). Eddy runs on Claude Haiku 5.5 and answers from the same data the pages show: scores and their inputs, dated reports, gauge readings and NOAA forecasts, dam counts, ODFW stocking, NWS weather, ODFW rule changes and angler posts.
 
 ## How it fits together
 

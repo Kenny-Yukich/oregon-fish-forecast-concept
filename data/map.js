@@ -32,5 +32,14 @@ window.ORFF_MAP = {
     "henry-hagg-lake": [45.480, -123.215],
     "odell-lake-princess-creek": [43.585, -122.000],
     "wallowa-lake-state-park": [45.278, -117.212],
+    "lost-creek-reservoir": [42.671, -122.675],
+    "rogue-river-above-lost-creek": [42.920, -122.440],
+    "dexter-reservoir": [43.924, -122.805],
+    "dorena-reservoir": [43.786, -122.955],
+    "applegate-reservoir": [42.057, -123.109],
+    "alton-baker-canal": [44.053, -123.083],
+    "mckenzie-river-above-leaburg": [44.128, -122.380],
+    "north-santiam-river-mehama": [44.789, -122.619],
+    "columbia-river-buoy-10": [46.189, -123.859],
   }
 };
