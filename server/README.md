@@ -4,7 +4,10 @@ An "Ask Eddy" chat panel on the homepage and water pages where visitors ask abou
 
 ## How it fits together
 
-- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as about 110K characters of plain text (about 47K tokens for Haiku 5.5): one block per guide water, statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
+- **`context.mjs`** runs the site's own data files and score formula (`data/*.js`, `assets/member-preview.js`) in a sandbox and writes them out as plain text in two levels:
+  - **Cached for every question:** a short summary of each guide water (score and its biggest input, latest report, first notice, in-season rules, gauge, stocking, angler posts, season, access), statewide dam counts, the last and next planned stocking for every water on ODFW's schedule (about 255), ODFW's weekly report for each zone (`data/odfw-reports.js`, optional) and "not in the guide yet". About 72K characters with 37 guide waters on Nov 24, 2026 (roughly 30K tokens); each guide water adds about 1,000 characters, so the guide can grow well past 100 waters and stay under Haiku 5.5's 100K-token price step.
+  - **Sent with a question:** the full block (every notice, season rules, methods, access points, gauge, counts, weather) for the water page the visitor is on and the guide waters their latest two questions name, at most 4 (`detailIds` in `ask.mjs`). It goes in the visitor's turn inside `<site_detail>` tags, so the cached part stays the same for everyone; visitor text cannot add those tags.
+  - Field-check wording stays out, as on the site. The text is rebuilt every 15 minutes and whenever the Pacific date changes; a failed rebuild keeps the last copy.
 - **`ask.mjs`** is the endpoint: `POST` a conversation, get the answer streamed back as newline-delimited JSON. It is a web-standard `(Request) => Response` handler.
   - Model `claude-haiku-5-5`, effort `low`, adaptive thinking (the model's default), up to 3,000 output tokens.
   - The instructions and site data go in the system prompt and are cached, so repeat questions within five minutes read the data at a tenth of the price.
@@ -79,7 +82,7 @@ Then open http://localhost:8787. The local server serves the whole site and poin
 
 ## Cost
 
-Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens; cached reads cost a tenth and cache writes 1.25 times the input price. Each question reads about 32K tokens of instructions and site data:
+Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens, and five times that ($0.50 / $2.50) above it; cached reads cost a tenth and cache writes 1.25 times the input price. Each question reads about 32K tokens of cached instructions and site data, plus up to a few thousand uncached tokens of detail for the waters it is about (figures below are from the Nov 18 check, before the two-level split):
 
 - The first question in a five-minute window writes the cache: about $0.004.
 - Questions within five minutes of another read the cache: about $0.0003.

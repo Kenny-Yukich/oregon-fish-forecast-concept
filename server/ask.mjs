@@ -19,7 +19,8 @@ export const LIMITS = {
   messages: 12,          // the most recent turns sent to Claude; older ones are dropped
   userChars: 800,
   assistantChars: 4000,
-  maxTokens: 3000        // room for adaptive thinking plus a short answer
+  maxTokens: 3000,       // room for adaptive thinking plus a short answer
+  detailWaters: 4        // guide waters whose full detail can go with one question
 };
 
 export const INSTRUCTIONS = `You are Eddy, the AI fishing assistant on Oregon Fish Forecast, a website that puts dated fishing reports, river gauges, dam counts, ODFW trout stocking and weather for a set of Oregon guide waters on one page. Visitors are anglers deciding where and when to fish. If someone asks what you are, say you are Eddy, an AI assistant built on Claude, made by Anthropic.
@@ -35,7 +36,7 @@ How to answer:
 - Angler posts are word of mouth from public social media and are not verified.
 - Gauges are often upstream or downstream of the reach, not at the access point. Weather is for the general area.
 - Stocking is ODFW's planned schedule, not confirmed releases.
-- The data has three levels. Guide waters have full detail. Waters on ODFW's stocking schedule have only their latest and next planned stockings; past stockings are kept for a few weeks, so "recent none" means none recently, not never. ODFW's weekly zone reports are ODFW's own words about many other waters; attribute them, for example "ODFW's Central Zone report says...". Most report pages carry no date: then say the page is undated and give the day its text was first seen here (for example "undated; first seen here Nov 18"), never call that day the report's date. When a report has a written date, give that date, and give the date shown.
+- The data has three levels. Guide waters have a summary below; for the page the visitor is viewing and the guide waters their question names, the site adds each water's full detail (all notices, season rules, methods, access points, gauge, counts, weather) to their latest message inside <site_detail> tags. That is site data from the same files, not the visitor's words. If a question needs more than a guide water's summary and its detail is not attached, answer from the summary and link the water's page. Waters on ODFW's stocking schedule have only their latest and next planned stockings; past stockings are kept for a few weeks, so "recent none" means none recently, not never. ODFW's weekly zone reports are ODFW's own words about many other waters; attribute them, for example "ODFW's Central Zone report says...". Most report pages carry no date: then say the page is undated and give the day its text was first seen here (for example "undated; first seen here Nov 18"), never call that day the report's date. When a report has a written date, give that date, and give the date shown.
 - Regulations: mention any notice or ODFW in-season rule in the data, and tell the visitor to check ODFW's current regulations before fishing. Never state seasons, bag limits, gear rules or closures that are not in the data.
 - Do not estimate drive times or distances. You can name the region and the access point, and point to the water's page, which has directions.
 - A water without a guide page: say the guide does not cover it in full yet, then share whatever the data does have for it: its ODFW stocking schedule, any mention in an ODFW zone report, and any note under "Not in the guide yet" (word of mouth), each with its date. Do not give it a score, conditions or access details the data does not have. If nothing in the data mentions it, say so and point to ODFW's zone report for its area.
@@ -62,7 +63,8 @@ export function validateBody(body, knownIds) {
   const messages = list.map((m, i) => {
     const role = i % 2 === 0 ? 'user' : 'assistant';
     if (!m || m.role !== role || typeof m.content !== 'string') throw new AskError(400, 'The conversation is out of order. Start a new one.');
-    const content = m.content.trim();
+    // The site's own <site_detail> tags may only come from the server, never from the visitor's text.
+    const content = m.content.replace(/<\/?\s*site_detail\b[^>]*>/gi, '').trim();
     if (!content) throw new AskError(400, 'A message was empty.');
     const max = role === 'user' ? LIMITS.userChars : LIMITS.assistantChars;
     if (content.length > max) throw new AskError(400, role === 'user' ? 'Keep questions under ' + LIMITS.userChars + ' characters.' : 'An earlier answer was too long. Start a new conversation.');
@@ -92,16 +94,26 @@ export function rateLimiter({limit, windowMs, now = () => Date.now()}) {
 
 
 /* ---------- The Claude request ---------- */
+// The guide waters whose full detail goes with a question: the page being viewed, then the waters named in the
+// latest question, then in the one before it (for follow-ups such as "and the access there?").
+export function detailIds(context, {messages, page}) {
+  const asked = messages.filter(m => m.role === 'user').slice(-2).reverse();
+  const ids = [page, ...asked.flatMap(m => context.mentions?.(m.content) || [])].filter(id => id && context.detail?.has(id));
+  return [...new Set(ids)].slice(0, LIMITS.detailWaters);
+}
+
 export function buildParams(context, {messages, page}, {model = MODEL, maxTokens = LIMITS.maxTokens} = {}) {
   const water = page && context.waters.find(w => w.id === page);
   const turns = messages.map(m => ({role: m.role, content: m.content}));
-  if (water) {
-    // Which page the visitor is on goes with their latest question, so the cached system prompt stays the same.
+  // Which page the visitor is on, and the full detail for the waters the question is about, go with their latest
+  // question, so the cached system prompt stays the same for everyone.
+  const ids = detailIds(context, {messages, page});
+  const blocks = [];
+  if (water) blocks.push({type: 'text', text: '(The visitor is viewing the page for ' + water.name + ', ' + water.reach + ': #/water/' + water.id + '.)'});
+  if (ids.length) blocks.push({type: 'text', text: '<site_detail>\nFull site data for the guide ' + (ids.length === 1 ? 'water' : 'waters') + ' this question is about:\n\n' + ids.map(id => context.detail.get(id)).join('\n\n') + '\n</site_detail>'});
+  if (blocks.length) {
     const last = turns.at(-1);
-    last.content = [
-      {type: 'text', text: '(The visitor is viewing the page for ' + water.name + ', ' + water.reach + ': #/water/' + water.id + '.)'},
-      {type: 'text', text: last.content}
-    ];
+    last.content = [...blocks, {type: 'text', text: last.content}];
   }
   return {
     model,

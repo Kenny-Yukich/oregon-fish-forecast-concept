@@ -165,6 +165,48 @@ function waterBlock(g, w, today) {
   return out.join('\n');
 }
 
+// The short form every guide water gets in the cached data: enough to compare waters and pick one. The full
+// block above goes with a question only for the water being viewed and the waters it names (see detailFor).
+const trim = (s, n) => { s = clean(s); return s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '...' : s; };
+function summaryBlock(g, w, today) {
+  const p = w.planning, out = [];
+  out.push('### ' + w.name + ', ' + w.reach);
+  out.push('Page: #/water/' + w.id + ' · ' + (w.kind === 'river' ? 'River' : w.kind === 'reservoir' ? 'Reservoir' : 'Lake') + ' · ' + w.region + ' · Targets: ' + p.target_species.join(', ') + '.');
+  const s = g.ORFFPreview.score(w);
+  if (s.status === 'scored') {
+    const top = [...s.factors].sort((a, b) => b.weight - a.weight)[0];
+    out.push('Score: ' + s.value + '/100, ' + s.label + ', ' + s.confidence + ' confidence (' + s.used + ' of ' + s.inputs + ' inputs' + (top ? '; biggest: ' + top.label.toLowerCase() + ', ' + clean(top.display) : '') + ').');
+  } else out.push(scoreLines(g, w)[0]);
+  const a = g.ORFFPreview.autoReport?.(w), r = a || p.report;
+  out.push(r?.reported_on ? 'Latest report (' + r.reported_on + ', ' + ago(r.reported_on, today) + '): "' + trim(r.summary, 220) + '"' : 'Latest report: no dated fishing report.');
+  const notices = p.alerts || [];
+  if (notices.length) out.push('Notices (' + notices.length + '): ' + trim(notices[0].summary, 170) + (notices.length > 1 ? ' (and ' + (notices.length - 1) + ' more)' : ''));
+  for (const rule of (g.ORFF_AUTO?.rules?.[w.id] || []).filter(x => !x.effective_to || x.effective_to >= today)) {
+    out.push('ODFW in-season rule (' + rule.kind + ', ' + rule.effective_from + (rule.effective_to ? ' to ' + rule.effective_to : '') + '): ' + trim(rule.summary, 170));
+  }
+  const gauge = gaugeLines(g, w, today)[0];
+  if (gauge) out.push(trim(gauge, 170));
+  out.push(...stockingLines(g, w, today));
+  out.push(...weatherLines(g, w).filter(l => l.startsWith('NWS alert')));
+  const posts = anglerLines(g, w, today);
+  if (posts.length) out.push(posts.length + (posts.length === 1 ? ' angler post' : ' angler posts') + ' in the last 30 days; latest: ' + trim(posts[0], 170));
+  out.push('Season: ' + clean(p.seasonal_summary) + '. Access: ' + clean(p.access_summary) + '.');
+  return out.join('\n');
+}
+
+// Words in a visitor's question that name a guide water: its name, its name without the kind word or a
+// Lower/Middle/North Fork style prefix ("Rogue", "Santiam", "Alton Baker"), its ODFW stocking names and its page id.
+// Short stems such as "Fall" are left out because they are ordinary words. Pages that share a name (two
+// McKenzie reaches) are all matched.
+const KIND_WORD = /\s+(?:River|Lake|Reservoir|Creek|Canoe Canal|Canal)$/i, PREFIX = /^(?:Lower|Middle|Upper|North Fork|South Fork|North|South)\s+/i;
+function mentionPatterns(g, w) {
+  const names = new Set([w.name]);
+  const stem = w.name.replace(KIND_WORD, ''), bare = stem.replace(PREFIX, '');
+  for (const n of [stem, bare]) if (n !== w.name && n.length >= 5) names.add(n);
+  for (const n of g.ORFF_STOCKING_MATCH?.[w.id] || []) if (n.length > 4 && !/[()]/.test(n)) names.add(n);
+  return [...nameRes([...names]), new RegExp('#/water/' + w.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b')];
+}
+
 /* ---------- Statewide ---------- */
 function countsBlock(g) {
   const out = ['## Dam counts (adult fish passing upstream; run timing, not catch rates)'];
@@ -255,16 +297,20 @@ function elsewhereBlock(g) {
     ...list.map(e => { const w = pageFor(e.water); return '- ' + e.water + (w ? ' (now has a guide page: #/water/' + w.id + ')' : '') + ' (' + e.posts + (e.posts === 1 ? ' post' : ' posts') + ', latest ' + e.latest + '): ' + clean(e.note); })].join('\n');
 }
 
-// The full text the assistant reads, plus what the endpoint needs to validate requests.
+// The text the assistant reads on every question (cached), the full per-water blocks the endpoint adds to a
+// question about particular waters, and what the endpoint needs to validate requests.
 export function buildContext(g, today = pacificToday()) {
   const waters = g.ORFF_DATA.waters;
   const byId = new Map(waters.map(w => [w.id, w]));
+  const detail = new Map(waters.map(w => [w.id, waterBlock(g, w, today)]));
+  // Array.from: the waters list comes from the sandbox, and arrays mapped from it would carry its Array prototype.
+  const patterns = Array.from(waters, w => [w.id, mentionPatterns(g, w)]);
   const text = [
     '# Oregon Fish Forecast site data, built ' + today + ' (Pacific)',
     'Data files refresh every morning. Angler posts were last read ' + (g.ORFF_ANGLER?.checked_on || 'unknown') + '. Gauges were read ' + (g.ORFF_CONDITIONS?.fetched_at || 'unknown').slice(0, 16).replace('T', ' ') + ' UTC.',
     '',
-    '## The ' + waters.length + ' guide waters (full detail: score, reports, gauges, counts, stocking, weather, access)',
-    waters.map(w => waterBlock(g, w, today)).join('\n\n'),
+    '## The ' + waters.length + ' guide waters (summary of each: score, latest report, first notice, gauge, stocking, season, access. Full detail for the waters a question is about comes with the question in <site_detail> tags)',
+    waters.map(w => summaryBlock(g, w, today)).join('\n\n'),
     '',
     countsBlock(g),
     '',
@@ -276,7 +322,9 @@ export function buildContext(g, today = pacificToday()) {
     '',
     elsewhereBlock(g)
   ].join('\n');
-  return {today, text, waters: waters.map(w => ({id: w.id, name: w.name, reach: w.reach}))};
+  // Guide waters a piece of visitor text names, in guide order.
+  const mentions = s => patterns.filter(([, res]) => res.some(re => re.test(String(s || '')))).map(([id]) => id);
+  return {today, text, detail, mentions, waters: waters.map(w => ({id: w.id, name: w.name, reach: w.reach}))};
 }
 
 // Caches the loaded site data itself (for alerts), reloading it when older than ttlMs. A failed reload keeps the last copy.
