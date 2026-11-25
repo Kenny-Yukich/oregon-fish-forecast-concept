@@ -78,7 +78,7 @@
   function linkHTML(label, href) {
     const water = href.match(/^#\/water\/([a-z0-9-]+)$/);
     if (water && byId.has(water[1])) return '<a class="ask-link" href="' + esc(href) + '" data-internal>' + label + '</a>';
-    if (href === 'classic/#/stocking' || href === '#/stocking' || href === '#/counts') return '<a class="ask-link" href="' + esc(href) + '" data-internal>' + label + '</a>';
+    if (href === '#/stocking' || href === '#/counts' || href === '#/map') return '<a class="ask-link" href="' + esc(href) + '" data-internal>' + label + '</a>';
     if (/^https:\/\/[^\s<>"']+$/.test(href)) return '<a class="ask-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + label + '<span class="sr-only"> (opens in a new tab)</span></a>';
     return label;
   }

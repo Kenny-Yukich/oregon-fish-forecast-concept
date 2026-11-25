@@ -79,7 +79,8 @@ export function factsFor(g, keys, {today, now = Date.now(), siteUrl = 'https://o
     const item = all.get(k);
     if (!item) continue;
     const w = item.guide, facts = [];
-    const url = w ? base + '#/water/' + w.id : base + 'classic/#/stocking';
+    // A water outside the guide links to the stocking schedule, searched for that water.
+    const url = w ? base + '#/water/' + w.id : base + '#/stocking?q=' + encodeURIComponent(item.stocked || item.name);
 
     // Stocking planned for this week or next.
     const res = w ? (g.ORFF_STOCKING_MATCH?.[w.id] || []).map(n => new RegExp('\\b' + reEscape(n) + '\\b', 'i')) : null;

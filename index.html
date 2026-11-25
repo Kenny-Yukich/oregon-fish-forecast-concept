@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="v2/assets/site.css?v=7f3b95e327">
-  <!-- Shared data. These are the same files the classic site reads, refreshed daily by the data workflow. -->
+  <link rel="stylesheet" href="v2/assets/site.css?v=41642f8608">
+  <!-- Shared data, refreshed daily by the data workflow. Eddy's server reads the same files. -->
   <script src="data/waters.js" defer></script>
   <script src="data/monitoring.js" defer></script>
   <script src="data/count-stations.js" defer></script>
@@ -21,20 +21,28 @@
   <script src="data/stocking-match.js" defer></script>
   <script src="data/conditions.js" defer></script>
   <script src="data/weather.js" defer></script>
-  <!-- The score formula is shared with the classic pages so both show the same numbers. -->
   <script src="data/angler.js" defer></script>
   <script src="data/field-checks.js" defer></script>
   <script src="data/flow-seasons.js" defer></script>
   <script src="data/auto-reports.js" defer></script>
+  <!-- The score formula. Eddy's server runs the same file, so the chat and the pages show the same numbers. -->
   <script src="assets/member-preview.js?v=9789e16d72" defer></script>
   <script src="v2/vendor/gsap.min.js?v=28033e449a" defer></script>
   <script src="v2/vendor/ScrollTrigger.min.js?v=ad33c2df9a" defer></script>
   <script src="v2/vendor/lenis.min.js?v=c53150d4f8" defer></script>
   <script src="v2/assets/icons.js?v=3a6e74e4d5" defer></script>
-  <script src="v2/assets/app.js?v=610edbc8aa" defer></script>
+  <script src="v2/assets/app.js?v=9243c35c95" defer></script>
   <!-- Eddy, the AI fishing assistant. The chat stays hidden unless ask-config.js names an endpoint (see server/README.md). -->
   <script src="assets/ask-config.js?v=d6c148bb6c" defer></script>
-  <script src="v2/assets/ask.js?v=2c7d53bbaa" defer></script>
+  <script src="v2/assets/ask.js?v=18f2519375" defer></script>
+  <!-- The water map (#/map). Nothing in a template loads until app.js asks for it when the map opens; the
+       addresses are listed here so scripts/stamp-assets.mjs stamps them like every other file. -->
+  <template id="map-assets">
+    <link rel="stylesheet" href="v2/vendor/leaflet/leaflet.css?v=337bfca5ca">
+    <script src="v2/vendor/leaflet/leaflet.js?v=db49d009c8"></script>
+    <script src="v2/assets/map.js?v=8383cb3601"></script>
+    <script src="data/map.js"></script>
+  </template>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -48,6 +56,7 @@
       <nav aria-label="Main">
         <ul class="nav-links" id="nav-links">
           <li><a href="#/waters">Explore waters</a></li>
+          <li><a href="#/map">Map</a></li>
           <li><a href="#/counts">Fish counts</a></li>
           <li><a href="#/stocking">Stocking</a></li>
           <li><a href="#/reports">Reports</a></li>
@@ -90,7 +99,7 @@
       <noscript>
         <style>.hero-search, .hero-jump { display: none; }</style>
         <section class="noscript">
-          <p>Search, the water directory, fish counts and stocking lists need JavaScript. The <a href="classic/">classic site</a> has the same records, and the raw data is in <a href="data/waters.json">waters.json</a>.</p>
+          <p>Search, the water directory, the map, fish counts and stocking lists need JavaScript. The raw water records are in <a href="data/waters.json">waters.json</a>.</p>
         </section>
       </noscript>
     </div>
@@ -101,22 +110,19 @@
       <p class="footer-word" data-split>See you by the water.</p>
       <div class="footer-cols">
         <div>
-          <h2 class="footer-h">This site</h2>
+          <h2 class="footer-h">Find a water</h2>
           <ul>
             <li><a href="#/waters">All waters</a></li>
-            <li><a href="#/counts">Fish counts</a></li>
-            <li><a href="#/stocking">Trout stocking</a></li>
-            <li><a href="#/reports">Angler reports</a></li>
+            <li><a href="#/map">Water map</a></li>
             <li><a href="#/method">How scores work</a></li>
           </ul>
         </div>
         <div>
-          <h2 class="footer-h">Classic version</h2>
+          <h2 class="footer-h">On the water</h2>
           <ul>
-            <li><a href="classic/">Directory table</a></li>
-            <li><a href="classic/#/map">Water map</a></li>
-            <li><a href="classic/#/stocking">Full stocking schedule</a></li>
-            <li><a href="classic/#/approach">Approach &amp; sources</a></li>
+            <li><a href="#/counts">Fish counts</a></li>
+            <li><a href="#/stocking">Trout stocking</a></li>
+            <li><a href="#/reports">Angler reports</a></li>
           </ul>
         </div>
         <div>

@@ -1,5 +1,5 @@
 /* Oregon Fish Forecast, version two.
-   Reads the same data files as the classic site. Every number on the page comes from those files;
+   Reads the shared data files in data/. Every number on the page comes from those files;
    missing values stay missing. Motion: GSAP + ScrollTrigger, with Lenis as the only smooth-scroll
    engine. Under prefers-reduced-motion there is no smooth scrolling, no scrubbing and no shader. */
 (() => {
@@ -140,17 +140,25 @@
     const res = names.map(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'));
     return (window.ORFF_STOCKING?.rows || []).filter(r => res.some(re => re.test(r.waterbody)));
   }
+  // The guide water an ODFW schedule name belongs to, if any. Remembered, since the full schedule asks for every row.
+  const guideCache = new Map();
   function guideFor(waterbody) {
+    if (guideCache.has(waterbody)) return guideCache.get(waterbody);
+    let found = null;
     for (const [id, names] of Object.entries(window.ORFF_STOCKING_MATCH || {})) {
-      if (names.some(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(waterbody))) return byId.get(id);
+      if (names.some(n => new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(waterbody))) { found = byId.get(id) || null; break; }
     }
-    return null;
+    guideCache.set(waterbody, found);
+    return found;
   }
   function mondayOf(iso) {
     const d = new Date(iso + 'T12:00:00Z'), day = (d.getUTCDay() + 6) % 7;
     d.setUTCDate(d.getUTCDate() - day);
     return d.toISOString().slice(0, 10);
   }
+  const addDays = (iso, n) => new Date(Date.parse(iso + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+  // Where to get on the water: the documented access points, or the single access point older records carry.
+  const accessPoints = w => { const p = w.planning; return p.access_points?.length ? p.access_points : p.access_point ? [{label: p.access_point.label, type: 'Documented access', note: p.access_summary, map_query: p.access_point.map_query}] : []; };
   function ring(value, size = 92) {
     const r = 40, c = 2 * Math.PI * r, v = Math.max(0, Math.min(100, value));
     return '<div class="ring" style="width:' + size + 'px;height:' + size + 'px"><svg viewBox="0 0 92 92" aria-hidden="true"><circle class="track" cx="46" cy="46" r="' + r + '"/><circle class="val" cx="46" cy="46" r="' + r + '" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - v / 100)).toFixed(1) + '" data-ring="' + c.toFixed(1) + '"/></svg><b class="num" data-count="' + v + '">' + v + '</b></div>';
@@ -312,14 +320,81 @@
       '<div class="section-head"><div><p class="eyebrow">ODFW trout stocking</p><h1 id="st-h" class="display h-section" data-split tabindex="-1">Fresh trout, <em>' + esc(label) + '.</em></h1></div>' +
       '<p class="lede" data-reveal>ODFW’s planned releases, read every morning. These are plans, not confirmed releases, and the agency can change them.</p></div>' +
       (week.length ? '<div class="stock-grid"><div data-reveal><p class="stock-total num" data-count="' + total + '">' + num(total) + '</p><p class="lede" style="margin-top:14px">trout planned across ' + week.length + (week.length === 1 ? ' water' : ' waters') + ' for ' + esc(week[0].week_label) + '.</p>' +
-        '<p style="margin-top:28px"><a class="btn btn-ink" href="classic/#/stocking">Full year schedule ' + icon('arrow-right-up-linear') + '</a></p></div>' +
+        '<p style="margin-top:28px"><button type="button" class="btn btn-ink" data-jump="sch-h">Search the whole schedule ' + icon('arrow-down-linear') + '</button></p></div>' +
         '<ul class="stock-list">' + week.map(r => {
           const g = guideFor(r.waterbody);
           const name = g ? '<a href="#/water/' + esc(g.id) + '"><strong>' + esc(r.waterbody) + '</strong></a>' : '<strong>' + esc(r.waterbody) + '</strong>';
           return '<li data-reveal>' + name + '<span class="num">' + num(r.total) + ' fish</span><small>' + esc(r.zone) + (g ? ' · In the guide' : '') + '</small></li>';
         }).join('') + '</ul></div>'
         : '<p class="lede">' + (window.ORFF_STOCKING ? 'No stockings are listed for the coming weeks. ' : 'The stocking schedule did not load. ') + ext(window.ORFF_STOCKING?.source || 'https://myodfw.com/fishing/species/trout/stocking-schedule', 'Check ODFW’s schedule') + '</p>') +
-      '</div></section>';
+      '</div></section>' + (all.length ? scheduleHTML() : '');
+  }
+
+  // The whole ODFW schedule, searchable: about a year ahead, plus the past 8 weeks. #/stocking?q=<words>&weeks=past|all
+  // opens it searched (alert emails link a water this way), and the address follows the search box.
+  const sched = {q: '', weeks: 'coming', zone: ''};
+  const zoneOf = r => String(r.zone || '').split('/')[0].trim();
+  const monthOf = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'});
+  function weekBucket(r, mon) {
+    return r.week_start < addDays(mon, -56) ? 'old' : r.week_start < mon ? 'past' : r.week_start < addDays(mon, 7) ? 'this' : r.week_start < addDays(mon, 14) ? 'next' : 'later';
+  }
+  function fishLine(r) {
+    const parts = [['legals', 'legals'], ['larger', 'larger'], ['pounders', 'pounders'], ['trophy', 'trophy'], ['brood', 'brood'], ['fingerling', 'fingerlings']].filter(([k]) => r[k] > 0).map(([k, l]) => num(r[k]) + ' ' + l);
+    return parts.length > 1 ? parts.join(', ') : parts[0] || '';
+  }
+  function scheduleHTML() {
+    const zones = [...new Set((window.ORFF_STOCKING?.rows || []).map(zoneOf).filter(Boolean))].sort();
+    return '<section class="section" id="schedule" aria-labelledby="sch-h"><div class="inner">' +
+      '<div class="section-head"><div><p class="eyebrow">ODFW stocking schedule · read ' + fmtDate(window.ORFF_STOCKING.fetched_at, true) + '</p><h2 id="sch-h" class="display h-section" data-split tabindex="-1">When is my lake <em>stocked?</em></h2></div>' +
+      '<p class="lede" data-reveal>Every water on ODFW’s plan, about a year ahead, and the past 8 weeks. Waters in this guide link to their pages. Plans can change for weather, access or fish health.</p></div>' +
+      '<div class="controls sched-controls" role="search">' +
+      '<label class="search"><span class="sr-only">Search stocked waters or zones</span>' + icon('magnifer-linear') + '<input id="sq" type="search" placeholder="Search a lake, pond or zone" autocomplete="off" value="' + esc(sched.q) + '"></label>' +
+      '<div class="seg" role="group" aria-label="Weeks">' + [['coming', 'Coming up'], ['past', 'Recent'], ['all', 'All']].map(([v, l]) => '<button type="button" data-weeks="' + v + '" aria-pressed="' + (sched.weeks === v) + '">' + l + '</button>').join('') + '</div>' +
+      '<label><span class="sr-only">Zone</span><select class="select" id="szone"><option value="">All zones</option>' + zones.map(z => '<option value="' + esc(z) + '"' + (sched.zone === z ? ' selected' : '') + '>' + esc(z) + '</option>').join('') + '</select></label>' +
+      '</div><p class="result-count" id="sched-count" role="status" aria-live="polite"></p><div id="sched"></div></div></section>';
+  }
+  function renderSchedule() {
+    const box = document.getElementById('sched');
+    if (!box) return;
+    const mon = mondayOf(today()), terms = sched.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const order = {this: 0, next: 1, later: 2, past: 3};
+    const hits = (window.ORFF_STOCKING?.rows || []).map(r => ({r, b: weekBucket(r, mon)})).filter(({r, b}) => b !== 'old' &&
+      (sched.weeks === 'all' || (sched.weeks === 'past') === (b === 'past')) && (!sched.zone || zoneOf(r) === sched.zone) &&
+      terms.every(t => (r.waterbody + ' ' + (r.odfw_name || '') + ' ' + r.zone).toLowerCase().includes(t)))
+      .sort((x, y) => order[x.b] - order[y.b] || (x.b === 'past' ? y.r.week_start.localeCompare(x.r.week_start) : x.r.week_start.localeCompare(y.r.week_start)) || x.r.waterbody.localeCompare(y.r.waterbody));
+    const groups = new Map();
+    for (const {r, b} of hits) {
+      const label = b === 'this' ? 'This week' : b === 'next' ? 'Next week' : b === 'past' ? 'Past 8 weeks' : monthOf(r.week_start);
+      if (!groups.has(label)) groups.set(label, []);
+      groups.get(label).push(r);
+    }
+    document.querySelectorAll('[data-weeks]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.weeks === sched.weeks)));
+    document.getElementById('sched-count').textContent = hits.length + ' planned ' + (hits.length === 1 ? 'stocking' : 'stockings');
+    box.innerHTML = hits.length ? [...groups].map(([label, list]) => '<div class="sched-group"><h3 class="sched-h">' + esc(label) + ' <span class="num">' + list.length + '</span></h3><ul class="stock-list">' + list.map(r => {
+      const g = guideFor(r.waterbody), fish = fishLine(r);
+      return '<li>' + (g ? '<a href="#/water/' + esc(g.id) + '"><strong>' + esc(r.waterbody) + '</strong></a>' : '<strong>' + esc(r.waterbody) + '</strong>') + '<span class="num">' + num(r.total) + ' trout</span>' +
+        '<small>' + esc([r.week_label || 'Week of ' + fmtDate(r.week_start), fish, r.zone, g && 'In the guide'].filter(Boolean).join(' · ')) + '</small></li>';
+    }).join('') + '</ul></div>').join('')
+      : '<div class="empty"><p>No stockings match.</p><button type="button" class="btn btn-line" id="sched-reset">Clear search and filters</button></div>';
+    if (ST) requestAnimationFrame(() => ST.refresh());
+  }
+  function noteSchedule() {
+    const p = new URLSearchParams();
+    if (sched.q.trim()) p.set('q', sched.q.trim());
+    if (sched.weeks !== 'coming') p.set('weeks', sched.weeks);
+    try { history.replaceState(history.state, '', '#/stocking' + (p.toString() ? '?' + p : '')); } catch {}
+  }
+  function bindSchedule() {
+    const q = document.getElementById('sq'), zone = document.getElementById('szone');
+    if (!q) return;
+    q.addEventListener('input', () => { sched.q = q.value; noteSchedule(); renderSchedule(); });
+    zone.addEventListener('change', () => { sched.zone = zone.value; renderSchedule(); });
+    document.querySelectorAll('[data-weeks]').forEach(b => b.addEventListener('click', () => { sched.weeks = b.dataset.weeks; noteSchedule(); renderSchedule(); }));
+    document.getElementById('sched').addEventListener('click', e => {
+      if (!e.target.closest('#sched-reset')) return;
+      Object.assign(sched, {q: '', weeks: 'coming', zone: ''});
+      q.value = ''; zone.value = ''; noteSchedule(); renderSchedule(); q.focus();
+    });
   }
 
   function method() {
@@ -365,10 +440,127 @@
       '<p class="small" style="margin-top:28px">Sources: ' + (a.sources || []).map(x => ext(x.url, x.label)).join(', ') + '.</p></div></section>';
   }
 
+  /* ---------- Water map ---------- */
+  // Leaflet, the map code (map.js) and the pin positions (data/map.js) load only when the map opens. Their addresses
+  // sit in index.html's <template id="map-assets">, so they carry stamps like every other file.
+  const mapState = {kind: 'all', base: 'satellite', hydro: true, selected: null, trace: {}};
+  let liveMap = null, mapLoad = null;
+  function loadMapAssets() {
+    if (window.L && window.ORFFMap && window.ORFF_MAP) return Promise.resolve();
+    const tpl = document.getElementById('map-assets');
+    if (!tpl) return Promise.reject(new Error('The map files are not listed on this page.'));
+    return mapLoad ??= Promise.all([...tpl.content.children].map(src => {
+      const css = src.tagName === 'LINK', url = src.getAttribute(css ? 'href' : 'src');
+      const el = document.createElement(css ? 'link' : 'script');
+      if (css) { el.rel = 'stylesheet'; el.href = url; } else { el.src = url; el.async = false; }
+      return new Promise((resolve, reject) => {
+        el.onload = resolve;
+        el.onerror = () => { el.remove(); reject(new Error('Could not load ' + url)); };
+        document.head.appendChild(el);
+      });
+    })).catch(e => { mapLoad = null; throw e; });
+  }
+  function mapPage() {
+    const kind = w => w.kind === 'river' ? 'river' : 'lake';
+    return '<section class="section map-section" id="map" aria-labelledby="map-h"><div class="inner">' +
+      '<div class="section-head"><div><p class="eyebrow">The water map · ' + waters.length + ' reaches</p><h1 id="map-h" class="display h-section" data-split tabindex="-1">See the <em>water.</em></h1></div>' +
+      '<p class="lede" data-reveal>Every stream and lake in blue, with a pin for each reach in the guide. Choose one to find it; a river with a USGS gauge traces its own channel.</p></div>' +
+      '<div class="map-layout"><div class="map-frame">' +
+      '<div id="water-map" class="water-map" data-lenis-prevent role="region" aria-label="Map of the guide’s waters. Use the list of waters to choose one with a keyboard."><p class="map-msg">Loading the map…</p></div>' +
+      '<div class="map-tools"><div class="seg" role="group" aria-label="Water type">' + [['all', 'All'], ['river', 'Rivers'], ['lake', 'Lakes']].map(([v, l]) => '<button type="button" data-map-kind="' + v + '">' + l + '</button>').join('') + '</div>' +
+      '<div class="seg" role="group" aria-label="Base map">' + [['satellite', 'Satellite'], ['topo', 'Topo']].map(([v, l]) => '<button type="button" data-map-base="' + v + '">' + l + '</button>').join('') + '</div></div>' +
+      '<div class="map-legend"><span><i class="dot river" aria-hidden="true"></i>River reach</span><span><i class="dot lake" aria-hidden="true"></i>Lake or reservoir</span><span><i class="trace" aria-hidden="true"></i>Traced river</span>' +
+      '<label><input type="checkbox" id="hydro"' + (mapState.hydro ? ' checked' : '') + '> Streams and lakes</label></div></div>' +
+      '<aside class="map-side" aria-label="Waters on the map"><div class="card map-card" id="map-card" aria-live="polite"></div>' +
+      '<div class="map-list-head"><h2>Waters</h2><span class="num" id="map-count"></span></div>' +
+      '<ul class="map-list" id="map-list" data-lenis-prevent>' + waters.map(w => '<li data-kind="' + kind(w) + '"><button type="button" data-map-water="' + esc(w.id) + '" aria-pressed="false"><i class="dot ' + kind(w) + '" aria-hidden="true"></i>' +
+        '<span><strong>' + esc(w.name) + '</strong><small>' + esc(w.reach) + '</small></span></button></li>').join('') + '</ul></aside></div>' +
+      '<p class="small map-note">Pins mark the general area of each reach. They are not access points: directions go only to a documented public access. A traced river follows the USGS network about 25 km up and downstream of its gauge, which can run past the named reach. Map tiles and river lines need a connection.</p>' +
+      '</div></section>';
+  }
+  function mapCard(id) {
+    const el = document.getElementById('map-card'), w = byId.get(id);
+    if (!el) return;
+    document.querySelectorAll('[data-map-water]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mapWater === id)));
+    if (!w) { el.innerHTML = '<p class="eyebrow">Start here</p><p class="map-empty">Choose a pin, or a water from the list.</p>'; return; }
+    const s = score(w), t = mapState.trace[id], pt = accessPoints(w)[0];
+    const gauged = w.kind === 'river' && !!window.ORFFMap?.station(w.id);
+    const trace = w.kind !== 'river' || !window.ORFFMap ? '' : !gauged ? 'No connected USGS gauge, so the river line is not traced. The blue stream layer still shows it.'
+      : t === 'loading' ? 'Tracing the river from its USGS gauge…' : t === 'done' ? 'River traced from its USGS gauge.' : t === 'error' ? 'The river line could not load. The blue stream layer still shows the channel.' : '';
+    el.innerHTML = '<p class="eyebrow">' + kindLabel(w) + ' · ' + esc(w.region) + '</p><h3>' + esc(w.name) + '</h3><p class="map-reach">' + esc(w.reach) + '</p>' +
+      '<p class="map-score">' + (s.status === 'scored' ? '<b class="num">' + s.value + '</b>/100 for ' + esc(speciesWord(w)) + ' · ' + esc(s.label) : s.status === 'withheld' ? 'Score held for rules' : 'Not scored yet') + '</p>' +
+      '<p class="small">' + esc(w.planning.target_species.join(', ')) + '</p>' + (trace ? '<p class="small">' + trace + '</p>' : '') +
+      '<p class="map-acts"><a class="btn btn-ink" href="#/water/' + esc(w.id) + '">Open this water ' + icon('arrow-right-linear') + '</a>' +
+      (pt ? '<a class="link ext" data-dest="' + esc(pt.map_query) + '" href="' + esc(mapsRoute(pt.map_query)) + '" target="_blank" rel="noopener noreferrer">Directions<span class="sr-only"> to ' + esc(pt.label) + ' in Google Maps (opens in a new tab)</span></a>' : '') + '</p>';
+  }
+  // Keeps the chosen water in view inside the list, without scrolling the page (on a phone the list is not a scroll box).
+  function revealInList(id) {
+    const list = document.getElementById('map-list'), li = list?.querySelector('[data-map-water="' + id + '"]')?.parentElement;
+    if (!li || list.scrollHeight <= list.clientHeight + 1) return;
+    if (li.offsetTop < list.scrollTop) list.scrollTop = li.offsetTop;
+    else if (li.offsetTop + li.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = li.offsetTop + li.offsetHeight - list.clientHeight;
+  }
+  // A water hidden by the Rivers or Lakes filter is shown again when it is chosen, by showing every water.
+  function showKindOf(id) {
+    const w = byId.get(id);
+    if (!w || mapState.kind === 'all' || mapState.kind === (w.kind === 'river' ? 'river' : 'lake')) return;
+    mapState.kind = 'all';
+    paintMapControls();
+    liveMap?.filter('all');
+  }
+  function chooseOnMap(id, opts) {
+    showKindOf(id);
+    mapState.selected = id;
+    mapCard(id);
+    liveMap?.select(id, opts);
+    revealInList(id);
+    try { history.replaceState(history.state, '', '#/map' + (id ? '?water=' + encodeURIComponent(id) : '')); } catch {}
+  }
+  function paintMapControls() {
+    document.querySelectorAll('[data-map-kind]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mapKind === mapState.kind)));
+    document.querySelectorAll('[data-map-base]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mapBase === mapState.base)));
+    document.querySelectorAll('#map-list li').forEach(li => { li.hidden = mapState.kind !== 'all' && li.dataset.kind !== mapState.kind; });
+    const count = document.getElementById('map-count');
+    if (count) count.textContent = document.querySelectorAll('#map-list li:not([hidden])').length;
+  }
+  function bindMap(route) {
+    mapState.selected = route.select || null;
+    showKindOf(mapState.selected);
+    paintMapControls();
+    mapCard(mapState.selected);
+    revealInList(mapState.selected);
+    document.getElementById('map-list').addEventListener('click', e => {
+      const b = e.target.closest('[data-map-water]');
+      if (!b) return;
+      chooseOnMap(b.dataset.mapWater);
+      // On a phone the list sits under the map: bring the map back into view to show the choice.
+      const frame = document.querySelector('.map-frame'), r = frame.getBoundingClientRect();
+      if (r.top < 70 || r.bottom > innerHeight) scrollToEl(frame, !motionOK(), 84);
+    });
+    document.querySelectorAll('[data-map-kind]').forEach(b => b.addEventListener('click', () => { mapState.kind = b.dataset.mapKind; paintMapControls(); liveMap?.filter(mapState.kind); }));
+    document.querySelectorAll('[data-map-base]').forEach(b => b.addEventListener('click', () => { mapState.base = b.dataset.mapBase; paintMapControls(); liveMap?.setBase(mapState.base); }));
+    document.getElementById('hydro').addEventListener('change', e => { mapState.hydro = e.target.checked; liveMap?.setHydro(mapState.hydro); });
+    const token = renderToken;
+    loadMapAssets().then(() => {
+      const box = document.getElementById('water-map');
+      if (token !== renderToken || !box) return;
+      box.innerHTML = '';
+      liveMap = window.ORFFMap.mount(box, {waters, esc, onSelect: chooseOnMap, onTrace: (id, status) => { mapState.trace[id] = status; if (mapState.selected === id) mapCard(id); }});
+      liveMap.filter(mapState.kind); liveMap.setBase(mapState.base); liveMap.setHydro(mapState.hydro);
+      if (mapState.selected) liveMap.select(mapState.selected, {fly: false});
+      mapCard(mapState.selected);
+      document.fonts?.ready.then(() => { if (token === renderToken) liveMap?.map?.invalidateSize(); });
+    }).catch(() => {
+      const box = document.getElementById('water-map');
+      if (token === renderToken && box) box.innerHTML = '<p class="map-msg">The map could not load. The list of waters still works, and every water page has directions.</p>';
+    });
+  }
+
   // The homepage: search, this week's short list, then the live wire. Each other section is its own page.
   function homeHTML() { return heroHTML + shortlist() + wire(); }
   const PAGES = {
     waters: {html: directory, title: 'Explore waters', top: 'paper'},
+    map: {html: mapPage, title: 'Water map', top: 'paper'},
     counts: {html: counts, title: 'Fish counts', top: 'ink'},
     stocking: {html: stocking, title: 'Trout stocking', top: 'paper'},
     reports: {html: anglers, title: 'Angler reports', top: 'paper'},
@@ -394,8 +586,7 @@
   }
 
   function waterHTML(w) {
-    const p = w.planning, s = score(w), f = freshness(w), g = gauge(w);
-    const points = p.access_points?.length ? p.access_points : p.access_point ? [{label: p.access_point.label, type: 'Documented access', note: p.access_summary, map_query: p.access_point.map_query}] : [];
+    const p = w.planning, s = score(w), f = freshness(w), g = gauge(w), points = accessPoints(w);
     const idx = waters.indexOf(w), prev = waters[(idx - 1 + waters.length) % waters.length], next = waters[(idx + 1) % waters.length];
     const scoreBlock = s.status === 'scored'
       ? ring(s.value, 150) + '<p><span class="d-for">For ' + esc(speciesWord(w)) + '</span>' + esc(s.label) + ' · <button type="button" class="d-conf" data-jump="b-h">' + esc(s.confidence) + ' confidence</button></p>'
@@ -490,10 +681,11 @@
         '<a class="link ext" data-dest="' + esc(pt.map_query) + '" href="' + esc(mapsRoute(pt.map_query)) + '" target="_blank" rel="noopener noreferrer">Directions<span class="sr-only"> to ' + esc(pt.label) + ' in Google Maps (opens in a new tab)</span></a></li>').join('') + '</ul>' +
         (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '') +
         '<form class="origin" id="origin-form"><label for="origin">Driving from</label><div><input id="origin" maxlength="180" required autocomplete="off" value="' + esc(origin) + '"><button type="submit">Update</button></div><span role="status" id="origin-status"></span></form>'
-      : '<p>No verified public access is documented for this reach, so no directions are offered.</p>' + (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '')) + '</div>';
+      : '<p>No verified public access is documented for this reach, so no directions are offered.</p>' + (p.access_detail ? '<p class="small">' + esc(p.access_detail) + '</p>' : '')) +
+      '<p class="d-map"><a class="link" href="#/map?water=' + esc(w.id) + '">' + icon('map-linear') + 'See it on the map</a></p></div>';
     const seen = new Set();
     const sources = '<div class="card" data-reveal><h2>Sources</h2><ul class="sources">' + [...(p.sources || []), ...(w.sources || [])].filter(x => { const k = x.label + x.url; if (seen.has(k)) return false; seen.add(k); return true; }).map(x => '<li>' + ext(x.url, x.label) + '</li>').join('') + '</ul>' +
-      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p><p class="small"><a class="link" href="classic/#/water/' + esc(w.id) + '">Open in the classic site</a></p></div>';
+      '<p class="small" style="margin-top:16px">Record checked ' + time(p.checked_on, true) + '. Check the exact reach and current rules before your trip.</p></div>';
 
     return '<article><header class="d-hero"><div class="inner">' +
       '<a class="crumb" href="#/waters">' + icon('arrow-left-linear') + 'All waters</a>' +
@@ -549,6 +741,7 @@
     ctx?.revert(); ctx = null;
     stopRiver?.(); stopRiver = null;
     wireObserver?.disconnect(); wireObserver = null;
+    liveMap?.destroy(); liveMap = null;
   }
 
   function animateIn(root, isHome) {
@@ -624,10 +817,11 @@
   }
 
   /* ---------- Router ---------- */
-  // #/ is the homepage. #/waters, #/counts, #/stocking, #/reports and #/method are pages; #/water/<id> is a water.
+  // #/ is the homepage. #/waters, #/map, #/counts, #/stocking, #/reports and #/method are pages; #/water/<id> is a water.
   // #/anglers is the old address of #/reports, and #/shortlist still scrolls to the short list on the homepage.
-  const ROUTES = {waters: 'waters', counts: 'counts', stocking: 'stocking', reports: 'reports', anglers: 'reports', method: 'method'};
-  let current = null, firstRender = true;
+  // The retired classic site (classic/) forwards its old addresses here.
+  const ROUTES = {waters: 'waters', map: 'map', counts: 'counts', stocking: 'stocking', reports: 'reports', anglers: 'reports', method: 'method'};
+  let current = null, firstRender = true, renderToken = 0;
   const curtain = document.createElement('div');
   curtain.className = 'curtain'; curtain.setAttribute('aria-hidden', 'true');
   document.body.appendChild(curtain);
@@ -639,7 +833,15 @@
     if (parts[0] === 'water' && byId.has(parts[1])) return {view: 'water:' + parts[1], water: byId.get(parts[1])};
     // #/waters?q=<words> opens the directory already searched (the homepage search sends visitors here);
     // plain #/waters lists every water. The address holds the search words, so Back returns to the same list.
-    if (ROUTES[parts[0]]) return {view: ROUTES[parts[0]], q: parts[0] === 'waters' ? new URLSearchParams(query).get('q') || '' : null};
+    // #/stocking?q=<words>&weeks=past|all opens the schedule searched, and #/map?water=<id> opens the map on a water.
+    const view = ROUTES[parts[0]], params = new URLSearchParams(query);
+    if (view === 'waters') return {view, q: params.get('q') || ''};
+    if (view === 'stocking') {
+      const weeks = params.get('weeks');
+      return {view, q: params.get('q') || '', weeks: weeks === 'all' ? 'all' : weeks === 'past' || weeks === 'recent' ? 'past' : 'coming'};
+    }
+    if (view === 'map') return {view, select: byId.has(params.get('water')) ? params.get('water') : null};
+    if (view) return {view};
     return {view: 'home', section: parts[0] === 'shortlist' ? 'shortlist' : null};
   }
   function scrollToEl(el, immediate, gap = 0) {
@@ -673,6 +875,7 @@
   }
   function render(route) {
     teardown();
+    renderToken++;
     view.classList.remove('booting');
     const page = PAGES[route.view];
     if (route.view === 'home') {
@@ -680,10 +883,13 @@
       document.title = 'Oregon Fish Forecast · Read the river';
       bindHeroSearch();
     } else if (page) {
-      if (route.q != null) dir.q = route.q;
+      if (route.view === 'waters') dir.q = route.q;
+      if (route.view === 'stocking') Object.assign(sched, {q: route.q, weeks: route.weeks});
       view.innerHTML = page.html();
       document.title = page.title + ' · Oregon Fish Forecast';
       if (route.view === 'waters') { renderRows(false); bindDirectory(); }
+      if (route.view === 'stocking') { renderSchedule(); bindSchedule(); }
+      if (route.view === 'map') bindMap(route);
     } else {
       view.innerHTML = waterHTML(route.water);
       document.title = route.water.name + ', ' + route.water.reach + ' · Oregon Fish Forecast';
@@ -696,13 +902,19 @@
     // Lets the Eddy panel (ask.js) fill the homepage's "Ask Eddy" card and a water page's "Follow this water" slot.
     document.dispatchEvent(new CustomEvent('orff:render', {detail: {water: route.water?.id || null}}));
   }
+  // A section a route opens on instead of the top: the homepage short list, or the stocking schedule when searched.
+  function landing(route) {
+    if (route.view === 'home' && route.section) return document.getElementById(route.section);
+    if (route.view === 'stocking' && (route.q || route.weeks !== 'coming')) return document.getElementById('schedule');
+    return null;
+  }
   function afterRender(route, immediate) {
     setNav(route);
     ST?.refresh();
-    if (route.view === 'home' && route.section) {
-      const el = document.getElementById(route.section);
+    const el = landing(route);
+    if (el) {
       scrollToEl(el, immediate);
-      el?.querySelector('h2')?.focus({preventScroll: true});
+      el.querySelector('h2')?.focus({preventScroll: true});
     } else {
       scrollToEl(null, true);
       if (!firstRender) (view.querySelector('h1[tabindex]') || document.getElementById('main')).focus({preventScroll: true});
@@ -710,7 +922,7 @@
     if (ST) document.fonts?.ready.then(() => {
       ST.refresh();
       // Fonts can shift section positions after a deep link; settle on the section again.
-      if (route.view === 'home' && route.section && immediate) scrollToEl(document.getElementById(route.section), true);
+      if (immediate && landing(route)) scrollToEl(landing(route), true);
     });
     firstRender = false;
   }
@@ -718,7 +930,15 @@
     closeMenu();
     const route = parse();
     if (route.view === current && !firstRender) {
-      if (route.q != null && route.q !== dir.q) { searchDirectory(route.q); renderRows(true); }
+      if (route.view === 'waters' && route.q !== dir.q) { searchDirectory(route.q); renderRows(true); }
+      if (route.view === 'stocking' && (route.q !== sched.q || route.weeks !== sched.weeks)) {
+        Object.assign(sched, {q: route.q, weeks: route.weeks});
+        const box = document.getElementById('sq');
+        if (box) box.value = sched.q;
+        renderSchedule();
+      }
+      // A link to another water while the map is open chooses it in place; the map stays where it is.
+      if (route.view === 'map' && route.select) { if (route.select !== mapState.selected) chooseOnMap(route.select); setNav(route); return; }
       afterRender(route, false);
       return;
     }

@@ -15,7 +15,8 @@ import {dirname, join, relative, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PAGES = ['index.html', 'classic/index.html'];
+// The page's <template id="map-assets"> is stamped too: app.js loads the map files from those addresses.
+const PAGES = ['index.html'];
 const check = process.argv.includes('--check');
 // Hash the text with Unix line endings, so a Windows checkout and the workflow agree.
 const stamp = file => createHash('sha256').update(readFileSync(file, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 10);

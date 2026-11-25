@@ -241,7 +241,7 @@ function stockingBlock(g, today, byId) {
     out.push(label + ', ' + list[0].week_label + ' (' + num(list.reduce((s, r) => s + r.total, 0)) + ' trout at ' + list.length + (list.length === 1 ? ' water' : ' waters') + '):');
     for (const r of list) { const gw = guide(r.waterbody); out.push('- ' + r.waterbody + ' (' + r.zone + '): ' + num(r.total) + (gw ? ' · in the guide as #/water/' + gw.id : '')); }
   }
-  out.push('Full year schedule: classic/#/stocking on this site, or ' + (g.ORFF_STOCKING.source || 'https://myodfw.com/fishing/species/trout/stocking-schedule'));
+  out.push('Full year schedule: #/stocking on this site (searchable by water), or ' + (g.ORFF_STOCKING.source || 'https://myodfw.com/fishing/species/trout/stocking-schedule'));
   return out.join('\n');
 }
 

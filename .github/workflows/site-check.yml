@@ -7,7 +7,6 @@ on:
   pull_request:
     paths:
       - 'index.html'
-      - 'classic/index.html'
       - 'v2/**'
       - 'assets/**'
       - 'scripts/stamp-assets.mjs'
@@ -26,6 +25,6 @@ jobs:
         with:
           node-version: '22'
       - name: Check the homepage scripts parse
-        run: node --check v2/assets/app.js && node --check v2/assets/ask.js
+        run: node --check v2/assets/app.js && node --check v2/assets/ask.js && node --check v2/assets/map.js
       - name: Check every stylesheet and script address carries its current hash
         run: node scripts/stamp-assets.mjs --check

@@ -2,24 +2,17 @@
 
 ## Site layout
 
-- **Homepage (`index.html`):** the version-two design, kept short: "Where are you fishing?" with a search box and a link to this week's best waters, the short list, then the live ticker, with a river shader on the supplied artwork. The directory, fish counts, stocking, angler reports and the score method each have their own page (`#/waters`, `#/counts`, `#/stocking`, `#/reports`, `#/method`). Its code is in `v2/`; see [v2/README.md](v2/README.md).
-- **Classic site (`classic/`):** the earlier design, with the directory table, water map, full stocking schedule and approach page. The homepage links to it for those pages.
-- **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and the classic site's code) and `scripts/` (data fetchers).
-- The old `/v2/` address forwards to the homepage.
+- **Homepage (`index.html`):** the version-two design, kept short: "Where are you fishing?" with a search box and a link to this week's best waters, the short list, then the live ticker, with a river shader on the supplied artwork. The directory, water map, fish counts, stocking (this week and the whole schedule), angler reports and the score method each have their own page (`#/waters`, `#/map`, `#/counts`, `#/stocking`, `#/reports`, `#/method`). Its code is in `v2/`; see [v2/README.md](v2/README.md).
+- **Shared:** `data/` (refreshed daily by the workflow), `assets/` (artwork, the score formula and Eddy's settings) and `scripts/` (data fetchers).
+- **Old addresses:** the classic design was retired on Nov 25, 2026. `classic/` and the old `/v2/` address only forward to the same page on the homepage, so bookmarks, earlier alert emails and Eddy answers keep working.
 - **One address:** the site lives at **oregonfishforecast.com**. `orfishforecast.com` forwards there (`_redirects`, read by Netlify), keeping the path and any `#/water/…` route, so Eddy passes and saved settings stay in one place.
 - **Eddy, the AI fishing assistant (`server/`, `v2/assets/ask.js`):** an "Ask Eddy" chat panel where visitors ask about the guide waters and Claude Haiku 5.5 answers from the site's own data, plus water alerts by email for pass holders ("Follow this water" on a water page). It needs a small server endpoint, so it stays hidden on GitHub Pages until one is deployed. See [server/README.md](server/README.md).
 
-GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/** (classic: `/classic/`)
+GitHub Pages address: **https://kenny-yukich.github.io/oregon-fish-forecast-concept/**
 
 This separate public repository serves the static site from the root of its main branch. It does not deploy to, modify, or replace the original Oregon Fish Forecast app. The site asks search engines not to index it.
 
 Only the site, local artwork/data and documentation are published. Local checks, editor configuration, credentials and skill files are excluded.
-
-## Classic site
-
-The notes below describe the classic site in `classic/`. Open **classic/index.html**; keep the `assets` and `data` folders at the repository root beside it.
-
-The design uses forest ink from the supplied fish artwork, serif headings, quiet surfaces and a comparison table as the main utility. Mobile table scrolling stays inside its own region, with water/reach names pinned. Detail pages keep the selected reach visible.
 
 ## Included
 
@@ -44,27 +37,27 @@ The design uses forest ink from the supplied fish artwork, serif headings, quiet
   - What matters in late November is on each page as a notice: Crane Prairie and Wickiup are closed to angling until Apr. 22 (the 2026 season is Apr. 22 to Oct. 31), the Paulina Lake Road to East Lake is closed for winter, Davis Lake is fly fishing only with trout catch and release, East and Paulina lakes are catch and release for tiger trout, and Crescent Lake is at 9% full with a 24 inch lake trout minimum. Crescent Lake also carries a note that Recreation.gov lists a late-April-to-October season the regulations do not.
   - Map pins are USGS lake sites where one exists (Crane Prairie, Cultus and Lake of the Woods are approximate). Region "Central Oregon" now also holds East and Paulina lakes.
 - Angler posts filed under "not in the guide yet" before a lake got its page are hidden from that homepage list (Eddy sees them pointed at the new page) until they age out after 30 days.
-- Hash navigation for directory, every water and approach/sources; search by water/reach/region/species; river/lake filters; result counts and resettable empty state.
+- Hash navigation for the directory, map and every water; search by water/reach/region/species; river/lake and region filters; result counts and resettable empty state.
 - Editable Portland origin saved only in this browser. All 22 driving links use the exact documented map query. No estimated drive durations and no routes to the two unverified gauge locations.
-- Local seven-day trending from actual water-page opens, deduplicated within 30 minutes. No seeded popularity or invented community statistics.
-- Monitoring coverage entries for every water. Sixteen USGS station connections can request actual latest observations individually. Three operator references, two historical references and three unresolved coverage gaps remain honestly labeled. Not every water has a working live feed.
+- No popularity rankings or invented community statistics.
+- Monitoring coverage entries for every water, read every morning where a feed exists (see [River and reservoir conditions](#river-and-reservoir-conditions)). Operator references, historical references and coverage gaps stay labeled as such. Not every water has a working live feed.
 - Nearby, upstream, downstream and mainstem/tributary differences are stated explicitly. No station substitutes for a public access point or on-site safety assessment.
 
 ## Access details
 
-Records can list several `access_points` (label, type, note, map query, source). When there is more than one, the access sidebar lists each with its own directions. Detail pages also open with a short strip of facts: species count, verified access points, monitoring type and notice count.
+Records can list several `access_points` (label, type, note, map query, source). When there is more than one, the "Getting there" card lists each with its own directions, and the decision strip at the top of the water page names the first.
 
 ## Water map
 
-Open `#/map` from the main navigation, or **Map** in any water's section bar. Inspired by TroutRoute's map, in this site's style:
+Open `#/map` from the main navigation, or **See it on the map** on any water page. Inspired by TroutRoute's map, in this site's style:
 
 - A satellite base (Esri World Imagery with place labels) or the USGS topo base, with the USGS National Map hydrography layer on top so every stream and lake shows in blue. The hydrography layer can be switched off.
 - One pin per water from `data/map.js`, forest for rivers and blue for lakes. Pins mark the approximate area of each reach. They are not access points, and directions still use only documented access points.
 - Choosing a river with a USGS gauge traces its channel about 25 km up and downstream from that gauge using the USGS NLDI service, drawn as a gold line. The trace can run past the named reach, and the page says so. If it fails, the card says the line is unavailable.
-- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, and deep links such as `#/map?water=rogue-river-touvelle`.
-- Leaflet 1.9.4 is vendored in `assets/vendor/leaflet` (BSD-2-Clause, license included). Tiles and river lines are fetched by the visitor's browser only on the map page.
+- Rivers, Lakes and All filters, a keyboard-friendly list beside the map, a card for the chosen water (score, species, directions), and deep links such as `#/map?water=rogue-river-touvelle`.
+- Leaflet 1.9.4 is vendored in `v2/vendor/leaflet` (BSD-2-Clause, license included) and loads with `v2/assets/map.js` and `data/map.js` only when the map opens. Tiles and river lines are fetched by the visitor's browser only on the map page.
 
-Verification used mocked tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
+Verification used stand-in tiles and river-line responses, because the editing environment could not reach the tile or USGS hosts. Check the live tile and NLDI services on the published site, especially that the USGS hydrography tiles draw as a transparent overlay.
 
 ## Fish counts and catch checks
 
@@ -84,9 +77,8 @@ Counts show adult fish moving upstream past a point. They are run timing, not ca
 
 Open `#/stocking` from the main navigation.
 
-- **What it shows:** ODFW's planned weekly trout stockings across Oregon. ODFW publishes about a year ahead, so the page groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone, a zone filter and a map link for each water.
-- **Guide waters:** waters in the guide link to their field notes and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
-- **Directory:** the directory shows **Stocked this week: N Oregon waters**, and matched rows in the table show their next or latest stocking.
+- **What it shows:** this week's total and waters first, then ODFW's planned weekly trout stockings across Oregon. ODFW publishes about a year ahead, so the schedule groups it into this week, next week, coming up (by month) and the past 8 weeks, with search by water or zone and a zone filter. `#/stocking?q=<words>` opens it searched.
+- **Guide waters:** waters in the guide link to their pages and get a **When was it stocked?** section. `data/stocking-match.js` maps ODFW's names to guide waters.
 - **How it updates:** `scripts/fetch-stocking.mjs` runs in the same daily workflow as the fish counts.
   - It asks the schedule for one zone and date range at a time, using the schedule's own filter form, and splits each zone by week until every slice fits on one 50-row page. Splits fall between a Sunday and a Monday, since stocking weeks run Monday to Friday. Each response is checked against the filter it asked for.
     - Why: on Oct 14, 2026, paging the full schedule repeated 101 rows and skipped 53, and the print view stops at 500 of the roughly 1,000 stockings ODFW plans through October 2027. The print view also rejects the filters.
@@ -104,7 +96,7 @@ Open `#/stocking` from the main navigation.
 
 ## Angler posts
 
-`data/angler.js` holds word-of-mouth reports from public social media, shown on the homepage ("What anglers are posting"), in each water's latest report and as the latest angler report date in the directory.
+`data/angler.js` holds word-of-mouth reports from public social media, shown on the Reports page ("What anglers are posting"), in each water's latest report and as the latest angler report date in the directory.
 
 - **Sources:** three public Facebook groups (Oregon Fishing; Oregon Fishing Network; Rogue River, Chetco River, Elk River, & Sixes River Fishing Reports) and TikTok (#oregonfishing plus the getrightkell and outdoorguy35 profiles). The lists are at the top of `scripts/fetch-angler.mjs`.
 - **How it updates:** `.github/workflows/angler-posts.yml` runs `scripts/fetch-angler.mjs` once a week, on Monday mornings (7:11 am Pacific during daylight time, 6:11 am in winter), separate from the daily data. It collects the posts since the last successful run with Apify, including one day of overlap and up to the full 30-day report window after missed weeks. It skips posts it has already read (`data/angler-seen.json`) and has Claude pick out real fishing reports and write a one-line summary for each. Photo-only posts with no text cannot be read and are skipped. Results are merged into `data/angler.js`, and posts older than 30 days drop off. Missing credentials, either platform failing, or a reading error fail the run and preserve both existing data files and the last successful check date. It can also be run by hand from the Actions tab ("Weekly angler posts"). Pull requests run offline collector tests and syntax checks, with no API charges.
@@ -170,27 +162,11 @@ Every visitor sees the scores for free. Eddy, the AI assistant, can be sold as a
   - Either way, the notice stays visible.
 - **Missing inputs.** Missing inputs are skipped and lower confidence, and unverified rule notices lower it too. A water needs at least one input besides gauge readings to be scored.
 - **Undated reports.** Crooked River below Opal Springs has no dated fishing report; missing report inputs remain unavailable.
-- **Where scores appear.** In the directory, a score shows under each water's name, with a **Best score first** sort. Water pages show the score with a breakdown of every input and its source.
+- **Where scores appear.** The homepage short list shows the top five. In the directory, each row shows its score, with a **Best score** sort. Water pages show the score with a breakdown of every input and its source.
 - **Not yet tested against catches.** The formula has not been checked against catch results. Scores are shown without a label on the site.
 
-Old `#/membership` links on the classic pages go to the water directory.
-
-## Readings
-
-Choose a water and use **Load station readings**. A request goes directly to the public USGS API; the rest of the website remains usable offline. There is no automatic background polling.
-
-Measurements retain their units, original timestamp, station and provisional/approval status. Observations older than six hours are marked older; observations over seven days old are withheld. Missing values are never converted to zero. No weather or numerical fishing score is inferred.
-
-The public USGS response for the Madras gauge was retrieved successfully during verification on October 13, 2026. Not all station feeds or browser network/CORS behavior have been verified. Public API availability and rate limits can affect requests.
-
-Source: [USGS modernized API migration documentation](https://api.waterdata.usgs.gov/docs/ogcapi/migration/). Each monitoring entry links to its official station or operator source. Editorial records remain a separate October 12 snapshot.
-
-## Connecting community trends
-
-Current trends are explicitly **this browser**, not community data. The code is ready to emit a water_view event with water_id and entry_point if a future host supplies a consented gtag integration and explicitly enables ORFF_ANALYTICS_CONSENT. No analytics account, SDK, tracking ID or remote analytics collection is installed here.
-
-For community trends, aggregate distinct consenting sessions per water over a rolling seven-day window on a server or scheduled analytics export. Return only public aggregate results to the frontend. Keep analytics credentials server-side; exclude bots/internal traffic and deduplicate repeat visits. Do not send raw search queries or driving origins. Only label results “Community” after a real aggregate feed is connected.
+Old classic `#/membership` links go to the water directory.
 
 ## Verification
 
-Lightweight JavaScript and static checks cover all detail routes, source fidelity, the two blocked driving routes, filter/search/empty-state logic, changed origins, trend deduplication, missing/stale reading handling, all 17 river-score states and both Lower Deschutes notices. No original-site modification was performed. Responsive sizing and keyboard controls received static review; rendered desktop/phone verification remains outstanding.
+See **Checked** in [v2/README.md](v2/README.md) for what was rendered and tested, and `scripts/check-data.mjs` for the offline data checks (every water has a map position and a monitoring entry, and no dataset names an unknown water).
