@@ -8,7 +8,9 @@ const OUT = new URL('../data/weather.js', import.meta.url);
 const STRICT = process.env.STRICT === '1';
 const API = 'https://api.weather.gov';
 const HEADERS = {'user-agent': 'oregon-fish-forecast-concept (GitHub Actions; daily weather)', accept: 'application/geo+json'};
-const PERIODS = 4, GAP_MS = 250, KEEP_MS = 48 * 3600000;
+// `periods` (the next four) feed the water pages and Eddy; `week` (up to 14 periods, about seven days) feeds the
+// iPhone app's 7-day bite forecast. Both come from the same forecast request.
+const PERIODS = 4, WEEK = 14, GAP_MS = 250, KEEP_MS = 48 * 3600000;
 
 const load = (file, win = {}) => { new Function('window', readFileSync(new URL('../data/' + file, import.meta.url), 'utf8'))(win); return win; };
 const win = load('map.js', load('waters.js'));
@@ -45,7 +47,7 @@ async function grid(lat, lon, cached) {
 const forecasts = new Map(), alertsAt = new Map();
 async function forecast(g) {
   const key = `${g.office}/${g.x},${g.y}`;
-  if (!forecasts.has(key)) forecasts.set(key, get(`${API}/gridpoints/${key}/forecast`).then(j => (j.properties?.periods || []).slice(0, PERIODS).map(p => ({
+  if (!forecasts.has(key)) forecasts.set(key, get(`${API}/gridpoints/${key}/forecast`).then(j => (j.properties?.periods || []).slice(0, WEEK).map(p => ({
     name: p.name, start: p.startTime, isDaytime: !!p.isDaytime, temp: p.temperature ?? null, tempUnit: p.temperatureUnit || null,
     wind: [p.windDirection, p.windSpeed].filter(Boolean).join(' ') || null, short: p.shortForecast || null,
     precip: p.probabilityOfPrecipitation?.value ?? null
@@ -69,12 +71,13 @@ for (const w of waters) {
   const old = prev[w.id];
   try {
     const g = await grid(lat, lon, old?.grid);
-    const periods = await forecast(g);
-    if (!periods.length) throw new Error('forecast: no periods');
+    const week = await forecast(g);
+    if (!week.length) throw new Error('forecast: no periods');
+    const periods = week.slice(0, PERIODS);
     // An alerts failure keeps the forecast; it is logged and shows no alerts.
     let al = [];
     try { al = await alerts(lat, lon); } catch (e) { console.log(`${w.id}: alerts failed: ${e.message}`); }
-    result.waters[w.id] = {at: result.fetched_at, grid: g, periods, alerts: al};
+    result.waters[w.id] = {at: result.fetched_at, grid: g, periods, week, alerts: al};
     ok++;
     console.log(`${w.id}: ${g.office} ${g.x},${g.y} ${periods[0].name} ${periods[0].temp}${periods[0].tempUnit || ''}, ${al.length} alert(s)`);
   } catch (e) {

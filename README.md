@@ -100,7 +100,7 @@ Open `#/stocking` from the main navigation.
 
 ## Weather
 
-- **Weather:** `scripts/fetch-weather.mjs` runs in the daily workflow and reads the National Weather Service forecast (api.weather.gov) at each water's map position in `data/map.js`: the next four forecast periods and any active NWS alerts, written to `data/weather.js`. Gridpoints are cached in that file, so the points lookup only runs when a position moves, and waters on the same grid share one forecast request. A water that fails keeps its last entry for up to 48 hours. Water pages show a **Weather** card in the sidebar, with alerts first and a link to the NWS forecast for that spot; the card is hidden when there is no current data. The map position is the general area of the reach, not an access point. Weather is not part of the score.
+- **Weather:** `scripts/fetch-weather.mjs` runs in the daily workflow and reads the National Weather Service forecast (api.weather.gov) at each water's map position in `data/map.js`: the next four forecast periods (`periods`), the full seven-day forecast (`week`, up to 14 periods, used by the iPhone app's 7-day bite forecast) and any active NWS alerts, written to `data/weather.js`. Gridpoints are cached in that file, so the points lookup only runs when a position moves, and waters on the same grid share one forecast request. A water that fails keeps its last entry for up to 48 hours. Water pages show a **Weather** card in the sidebar, with alerts first and a link to the NWS forecast for that spot; the card is hidden when there is no current data. The map position is the general area of the reach, not an access point. Weather is not part of the score.
 
 ## Angler posts
 
